@@ -32,7 +32,22 @@ void init()
 //return the color of your pixel.
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest)
 {
-	return Vec3Df(1,0,0);
+	// Test intersection with circle at origin
+	// Coefficients for the polynomial
+	float a = Vec3Df::dotProduct(dest, dest);
+	float b = 2 * Vec3Df::dotProduct(dest, origin);
+	float c = Vec3Df::dotProduct(origin, origin) - 1.5 * 1.5;
+
+	// Compute discriminant
+	float disc = b * b - 4 * a * c;
+	if (disc < 0) 	return Vec3Df(0,0,0);
+	if (disc == 0)	return Vec3Df(0,0,1);
+	if (disc > 0)	return Vec3Df(1,0,0);
+	//float t0 = (-b - sqrtf(disc)) / 2 * a;
+	//float t1 = (-b + sqrtf(disc)) / 2 * a;
+
+	// Check which of the two is the right scalar to use.
+	//return t0 < t1 ? camPos + t0 * ray : camPos + t1 * ray;
 }
 
 
