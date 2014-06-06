@@ -1,6 +1,6 @@
-#ifdef WIN32
+//#ifdef WIN32
 #include <windows.h>
-#endif
+//#endif
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <math.h>

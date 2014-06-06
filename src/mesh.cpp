@@ -1,7 +1,7 @@
 #include "mesh.h"
-#ifdef WIN32
+//#ifdef WIN32
 #include <windows.h>
-#endif
+//#endif
 #include <GL/glut.h>
 #include <stdio.h>
 #include <string.h>
@@ -157,7 +157,11 @@ bool Mesh::loadMesh(const char * filename, bool randomizeTriangulation)
             }
             {
 				std::string file = path_.append(t);//mtlfile);
+                printf("Load material file %s\n", file.c_str());
+                loadMtl(file.c_str(), materialIndex);
+#ifndef _WIN64
                 file = file.substr(0, file.size()-1);
+#endif
                 std::cerr << "DEBUG Material file: " << file << std::endl;
 				printf("Load material file %s\n", file.c_str());
 				loadMtl(file.c_str(), materialIndex);

@@ -5,9 +5,9 @@ Utilitaires pour appliquer une traqueboule a une fenetre OpenGL.
 */
 #ifndef TRAQUEBOULE
 #define TRAQUEBOULE
-#ifdef WIN32
+//#ifdef WIN32
 #include <windows.h>
-#endif
+//#endif
 #include <GL/glut.h>
 #include <math.h>
 #include "matrix.h"
