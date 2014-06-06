@@ -10,132 +10,19 @@
 #include "mesh.h"
 #include "traqueboule.h"
 
-Vec3Df MyCameraPosition;
-
-std::vector<Vec3Df> MyLightPositions;
-
-//image class just dumped to hide...
-class RGBValue
-{
-	public:
-	RGBValue(float rI=0, float gI=0, float bI=0)
-	: r(rI)
-	, g(gI)
-	, b(bI)
-	{
-	};
-	
-	float operator[](int i) const
-	{
-		switch(i)
-		{
-			case 0:
-				return r;
-			case 1:
-				return g;
-			case 2:
-				return b;
-			default: 
-				return r;
-		}
-	}
-	float & operator[](int i)
-	{
-		switch(i)
-		{
-			case 0:
-				return r;
-			case 1:
-				return g;
-			case 2:
-				return b;
-			default: 
-				return r;
-		}
-	}
-	float r, b,g;
-};
+#include "rgbvalue.h"
+#include "image.h"
 
 
-
-
-
-class Image
-{
-	public:
-	Image(int width, int height)
-	: _width(width)
-	, _height(height)
-	{
-		_image.resize(3*_width*_height);
-	}
-	void setPixel(int i, int j, const RGBValue & rgb)
-	{
-		_image[3*(_width*j+i)]=rgb[0];
-		_image[3*(_width*j+i)+1]=rgb[1];
-		_image[3*(_width*j+i)+2]=rgb[2];
-		
-	}
-	std::vector<float> _image;
-	int _width;
-	int _height;
-
-	bool writeImage(const char * filename);	
-};
-
-bool Image::writeImage(const char * filename)
-{
-	FILE* file;
-    file = fopen(filename, "wb");
-	if (!file)
-	{
-		printf("dump file problem... file\n");
-		return false;
-	}
-
-	fprintf(file, "P6\n%i %i\n255\n",_width, _height);
-
-	
-	std::vector<unsigned char> imageC(_image.size());
-	
-	for (unsigned int i=0; i<_image.size();++i)
-		imageC[i]=(unsigned char)(_image[i]*255.0f);
-	
-	int t = fwrite(&(imageC[0]), _width * _height * 3, 1, file);
-	if (t!=1)
-	{
-		printf("Dump file problem... fwrite\n");
-		return false;
-	}
-
-	fclose(file);
-	return true;
-}
-
-
-
-
-
-
-
-
-
-
-Mesh MyMesh; //Main mesh
-
-
-
-// Utilisé pour essayer différents types de rendu
-// Utilisé via le paramètre "-t" en ligne de commande
-enum { TRIANGLE=0, MODEL=1, };
-unsigned int type = MODEL;
+Vec3Df				MyCameraPosition;
+std::vector<Vec3Df>	MyLightPositions;
+Mesh				MyMesh; //Main mesh
 
 unsigned int WindowSize_X = 800;  // largeur fenetre
 unsigned int WindowSize_Y = 800;  // hauteur fenetre
 
 unsigned int RayTracingResolutionX = 800;  // largeur fenetre
 unsigned int RayTracingResolutionY = 800;  // largeur fenetre
-
 
 
 void dessinerRepere(float length)
@@ -159,39 +46,6 @@ void dessinerRepere(float length)
 
 }
 
-/**
- * Appel des différentes fonctions de dessin
-*/
-void dessiner( )
-{
-	switch( type )
-	{
-	case TRIANGLE:
-		glutSolidSphere(1,10,10);
-		dessinerRepere(1);
-		break;
-	case MODEL:
-		{
-			MyMesh.draw();
-			//glBegin(GL_TRIANGLES);
-
-			//for (unsigned int i=0;i<MyMesh.triangles.size();++i)
-			//{
-			//	glColor3f(MyMesh.materials[MyMesh.triangleMaterials[i]].Kd()[0], MyMesh.materials[MyMesh.triangleMaterials[i]].Kd()[1], MyMesh.materials[MyMesh.triangleMaterials[i]].Kd()[2]);
-			//	glVertex3f(MyMesh.vertices[MyMesh.triangles[i].v[0]].p[0], MyMesh.vertices[MyMesh.triangles[i].v[0]].p[1], MyMesh.vertices[MyMesh.triangles[i].v[0]].p[2]);
-			//	glVertex3f(MyMesh.vertices[MyMesh.triangles[i].v[1]].p[0], MyMesh.vertices[MyMesh.triangles[i].v[1]].p[1], MyMesh.vertices[MyMesh.triangles[i].v[1]].p[2]);
-			//	glVertex3f(MyMesh.vertices[MyMesh.triangles[i].v[2]].p[0], MyMesh.vertices[MyMesh.triangles[i].v[2]].p[1], MyMesh.vertices[MyMesh.triangles[i].v[2]].p[2]);
-			//}
-			//glEnd();
-		}
-	default:
-		dessinerRepere(1); // Par défaut
-		break;
-	}
-	
-	yourDebugDraw();
-}
-
 void animate()
 {
 	MyCameraPosition=getCameraPosition();
@@ -203,6 +57,7 @@ void animate()
 void display(void);
 void reshape(int w, int h);
 void keyboard(unsigned char key, int x, int y);
+void tracescene(void);
 
 /**
  * Programme principal
@@ -227,7 +82,7 @@ int main(int argc, char** argv)
     tbHelp();                      // affiche l'aide sur la traqueboule
 	MyCameraPosition=getCameraPosition();
     //
-    // Active la lumière
+    // Active la lumiï¿½re
     // Pour la partie
     // ECLAIRAGE
          
@@ -243,7 +98,7 @@ int main(int argc, char** argv)
 	glEnable(GL_NORMALIZE);
     glClearColor (0.0, 0.0, 0.0, 0.0);
 
-	// Details sur le mode de tracé
+	// Details sur le mode de tracï¿½
     glEnable( GL_DEPTH_TEST );            // effectuer le test de profondeur
     //glEnable(GL_CULL_FACE);
     //glCullFace(GL_BACK);
@@ -267,11 +122,11 @@ int main(int argc, char** argv)
     // lancement de la boucle principale
     glutMainLoop();
         
-    return 0;  // instruction jamais exécutée
+    return 0;  // instruction jamais exï¿½cutï¿½e
 }
 
 /**
- * Fonctions de gestion opengl à ne pas toucher
+ * Fonctions de gestion opengl ï¿½ ne pas toucher
  */
 // Actions d'affichage
 // Ne pas changer
@@ -285,7 +140,8 @@ void display(void)
 
     tbVisuTransform(); // origine et orientation de la scene
 
-    dessiner( );    
+    MyMesh.draw();
+    yourDebugDraw();
 
     glutSwapBuffers();
 	glPopAttrib();
@@ -348,47 +204,8 @@ void keyboard(unsigned char key, int x, int y)
 		MyLightPositions[MyLightPositions.size()-1]=getCameraPosition();
 		break;
 	case 'r':
-	{
-		//C'est nouveau!!!
-		//commencez ici et lancez vos propres fonctions par rayon.
-
-		cout<<"Raytracing"<<endl;
-				
-		Image result(WindowSize_X,WindowSize_Y);
-		Vec3Df origin00, dest00;
-		Vec3Df origin01, dest01;
-		Vec3Df origin10, dest10;
-		Vec3Df origin11, dest11;
-		Vec3Df origin, dest;
-
-
-		produceRay(0,0, &origin00, &dest00);
-		produceRay(0,WindowSize_Y-1, &origin01, &dest01);
-		produceRay(WindowSize_X-1,0, &origin10, &dest10);
-		produceRay(WindowSize_X-1,WindowSize_Y-1, &origin11, &dest11);
-
-		for (unsigned int y=0; y<WindowSize_Y;++y)
-			for (unsigned int x=0; x<WindowSize_X;++x)
-			{
-				//svp, decidez vous memes quels parametres vous allez passer à la fonction
-				//e.g., maillage, triangles, sphères etc.
-				float xscale=1.0f-float(x)/(WindowSize_X-1);
-				float yscale=float(y)/(WindowSize_Y-1);
-
-				origin=yscale*(xscale*origin00+(1-xscale)*origin10)+
-					(1-yscale)*(xscale*origin01+(1-xscale)*origin11);
-				dest=yscale*(xscale*dest00+(1-xscale)*dest10)+
-					(1-yscale)*(xscale*dest01+(1-xscale)*dest11);
-
-		
-				Vec3Df rgb = performRayTracing(origin, dest);
-				result.setPixel(x,y, RGBValue(rgb[0], rgb[1], rgb[2]));
-			}
-		
-
-		result.writeImage("result.ppm");
+		tracescene();
 		break;
-	}
 	case 27:     // touche ESC
         exit(0);
     }
@@ -396,3 +213,43 @@ void keyboard(unsigned char key, int x, int y)
 	yourKeyboardFunc(key,x,y);
 }
 
+void tracescene() {
+	//C'est nouveau!!!
+	//commencez ici et lancez vos propres fonctions par rayon.
+
+	cout<<"Raytracing"<<endl;
+
+	Image result(WindowSize_X,WindowSize_Y);
+	Vec3Df origin00, dest00;
+	Vec3Df origin01, dest01;
+	Vec3Df origin10, dest10;
+	Vec3Df origin11, dest11;
+	Vec3Df origin, dest;
+
+
+	produceRay(0,0, &origin00, &dest00);
+	produceRay(0,WindowSize_Y-1, &origin01, &dest01);
+	produceRay(WindowSize_X-1,0, &origin10, &dest10);
+	produceRay(WindowSize_X-1,WindowSize_Y-1, &origin11, &dest11);
+
+	for (unsigned int y=0; y<WindowSize_Y;++y)
+		for (unsigned int x=0; x<WindowSize_X;++x)
+		{
+			//svp, decidez vous memes quels parametres vous allez passer ï¿½ la fonction
+			//e.g., maillage, triangles, sphï¿½res etc.
+			float xscale=1.0f-float(x)/(WindowSize_X-1);
+			float yscale=float(y)/(WindowSize_Y-1);
+
+			origin=yscale*(xscale*origin00+(1-xscale)*origin10)+
+				(1-yscale)*(xscale*origin01+(1-xscale)*origin11);
+			dest=yscale*(xscale*dest00+(1-xscale)*dest10)+
+				(1-yscale)*(xscale*dest01+(1-xscale)*dest11);
+
+
+			Vec3Df rgb = performRayTracing(origin, dest);
+			result.setPixel(x,y, RGBValue(rgb[0], rgb[1], rgb[2]));
+		}
+
+
+	result.writeImage("result.ppm");
+}
