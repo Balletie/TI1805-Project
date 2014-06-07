@@ -37,17 +37,30 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest)
 	float a = Vec3Df::dotProduct(dest, dest);
 	float b = 2 * Vec3Df::dotProduct(dest, origin);
 	float c = Vec3Df::dotProduct(origin, origin) - 1.5 * 1.5;
-
+    
 	// Compute discriminant
 	float disc = b * b - 4 * a * c;
-	if (disc < 0) 	return Vec3Df(0,0,0);
-	if (disc == 0)	return Vec3Df(0,0,1);
-	if (disc > 0)	return Vec3Df(1,0,0);
-	//float t0 = (-b - sqrtf(disc)) / 2 * a;
-	//float t1 = (-b + sqrtf(disc)) / 2 * a;
-
+	if (disc < 0) 		return Vec3Df(0,0,0);
+	else if (disc == 0)	return Vec3Df(0,0,1);
+	else if (disc > 0)	return Vec3Df(1,0,0);
+    
+	// Solve for t
+	//
+	//	float t0 = (-b - sqrtf(disc)) / 2 * a;
+	//	float t1 = (-b + sqrtf(disc)) / 2 * a;
 	// Check which of the two is the right scalar to use.
-	//return t0 < t1 ? camPos + t0 * ray : camPos + t1 * ray;
+	//	float t = t0 < t1 ? t0 : t1;
+	//
+	// new_origin is the same as the normal at the point of intersection.
+	//
+	//	Vec3Df new_origin = origin + t * dest;
+	//	Vec3Df normal = new_origin;
+	//	normal.normalize();
+	//	Vec3Df reflect = 2 * Vec3Df::dotProduct(dest, normal) * normal - dest;
+	//
+	// Recursive call here...
+	//
+	//	performRayTracing(new_origin, reflect);
 }
 
 

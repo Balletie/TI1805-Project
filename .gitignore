@@ -3,3 +3,6 @@ bin
 .project
 project
 *.swp
+*.DS_Store
+*.bmp
+*.ppm
