@@ -1,6 +1,7 @@
 #if (defined _WIN32 || defined _WIN64)
 #include <windows.h>
 #endif
+
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <math.h>
@@ -161,33 +162,28 @@ void reshape(int w, int h)
 //transformer le x, y en position 3D
 void produceRay(int x_I, int y_I, Vec3Df * origin, Vec3Df * dest)
 {
-		int viewport[4];
-		double modelview[16];
-		double projection[16];
-		//point sur near plane 
-		//double positionN[3];
-		//point sur far plane 
-		//double positionF[3];
-		glGetDoublev(GL_MODELVIEW_MATRIX, modelview); //recuperer matrices
-		glGetDoublev(GL_PROJECTION_MATRIX, projection); //recuperer matrices
-		glGetIntegerv(GL_VIEWPORT, viewport);//viewport
-		int y_new = viewport[3] - y_I;
+	int viewport[4];
+	double modelview[16];
+	double projection[16];
+	//point sur near plane
+	//double positionN[3];
+	//point sur far plane
+	//double positionF[3];
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelview); //recuperer matrices
+	glGetDoublev(GL_PROJECTION_MATRIX, projection); //recuperer matrices
+	glGetIntegerv(GL_VIEWPORT, viewport);//viewport
+	int y_new = viewport[3] - y_I;
 
-		double x, y, z;
-		
-		gluUnProject(x_I, y_new, 0, modelview, projection, viewport, &x, &y, &z);
-		origin->p[0]=float(x);
-		origin->p[1]=float(y);
-		origin->p[2]=float(z);
-		gluUnProject(x_I, y_new, 1, modelview, projection, viewport, &x, &y, &z);
-		dest->p[0]=float(x);
-		dest->p[1]=float(y);
-		dest->p[2]=float(z);
-}
+	double x, y, z;
 
-void produceRay(int x_I, int y_I, Vec3Df & origin, Vec3Df & dest)
-{
-	produceRay(x_I, y_I, &origin, &dest);
+	gluUnProject(x_I, y_new, 0, modelview, projection, viewport, &x, &y, &z);
+	origin->p[0]=float(x);
+	origin->p[1]=float(y);
+	origin->p[2]=float(z);
+	gluUnProject(x_I, y_new, 1, modelview, projection, viewport, &x, &y, &z);
+	dest->p[0]=float(x);
+	dest->p[1]=float(y);
+	dest->p[2]=float(z);
 }
 
 // prise en compte du clavier
