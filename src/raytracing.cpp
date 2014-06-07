@@ -1,8 +1,7 @@
+#include <stdio.h>
 #if (defined _WIN32 || defined _WIN64)
 #include <windows.h>
 #endif
-
-#include <stdio.h>
 #include <GL/glut.h>
 #include "raytracing.h"
 
@@ -79,7 +78,7 @@ void yourKeyboardFunc(char t, int x, int y)
 	// x, y are the screen position
 
 	//here I use it to get the coordinates of a ray, which I then draw in the debug function.
-	produceRay(x, y, &testRayOrigin, &testRayDestination);
+	produceRay(x, y, testRayOrigin, testRayDestination);
 
 	std::cout<<t<<" pressed! The mouse was in location "<<x<<","<<y<<"!"<<std::endl;
 }
