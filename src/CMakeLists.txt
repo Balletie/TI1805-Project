@@ -1,3 +1,10 @@
+cmake_minimum_required (VERSION 2.6)
+
+project (TI1805-Project)
+
+find_package (GLUT REQUIRED)
+find_package (OpenGL REQUIRED)
+
 file (GLOB SOURCES *.cpp)
 add_executable (project ${SOURCES})
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
