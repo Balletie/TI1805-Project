@@ -1,5 +1,7 @@
 #ifndef __SHAPE_H__
 #define __SHAPE_H__
+#include <stdint.h>
+
 #include "Vec3D.h"
 
 class Shape {
