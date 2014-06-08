@@ -3,12 +3,8 @@
 #include <windows.h>
 #endif
 #include <GL/glut.h>
-<<<<<<< HEAD
 #include <float.h>
 #include <stdint.h>
-=======
-#include <cfloat>
->>>>>>> c5825a91b5904beb91912518c23cf40067015284
 #include "raytracing.h"
 #include "shapes.h"
 
