@@ -78,15 +78,18 @@ void yourDebugDraw()
 	//as an example: 
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glDisable(GL_LIGHTING);
+
 	glColor3f(0,1,1);
 	glBegin(GL_LINES);
-	glVertex3f(testRayOrigin[0], testRayOrigin[1], testRayOrigin[2]);
-	glVertex3f(testRayDestination[0], testRayDestination[1], testRayDestination[2]);
+		glVertex3f(testRayOrigin[0], testRayOrigin[1], testRayOrigin[2]);
+		glVertex3f(testRayDestination[0], testRayDestination[1], testRayDestination[2]);
 	glEnd();
+
 	glPointSize(10);
 	glBegin(GL_POINTS);
-	glVertex3fv(MyLightPositions[0].pointer());
+		glVertex3fv(MyLightPositions[0].pointer());
 	glEnd();
+
 	glPopAttrib();
 
 }
@@ -99,5 +102,16 @@ void yourKeyboardFunc(char t, int x, int y)
 	//here I use it to get the coordinates of a ray, which I then draw in the debug function.
 	produceRay(x, y, testRayOrigin, testRayDestination);
 
-	std::cout<<t<<" pressed! The mouse was in location "<<x<<","<<y<<"!"<<std::endl;
+	std::cout<< t <<" pressed! The mouse was in location "<<x<<","<<y<<"!"<<std::endl;
+
+	Triangle triangle;
+	Vertex vertex;
+	for (int i = 0; i < MyMesh.triangles.size(); i++) {
+		triangle = MyMesh.triangles[i];
+		printf("triangle index: %d\t %d\t %d\n", triangle.v[0], triangle.v[1], triangle.v[2]);
+		for (int j = 0; j < 3; j++) {
+			vertex = MyMesh.vertices[triangle.v[j]];
+			printf("triangle coords: %f\t %f\t %f\n", vertex.p[0], vertex.p[1], vertex.p[2]);
+		}
+	}
 }
