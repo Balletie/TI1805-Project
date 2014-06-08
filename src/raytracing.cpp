@@ -3,12 +3,15 @@
 #include <windows.h>
 #endif
 #include <GL/glut.h>
+#include <cfloat.h>
 #include "raytracing.h"
+#include "shapes.h"
 
 
 //temporary variables
 Vec3Df testRayOrigin;
 Vec3Df testRayDestination;
+std::vector<Shape*> shapes;
 
 //use this function for any preprocessing of the mesh.
 void init()
@@ -17,27 +20,50 @@ void init()
 	//feel free to replace cube by a path to another model
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
-    //MyMesh.loadMesh("/lhome/martin/Projects/Uebung/raytracing/cube.obj", true);
-    MyMesh.loadMesh("cube.obj", true);
-    //MyMesh.loadMesh("cube2.obj", true);
-    //MyMesh.loadMesh("dodgeColorTest.obj", true);
+	//MyMesh.loadMesh("/lhome/martin/Projects/Uebung/raytracing/cube.obj", true);
+	MyMesh.loadMesh("cube.obj", true);
+	//MyMesh.loadMesh("cube2.obj", true);
+	//MyMesh.loadMesh("dodgeColorTest.obj", true);
 	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
 	//at least ONE light source has to be in the scene!!!
 	//here, we set it to the current location of the camera
 	MyLightPositions.push_back(MyCameraPosition);
+
+	shapes.push_back(new Sphere(Vec3Df(0,0,0.2), Vec3Df(0,0,0), 1.5));
 }
 
 //return the color of your pixel.
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest)
 {
-	performRayTracing(origin, origin - dest, 0, 3);
+	Vec3Df dir = origin - dest;
+	dir.normalize()
+	performRayTracing(origin, dir, 0, 3);
 }
 
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t level, uint8_t max)
 {
-	
+	Vec3Df normal;
+	Vec3Df new_origin;
+	float current_depth = FLT_MAX;
+	bool intersection = false;
+
+	for (unsigned int = 0; i < shapes.size(); i++) {
+		Vec3Df new_new_origin;
+		Vec3Df new_normal;
+		if (shapes[i]->intersect(origin, dir, new_normal, new_new_origin)) {
+			intersection = true;
+			float new_depth = new_new_origin - origin;
+			if (new_depth < current_depth) {
+				current_depth = new_depth;
+				normal = new_normal;
+				new_origin = new_new_origin;
+			}
+		}
+	}
+	normal.normalize()
+	Vec3Df reflect = 2 * Vec3Df::dotProduct(dir, normal) * normal - dir;
 }
 
 void yourDebugDraw()
