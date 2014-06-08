@@ -32,7 +32,7 @@ void init()
 	MyLightPositions.push_back(MyCameraPosition);
 
 	shapes.push_back(new Sphere(Vec3Df(0,0,0.2), Vec3Df(0,0,0), 1.5));
-	shapes.push_back(new Sphere(Vec3Df(0,0.3,0), Vec3Df(1.5,1.0,1), 1.5));
+	shapes.push_back(new Plane(Vec3Df(0,0.2,0), Vec3Df(0,1,0), Vec3Df(0,1,0)));
 }
 
 //return the color of your pixel.
@@ -66,10 +66,12 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 		}
 	}
 	if (!intersection)	return Vec3Df(0.f,0.f,0.f);
+
 	normal.normalize();
 	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
+
 	if (++level == max)	return color;
-	else			return color + performRayTracing(new_origin, reflect, level, max);
+	else				return color + performRayTracing(new_origin, reflect, level, max);
 }
 
 void yourDebugDraw()
@@ -111,7 +113,8 @@ void yourKeyboardFunc(char t, int x, int y)
 	Vertex vertex;
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
 		triangle = MyMesh.triangles[i];
-		printf("triangle index: %d\t %d\t %d\n", triangle.v[0], triangle.v[1], triangle.v[2]);
+		printf("triangle index v: %d\t %d\t %d\n", triangle.v[0], triangle.v[1], triangle.v[2]);
+		printf("triangle index t: %d\t %d\t %d\n", triangle.t[0], triangle.t[1], triangle.t[2]);
 		for (int j = 0; j < 3; j++) {
 			vertex = MyMesh.vertices[triangle.v[j]];
 			printf("triangle coords: %f\t %f\t %f\n", vertex.p[0], vertex.p[1], vertex.p[2]);

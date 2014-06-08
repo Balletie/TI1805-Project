@@ -1,5 +1,7 @@
 #include "shapes.h"
 
+#include <stdio.h>
+
 Shape::Shape(Vec3Df color, Vec3Df org)
 : _color(color), _origin(org)
 {}
@@ -30,5 +32,17 @@ bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_orig
 	return true;
 }
 
-bool Plane::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
+bool Plane::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal)
+{
+	normal = _coeff;
+	normal.normalize();
+
+	float denom = Vec3Df::dotProduct(dir,normal);
+	if (denom >= 0) return false;
+
+	// Calculate term t in the expressen 'p = o + tD'
+	float t = Vec3Df::dotProduct(_origin - origin, normal) / denom;
+
+	new_origin = origin + t * dir;
+	return true;
 }
