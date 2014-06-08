@@ -34,7 +34,7 @@ void init()
 	MyLightPositions.push_back(MyCameraPosition);
 
 
-	shapes.push_back(new Sphere(Vec3Df(0,0,0.2), Vec3Df(0.2,0.2,0.2), Vec3Df(0,0,0), 1.5));
+	shapes.push_back(new Sphere(Vec3Df(0,0,0.2), Vec3Df(0.2,0.2,0.2), Vec3Df(0,0.8,-3), 1.5));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
@@ -48,7 +48,10 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest)
 {
 	Vec3Df dir = dest - origin;
 	dir.normalize();
-	return performRayTracing(origin, dir, 0, 6);
+	dir[1] = -dir[1];
+	Vec3Df flipped_origin = origin; 
+	flipped_origin[1] = -origin[1];
+	return performRayTracing(flipped_origin, dir, 0, 6);
 }
 
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t level, uint8_t max)
