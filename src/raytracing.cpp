@@ -54,7 +54,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	for (unsigned int i = 0; i < shapes.size(); i++) {
 		Vec3Df new_new_origin;
 		Vec3Df new_normal;
-		if (shapes[i]->intersect(origin, dir, new_normal, new_new_origin)) {
+		if (shapes[i]->intersect(origin, dir, new_new_origin, new_normal)) {
 			intersection = true;
 			float new_depth = (new_new_origin - origin).getLength();
 			if (new_depth < current_depth) {
@@ -65,7 +65,6 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 			}
 		}
 	}
-
 	if (!intersection)	return Vec3Df(0.f,0.f,0.f);
 	normal.normalize();
 	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
