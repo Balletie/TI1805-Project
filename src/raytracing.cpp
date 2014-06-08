@@ -40,7 +40,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest)
 {
 	Vec3Df dir = dest - origin;
 	dir.normalize();
-	performRayTracing(origin, dir, 0, 1);
+	return performRayTracing(origin, dir, 0, 1);
 }
 
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t level, uint8_t max)
