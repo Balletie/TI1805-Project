@@ -33,8 +33,8 @@ void init()
 	//here, we set it to the current location of the camera
 	MyLightPositions.push_back(MyCameraPosition);
 
-
-	shapes.push_back(new Sphere(Vec3Df(0,0,0.2), Vec3Df(0.2,0.2,0.2), Vec3Df(0,0.8,-3), 1.5));
+	shapes.push_back(new Sphere(Vec3Df(0.2,0,0), Vec3Df(0.2,0.2,0.2), Vec3Df(0,0,-1), 1.5));	
+	shapes.push_back(new Sphere(Vec3Df(0,0,0.2), Vec3Df(0.2,0.2,0.2), Vec3Df(0,3,-3), 3));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
@@ -77,11 +77,22 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	}
 	if (!intersection)	return Vec3Df(0.f,0.f,0.f);
 
+	// Re-use intersection here
+	intersection = false;
+	for (unsigned int i = 0; i < shapes.size(); i++) {
+		Vec3Df stub1;
+		Vec3Df stub2;
+		if (shapes[i]->intersect(new_origin, MyLightPositions[0] - new_origin, stub1, stub2)) {
+			intersection = true;
+		}
+	}
+	if (intersection)	return Vec3Df(0.f,0.f,0.f);
+
 	normal.normalize();
 	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
 
 	if (++level == max)	return color;
-	else				return color + specular * performRayTracing(new_origin, reflect, level, max);
+	else			return color + specular * performRayTracing(new_origin, reflect, level, max);
 }
 
 void yourDebugDraw()
