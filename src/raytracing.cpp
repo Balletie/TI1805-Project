@@ -83,8 +83,12 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	for (unsigned int i = 0; i < shapes.size(); i++) {
 		Vec3Df stub1;
 		Vec3Df stub2;
-		if (shapes[i]->intersect(new_origin, MyLightPositions[0] - new_origin, stub1, stub2)) {
-			intersection = true;
+		Vec3Df lightPos = MyLightPositions[0] - new_origin;
+		float lightDist = lightPos.getLength();
+
+		if (shapes[i]->intersect(new_origin, lightPos, stub1, stub2)) {
+			if ((stub1 - new_origin).getLength() < lightDist)
+				intersection = true;
 		}
 	}
 	if (intersection)	return Vec3Df(0.f,0.f,0.f);
