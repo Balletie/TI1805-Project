@@ -3,10 +3,9 @@
 #include <windows.h>
 #endif
 #include <GL/glut.h>
-#include <cfloat.h>
+#include <cfloat>
 #include "raytracing.h"
 #include "shapes.h"
-
 
 //temporary variables
 Vec3Df testRayOrigin;
@@ -38,7 +37,7 @@ void init()
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest)
 {
 	Vec3Df dir = origin - dest;
-	dir.normalize()
+	dir.normalize();
 	performRayTracing(origin, dir, 0, 3);
 }
 
@@ -46,24 +45,28 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 {
 	Vec3Df normal;
 	Vec3Df new_origin;
+	Vec3Df color;
 	float current_depth = FLT_MAX;
 	bool intersection = false;
 
-	for (unsigned int = 0; i < shapes.size(); i++) {
+	for (unsigned int i = 0; i < shapes.size(); i++) {
 		Vec3Df new_new_origin;
 		Vec3Df new_normal;
 		if (shapes[i]->intersect(origin, dir, new_normal, new_new_origin)) {
 			intersection = true;
-			float new_depth = new_new_origin - origin;
+			float new_depth = (new_new_origin - origin).getLength();
 			if (new_depth < current_depth) {
 				current_depth = new_depth;
 				normal = new_normal;
 				new_origin = new_new_origin;
+				color = shapes[i]->_color;
 			}
 		}
 	}
-	normal.normalize()
+	normal.normalize();
 	Vec3Df reflect = 2 * Vec3Df::dotProduct(dir, normal) * normal - dir;
+	if (++level == max)	return color;
+	else			return color + performRayTracing(new_origin, reflect, level, max);
 }
 
 void yourDebugDraw()

@@ -1,6 +1,7 @@
 #ifndef __SHAPE_H__
 #define __SHAPE_H__
 #include "Vec3D.h"
+#include <cstdint>
 
 class Shape {
   public:
