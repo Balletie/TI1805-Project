@@ -3,7 +3,8 @@
 #include <windows.h>
 #endif
 #include <GL/glut.h>
-#include <cfloat.h>
+#include <float.h>
+#include <stdint.h>
 #include "raytracing.h"
 #include "shapes.h"
 
@@ -38,7 +39,7 @@ void init()
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest)
 {
 	Vec3Df dir = origin - dest;
-	dir.normalize()
+	dir.normalize();
 	performRayTracing(origin, dir, 0, 3);
 }
 
@@ -49,12 +50,12 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	float current_depth = FLT_MAX;
 	bool intersection = false;
 
-	for (unsigned int = 0; i < shapes.size(); i++) {
+	for (unsigned int i = 0; i < shapes.size(); i++) {
 		Vec3Df new_new_origin;
 		Vec3Df new_normal;
 		if (shapes[i]->intersect(origin, dir, new_normal, new_new_origin)) {
 			intersection = true;
-			float new_depth = new_new_origin - origin;
+			float new_depth = (new_new_origin - origin).getLength();
 			if (new_depth < current_depth) {
 				current_depth = new_depth;
 				normal = new_normal;
@@ -62,8 +63,8 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 			}
 		}
 	}
-	normal.normalize()
-	Vec3Df reflect = 2 * Vec3Df::dotProduct(dir, normal) * normal - dir;
+	normal.normalize();
+	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
 }
 
 void yourDebugDraw()
