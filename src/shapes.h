@@ -2,8 +2,6 @@
 #define __SHAPE_H__
 #include <stdint.h>
 
-#include "Vec3D.h"
-
 class Shape {
   public:
 	Shape(Vec3Df, Vec3Df);

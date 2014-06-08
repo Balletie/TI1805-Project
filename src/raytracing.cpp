@@ -8,7 +8,6 @@
 #include "raytracing.h"
 #include "shapes.h"
 
-
 //temporary variables
 Vec3Df testRayOrigin;
 Vec3Df testRayDestination;
@@ -47,6 +46,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 {
 	Vec3Df normal;
 	Vec3Df new_origin;
+	Vec3Df color;
 	float current_depth = FLT_MAX;
 	bool intersection = false;
 
@@ -60,11 +60,14 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 				current_depth = new_depth;
 				normal = new_normal;
 				new_origin = new_new_origin;
+				color = shapes[i]->_color;
 			}
 		}
 	}
 	normal.normalize();
 	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
+	if (++level == max)	return color;
+	else			return color + performRayTracing(new_origin, reflect, level, max);
 }
 
 void yourDebugDraw()
