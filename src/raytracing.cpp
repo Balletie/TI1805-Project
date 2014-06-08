@@ -32,6 +32,7 @@ void init()
 	MyLightPositions.push_back(MyCameraPosition);
 
 	shapes.push_back(new Sphere(Vec3Df(0,0,0.2), Vec3Df(0,0,0), 1.5));
+	shapes.push_back(new Sphere(Vec3Df(0,0.3,0), Vec3Df(1.5,1.0,1), 1.5));
 }
 
 //return the color of your pixel.
@@ -64,6 +65,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 			}
 		}
 	}
+
 	normal.normalize();
 	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
 	if (++level == max)	return color;
@@ -104,6 +106,7 @@ void yourKeyboardFunc(char t, int x, int y)
 
 	std::cout<< t <<" pressed! The mouse was in location "<<x<<","<<y<<"!"<<std::endl;
 
+	/*
 	Triangle triangle;
 	Vertex vertex;
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
@@ -114,4 +117,5 @@ void yourKeyboardFunc(char t, int x, int y)
 			printf("triangle coords: %f\t %f\t %f\n", vertex.p[0], vertex.p[1], vertex.p[2]);
 		}
 	}
+	*/
 }
