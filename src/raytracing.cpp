@@ -38,7 +38,7 @@ void init()
 //return the color of your pixel.
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest)
 {
-	Vec3Df dir = origin - dest;
+	Vec3Df dir = dest - origin;
 	dir.normalize();
 	performRayTracing(origin, dir, 0, 1);
 }
@@ -66,7 +66,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 		}
 	}
 
-	if (!intersect)		return Vec3Df(0.f,0.f,0.f);
+	if (!intersection)	return Vec3Df(0.f,0.f,0.f);
 	normal.normalize();
 	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
 	if (++level == max)	return color;
