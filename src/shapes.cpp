@@ -8,11 +8,15 @@ Shape::Shape(Vec3Df color, Vec3Df specular, Vec3Df org)
 
 Sphere::Sphere(Vec3Df color, Vec3Df specular, Vec3Df org, float rad)
 : Shape(color, specular, org), _radius(rad)
-{}
+{
+	_st = SPHERE_T;
+}
 
 Plane::Plane(Vec3Df color, Vec3Df specular, Vec3Df org, Vec3Df coeff)
 : Shape(color, specular, org), _coeff(coeff)
-{}
+{
+	_st = PLANE_T;
+}
 
 bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
 	Vec3Df trans_origin = origin - this->_origin;

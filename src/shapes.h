@@ -5,10 +5,17 @@
 
 #include "Vec3D.h"
 
+enum shape_type {
+	SPHERE_T,
+	PLANE_T,
+	SHAPE_COUNT//Keep last
+};
+
 class Shape {
   public:
 	Shape(Vec3Df color, Vec3Df specular, Vec3Df org);
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&) = 0;
+	shape_type _st;
   	const Vec3Df _color;
   	const Vec3Df _specular;
 	const Vec3Df _origin;

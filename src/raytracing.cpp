@@ -23,10 +23,10 @@ void init()
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
 	//MyMesh.loadMesh("/lhome/martin/Projects/Uebung/raytracing/cube.obj", true);
-	MyMesh.loadMesh("cube.obj", true);
+	//MyMesh.loadMesh("cube.obj", true);
 	//MyMesh.loadMesh("cube2.obj", true);
 	//MyMesh.loadMesh("dodgeColorTest.obj", true);
-	MyMesh.computeVertexNormals();
+	//MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
 	//at least ONE light source has to be in the scene!!!
@@ -41,6 +41,7 @@ void init()
 	shapes.push_back(new Plane(Vec3Df(0,0.2,0), Vec3Df(0.5,0.5,0.5), Vec3Df(0,0,0), Vec3Df(0,1,0)));
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
+
 }
 
 //return the color of your pixel.
@@ -103,6 +104,28 @@ void yourDebugDraw()
 	//as an example: 
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glDisable(GL_LIGHTING);
+
+	for (int i = 0; i < shapes.size(); i++) {
+		glPushMatrix();
+		switch (shapes[i]->_st) {
+			case SPHERE_T:{
+				Sphere* s = dynamic_cast<Sphere*> (shapes[i]);
+				glTranslatef(s->_origin[0],s->_origin[1],s->_origin[2]);
+				glColor3f(s->_color[0],s->_color[1],s->_color[2]);
+				glutSolidSphere(s->_radius, 20, 20);
+			}
+			break;
+			case PLANE_T:{
+				Plane* p = dynamic_cast<Plane*> (shapes[i]);
+				glTranslatef(p->_origin[0],p->_origin[1],p->_origin[2]);
+				glColor3f(p->_color[0],p->_color[1],p->_color[2]);
+				glScalef(10,0.4,10);
+				glutSolidCube(1);
+			}
+			break;
+		}
+		glPopMatrix();
+	}
 
 	glColor3f(0,1,1);
 	glBegin(GL_LINES);
