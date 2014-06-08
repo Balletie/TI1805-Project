@@ -48,10 +48,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest)
 {
 	Vec3Df dir = dest - origin;
 	dir.normalize();
-	dir[1] = -dir[1];
-	Vec3Df flipped_origin = origin; 
-	flipped_origin[1] = -origin[1];
-	return performRayTracing(flipped_origin, dir, 0, 6);
+	return performRayTracing(origin, dir, 0, 6);
 }
 
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t level, uint8_t max)
