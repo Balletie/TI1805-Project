@@ -315,7 +315,7 @@ void produceRay(int x_I, int y_I, Vec3Df * origin, Vec3Df * dest)
 		glGetDoublev(GL_MODELVIEW_MATRIX, modelview); //recuperer matrices
 		glGetDoublev(GL_PROJECTION_MATRIX, projection); //recuperer matrices
 		glGetIntegerv(GL_VIEWPORT, viewport);//viewport
-		int y_new = viewport[3] - y_I;
+		int y_new = y_I;
 
 		double x, y, z;
 		
