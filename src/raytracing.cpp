@@ -11,6 +11,8 @@
 //temporary variables
 Vec3Df testRayOrigin;
 Vec3Df testRayDestination;
+Vec3Df new_orig;
+Vec3Df new_dest;
 std::vector<Shape*> shapes;
 
 //use this function for any preprocessing of the mesh.
@@ -31,8 +33,14 @@ void init()
 	//here, we set it to the current location of the camera
 	MyLightPositions.push_back(MyCameraPosition);
 
-	shapes.push_back(new Sphere(Vec3Df(0,0,0.2), Vec3Df(0,0,0), 1.5));
-	shapes.push_back(new Plane(Vec3Df(0,0.2,0), Vec3Df(0,1,0), Vec3Df(0,1,0)));
+
+	shapes.push_back(new Sphere(Vec3Df(0,0,0.2), Vec3Df(0.2,0.2,0.2), Vec3Df(0,0,0), 1.5));
+
+	// Plane(color, origin, coeff)
+	// Horizontal green plane
+	shapes.push_back(new Plane(Vec3Df(0,0.2,0), Vec3Df(0.5,0.5,0.5), Vec3Df(0,0,0), Vec3Df(0,1,0)));
+	// Vertical red plane
+	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
 }
 
 //return the color of your pixel.
@@ -40,7 +48,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest)
 {
 	Vec3Df dir = dest - origin;
 	dir.normalize();
-	return performRayTracing(origin, dir, 0, 1);
+	return performRayTracing(origin, dir, 0, 6);
 }
 
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t level, uint8_t max)
@@ -48,6 +56,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	Vec3Df normal;
 	Vec3Df new_origin;
 	Vec3Df color;
+	Vec3Df specular;
 	float current_depth = FLT_MAX;
 	bool intersection = false;
 
@@ -62,6 +71,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 				normal = new_normal;
 				new_origin = new_new_origin;
 				color = shapes[i]->_color;
+				specular = shapes[i]->_specular;
 			}
 		}
 	}
@@ -71,7 +81,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
 
 	if (++level == max)	return color;
-	else				return color + performRayTracing(new_origin, reflect, level, max);
+	else				return color + specular * performRayTracing(new_origin, reflect, level, max);
 }
 
 void yourDebugDraw()
@@ -87,6 +97,8 @@ void yourDebugDraw()
 	glBegin(GL_LINES);
 		glVertex3f(testRayOrigin[0], testRayOrigin[1], testRayOrigin[2]);
 		glVertex3f(testRayDestination[0], testRayDestination[1], testRayDestination[2]);
+		glVertex3f(new_orig[0], new_orig[1], new_orig[2]);
+		glVertex3f(new_dest[0], new_dest[1], new_dest[2]);
 	glEnd();
 
 	glPointSize(10);
@@ -105,6 +117,18 @@ void yourKeyboardFunc(char t, int x, int y)
 
 	//here I use it to get the coordinates of a ray, which I then draw in the debug function.
 	produceRay(x, y, testRayOrigin, testRayDestination);
+
+	Vec3Df orig = testRayOrigin;
+	Vec3Df dir = testRayDestination - testRayOrigin;
+	dir.normalize();
+
+	Vec3Df normal;
+	if (shapes[0]->intersect(orig, dir, new_orig, normal)) {
+		printf("intersection!!\n");
+		Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
+		new_dest = 20 * reflect;
+	}
+
 
 	std::cout<< t <<" pressed! The mouse was in location "<<x<<","<<y<<"!"<<std::endl;
 

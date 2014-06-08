@@ -2,19 +2,21 @@
 
 #include <stdio.h>
 
-Shape::Shape(Vec3Df color, Vec3Df org)
-: _color(color), _origin(org)
+Shape::Shape(Vec3Df color, Vec3Df specular, Vec3Df org)
+: _color(color), _specular(specular), _origin(org)
 {}
 
-Sphere::Sphere(Vec3Df color, Vec3Df org, uint8_t rad)
-: Shape(color, org), _radius(rad)
+Sphere::Sphere(Vec3Df color, Vec3Df specular, Vec3Df org, uint8_t rad)
+: Shape(color, specular, org), _radius(rad)
 {}
 
-Plane::Plane(Vec3Df color, Vec3Df org, Vec3Df coeff)
-: Shape(color, org), _coeff(coeff)
+Plane::Plane(Vec3Df color, Vec3Df specular, Vec3Df org, Vec3Df coeff)
+: Shape(color, specular, org), _coeff(coeff)
 {}
 
 bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
+	normal = Vec3Df(0,0,1);
+
 	Vec3Df trans_origin = origin - this->_origin;
 	float a = Vec3Df::dotProduct(dir, dir);
 	float b = 2 * Vec3Df::dotProduct(trans_origin, dir);
