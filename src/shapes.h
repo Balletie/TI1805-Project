@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "Vec3D.h"
+#include <cstdint>
 
 class Shape {
   public:
