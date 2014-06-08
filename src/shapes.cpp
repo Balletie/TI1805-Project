@@ -6,7 +6,7 @@ Shape::Shape(Vec3Df color, Vec3Df specular, Vec3Df org)
 : _color(color), _specular(specular), _origin(org)
 {}
 
-Sphere::Sphere(Vec3Df color, Vec3Df specular, Vec3Df org, uint8_t rad)
+Sphere::Sphere(Vec3Df color, Vec3Df specular, Vec3Df org, float rad)
 : Shape(color, specular, org), _radius(rad)
 {}
 

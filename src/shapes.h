@@ -16,9 +16,9 @@ class Shape {
 
 class Sphere : public Shape {
   public:
-	Sphere(Vec3Df color, Vec3Df specular, Vec3Df org, uint8_t rad);
+	Sphere(Vec3Df color, Vec3Df specular, Vec3Df org, float rad);
 	bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
-	const uint8_t _radius;
+	const float _radius;
 };
 
 class Plane : public Shape {
