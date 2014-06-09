@@ -31,14 +31,16 @@ void init()
 	//one first move: initialize the first light source
 	//at least ONE light source has to be in the scene!!!
 	//here, we set it to the current location of the camera
-	MyLightPositions.push_back(MyCameraPosition);
+	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
 
-	shapes.push_back(new Sphere(Vec3Df(0.2,0,0), Vec3Df(0.2,0.2,0.2), Vec3Df(0,0,-1), 1.5));	
-	shapes.push_back(new Sphere(Vec3Df(0,0,0.2), Vec3Df(0.2,0.2,0.2), Vec3Df(0,3,-3), 3));
+	shapes.push_back(new Sphere(Vec3Df(0.2, 0  , 0  ), Vec3Df(0.2, 0.2, 0.2), Vec3Df(-2, 0, -1), 1));
+	shapes.push_back(new Sphere(Vec3Df(0  , 0  , 0.2), Vec3Df(0.2, 0.2, 0.2), Vec3Df( 0, 0, -1), 1));
+	shapes.push_back(new Sphere(Vec3Df(0.4, 0.4, 0  ), Vec3Df(0.2, 0.2, 0.2), Vec3Df( 0, 2, -1), 1));
+	shapes.push_back(new Sphere(Vec3Df(0.1, 0.1, 0.1), Vec3Df(1  , 1  , 1  ), Vec3Df( 2, 0, -1), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
-	shapes.push_back(new Plane(Vec3Df(0,0.2,0), Vec3Df(0.5,0.5,0.5), Vec3Df(0,0,0), Vec3Df(0,1,0)));
+	shapes.push_back(new Plane(Vec3Df(0.2,0.2,0.2), Vec3Df(0.5,0.5,0.5), Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
 

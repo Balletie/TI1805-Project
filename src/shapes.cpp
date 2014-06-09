@@ -27,10 +27,17 @@ bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_orig
 	float disc = b * b - 4 * a * c;
 	if (disc < 0)	return false;
 
-	float t0 = (-b + sqrtf(disc)) / (2 * a);
-	float t1 = (-b - sqrtf(disc)) / (2 * a);
-	float t  = t0 < t1 ? t0 : t1;
-	if (t < 0)	return false;
+	float q = (b > 0) ?
+				-0.5 * (b + sqrtf(disc)) :
+				-0.5 * (b - sqrtf(disc));
+	float t0 = q / a;
+	float t1 = c / q;
+	if (t0 < t1) std::swap(t0,t1);
+
+	float t;
+	if (t0 < 1e-4)	return false;
+	if (t1 < 1e-4)	t = t0;
+	else			t = t1;
 
 	normal = trans_origin + t*dir;
 	normal.normalize();
