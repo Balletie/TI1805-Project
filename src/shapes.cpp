@@ -2,6 +2,8 @@
 #include <GL/glut.h>
 #include <stdio.h>
 
+static const float EPSILON = 1e-4;
+
 Shape::Shape(Vec3Df color, Vec3Df specular, Vec3Df org)
 : _color(color), _specular(specular), _origin(org)
 {}
@@ -23,6 +25,8 @@ bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_orig
 	float disc = b * b - 4 * a * c;
 	if (disc < 0)	return false;
 
+	// We use the following in place of the quadratic formula for
+	// more numeric precision.
 	float q = (b > 0) ?
 				-0.5 * (b + sqrtf(disc)) :
 				-0.5 * (b - sqrtf(disc));
@@ -31,11 +35,11 @@ bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_orig
 	if (t0 < t1) std::swap(t0,t1);
 
 	float t;
-	if (t0 < 1e-4)	return false;
-	if (t1 < 0)	t = t0;
-	else		t = t1;
+	if (t0 < EPSILON)	return false;
+	if (t1 < 0)		t = t0;
+	else			t = t1;
 
-	normal = trans_origin + t*dir;
+	normal = trans_origin + t * dir;
 	normal.normalize();
 	new_origin = origin + t * dir;
 	return true;

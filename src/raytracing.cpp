@@ -49,6 +49,7 @@ void init()
 //return the color of your pixel.
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest)
 {
+	// Get the direction of the vector.
 	Vec3Df dir = dest - origin;
 	dir.normalize();
 	return performRayTracing(origin, dir, 0, 6);
@@ -56,10 +57,16 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest)
 
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t level, uint8_t max)
 {
+	// This will be instantiated with the new normal at the intersection point.
 	Vec3Df normal;
+	// This will be instantiated with the coordinates of the intersection point.
 	Vec3Df new_origin;
+
+	// The color if the intersected object.
 	Vec3Df color;
+	// The specularity of the intersected object.
 	Vec3Df specular;
+
 	float current_depth = FLT_MAX;
 	bool intersection = false;
 
@@ -93,9 +100,11 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 				intersection = true;
 		}
 	}
+	// If there was an intersection, this spot is occluded.
 	if (intersection)	return Vec3Df(0.f,0.f,0.f);
 
 	normal.normalize();
+	// Compute the reflection vector for the next recursive call.
 	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
 
 	if (++level == max)	return color;
@@ -111,6 +120,7 @@ void yourDebugDraw()
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glDisable(GL_LIGHTING);
 
+	// Draw all the shapes for the viewport window.
 	for (int i = 0; i < shapes.size(); i++) {
 		shapes[i]->draw();
 	}
