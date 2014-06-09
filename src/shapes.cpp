@@ -61,10 +61,11 @@ bool Plane::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origi
 	normal.normalize();
 
 	float denom = Vec3Df::dotProduct(dir,normal);
-	if (denom >= 0) return false;
+	if (denom < 1e-4 && denom > -1e-4) return false;
 
 	// Calculate term t in the expressen 'p = o + tD'
 	float t = Vec3Df::dotProduct(_origin - origin, normal) / denom;
+	if (t < 1e-4) return false;
 
 	new_origin = origin + t * dir;
 	return true;
