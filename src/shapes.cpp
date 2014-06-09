@@ -36,8 +36,8 @@ bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_orig
 
 	float t;
 	if (t0 < 1e-4)	return false;
-	if (t1 < 1e-4)	t = t0;
-	else			t = t1;
+	if (t1 < 0)	t = t0;
+	else		t = t1;
 
 	normal = trans_origin + t*dir;
 	normal.normalize();
