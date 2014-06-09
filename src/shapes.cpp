@@ -1,5 +1,5 @@
 #include "shapes.h"
-
+#include <GL/glut.h>
 #include <stdio.h>
 
 Shape::Shape(Vec3Df color, Vec3Df specular, Vec3Df org)
@@ -8,15 +8,11 @@ Shape::Shape(Vec3Df color, Vec3Df specular, Vec3Df org)
 
 Sphere::Sphere(Vec3Df color, Vec3Df specular, Vec3Df org, float rad)
 : Shape(color, specular, org), _radius(rad)
-{
-	_st = SPHERE_T;
-}
+{}
 
 Plane::Plane(Vec3Df color, Vec3Df specular, Vec3Df org, Vec3Df coeff)
 : Shape(color, specular, org), _coeff(coeff)
-{
-	_st = PLANE_T;
-}
+{}
 
 bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
 	Vec3Df trans_origin = origin - this->_origin;
@@ -45,6 +41,16 @@ bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_orig
 	return true;
 }
 
+void Sphere::draw() {
+	glPushMatrix();
+
+	glTranslatef(this->_origin[0],this->_origin[1],this->_origin[2]);
+	glColor3f(this->_color[0],this->_color[1],this->_color[2]);
+	glutSolidSphere(this->_radius, 20, 20);
+
+	glPopMatrix();
+}
+
 bool Plane::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal)
 {
 	normal = _coeff;
@@ -58,4 +64,15 @@ bool Plane::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origi
 
 	new_origin = origin + t * dir;
 	return true;
+}
+
+void Plane::draw() {
+	glPushMatrix();
+
+	glTranslatef(this->_origin[0],this->_origin[1],this->_origin[2]);
+	glColor3f(this->_color[0],this->_color[1],this->_color[2]);
+	glScalef(10,0.4,10);
+	glutSolidCube(1);
+
+	glPopMatrix();
 }
