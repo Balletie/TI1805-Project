@@ -17,7 +17,7 @@ $ make
 
 En dan uitvoeren met:
 ````
-$ ../../src/project
+$ open ../src/project
 ````
 
 Windows:
