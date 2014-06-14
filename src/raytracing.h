@@ -26,6 +26,8 @@ void produceRay(int x_I, int y_I, Vec3Df & origin, Vec3Df & dest);
 //your main function to rewrite
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest);
 
+Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t level, uint8_t max);
+
 //a function to debug --- you can draw in OpenGL here
 void yourDebugDraw();
 
