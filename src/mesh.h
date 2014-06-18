@@ -119,13 +119,13 @@ class Material {
 
 	private:
 
-	Vec3Df Kd_;	 bool Kd_is_set_; // diffuse
-	Vec3Df Ka_;	 bool Ka_is_set_; // ambient
-	Vec3Df Ks_;	 bool Ks_is_set_; // specular
-	float Ns_;	 bool Ns_is_set_; 
-	float Ni_;	 bool Ni_is_set_; 
-	int illum_;	 bool illum_is_set_;//illumination model
-	float Tr_;	 bool Tr_is_set_; // transperency
+	Vec3Df Kd_;	 bool Kd_is_set_;	// diffuse
+	Vec3Df Ka_;	 bool Ka_is_set_;	// ambient
+	Vec3Df Ks_;	 bool Ks_is_set_;	// specular
+	float Ns_;	 bool Ns_is_set_;	// specular exponent
+	float Ni_;	 bool Ni_is_set_;	// refraction index
+	int illum_;	 bool illum_is_set_;	// illumination model
+	float Tr_;	 bool Tr_is_set_;	// transperency
 	std::string name_;
 	std::string textureName_;
 };
