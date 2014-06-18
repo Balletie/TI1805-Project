@@ -22,10 +22,7 @@ void init()
 	//feel free to replace cube by a path to another model
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
-	//MyMesh.loadMesh("/lhome/martin/Projects/Uebung/raytracing/cube.obj", true);
 	//MyMesh.loadMesh("cube.obj", true);
-	//MyMesh.loadMesh("cube2.obj", true);
-	//MyMesh.loadMesh("dodgeColorTest.obj", true);
 	MyMesh.loadMesh("Pen_subsurf.obj", true);
 	MyMesh.computeVertexNormals();
 
@@ -46,7 +43,6 @@ void init()
 	shapes.push_back(new Plane(Vec3Df(0.2,0.2,0.2), Vec3Df(0.5,0.5,0.5), Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
-
 }
 
 //return the color of your pixel.
@@ -111,7 +107,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
 
 	if (++level == max)	return color;
-	else			return color + specular * performRayTracing(new_origin, reflect, level, max);
+	else return color + specular * performRayTracing(new_origin, reflect, level, max);
 }
 
 void yourDebugDraw()
@@ -142,7 +138,6 @@ void yourDebugDraw()
 	glEnd();
 
 	glPopAttrib();
-
 }
 
 void yourKeyboardFunc(char t, int x, int y)
@@ -163,7 +158,6 @@ void yourKeyboardFunc(char t, int x, int y)
 		Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
 		new_dest = 20 * reflect;
 	}
-
 
 	std::cout<< t <<" pressed! The mouse was in location "<<x<<","<<y<<"!"<<std::endl;
 
