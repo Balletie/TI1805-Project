@@ -1,7 +1,10 @@
 #pragma once
-//3D vectorial computations 
+//3D vectorial computations
 #include <cmath>
 #include <iostream>
+#ifndef M_PI
+#define M_PI           3.14159265358979323846
+#endif
 
 template<typename T> class Vec3D;
 
@@ -262,7 +265,7 @@ public:
 		return p;
 	}
 
-		
+
 	T p[3];
 };
 
