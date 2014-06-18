@@ -1,6 +1,9 @@
 #include "shapes.h"
-#include <GL/glut.h>
 #include <stdio.h>
+#if (defined _WIN32 || defined _WIN64)
+#include <windows.h>
+#endif
+#include <GL/glut.h>
 
 static const float EPSILON = 1e-4;
 
