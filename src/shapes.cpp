@@ -1,4 +1,6 @@
 #include "shapes.h"
+#include "Vertex.h"
+
 #include <stdio.h>
 #if (defined _WIN32 || defined _WIN64)
 #include <windows.h>
@@ -17,6 +19,10 @@ Sphere::Sphere(Vec3Df color, Vec3Df specular, Vec3Df org, float rad)
 
 Plane::Plane(Vec3Df color, Vec3Df specular, Vec3Df org, Vec3Df coeff)
 : Shape(color, specular, org), _coeff(coeff)
+{}
+
+OurTriangle::OurTriangle(Vec3Df color, Vec3Df specular, Mesh *mesh, Triangle *triangle)
+: Shape(color, specular, mesh->vertices[triangle->v[0]].p), _mesh(mesh)
 {}
 
 bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
@@ -84,4 +90,48 @@ void Plane::draw() {
 	glutSolidCube(1);
 
 	glPopMatrix();
+}
+
+bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
+	Vec3Df u = _origin - _mesh->vertices[_triangle->v[0]].p;
+	Vec3Df v = _origin - _mesh->vertices[_triangle->v[0]].p;
+
+	normal = Vec3Df::crossProduct(u - _origin, v - origin);
+	normal.normalize();
+
+	// Calculate the distance of the triangle plane to the origin
+	float dist = Vec3Df::dotProduct(_origin, normal);
+	// Calculate term t in the expression 'p = o + tD'
+	float t = (dist - Vec3Df::dotProduct(origin, normal)) /
+		  (Vec3Df::dotProduct(dir, normal));
+	// This vector represents the intersect point with the plane
+	Vec3Df p = origin + t * dir;
+
+
+	Vec3Df w = p - _origin;
+	Vec3Df uCrossW = Vec3Df::crossProduct(u, w);
+	Vec3Df uCrossV = Vec3Df::crossProduct(u, v);
+	if (Vec3Df::dotProduct(uCrossW, uCrossV) < 0)
+		return false;
+
+	Vec3Df vCrossW = Vec3Df::crossProduct(v, w);
+	Vec3Df vCrossU = Vec3Df::crossProduct(v, u);
+	if (Vec3Df::dotProduct(vCrossW, vCrossU) < 0)
+		return false;
+
+	float denom = uCrossV.getLength();
+	float a = vCrossW.getLength() / denom;
+	float b = uCrossW.getLength() / denom;
+
+	if (a + b > 1)
+		return false;
+
+	normal =	(_mesh->vertices[_triangle->v[0]].n +
+				 _mesh->vertices[_triangle->v[0]].n +
+				 _mesh->vertices[_triangle->v[0]].n);
+	normal.normalize();
+}
+
+void OurTriangle::draw() {
+
 }

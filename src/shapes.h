@@ -2,6 +2,7 @@
 #define __SHAPE_H__
 
 #include <stdint.h>
+#include "mesh.h"
 #include "Vec3D.h"
 
 class Shape {
@@ -44,6 +45,15 @@ class Plane : public Shape {
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 	virtual void draw();
 	const Vec3Df _coeff;
+};
+
+class OurTriangle : public Shape {
+  public:
+	OurTriangle(Vec3Df color, Vec3Df specular, Mesh *mesh, Triangle *triangle);
+	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
+	virtual void draw();
+	const Mesh* _mesh;
+	const Triangle* _triangle;
 };
 
 #endif
