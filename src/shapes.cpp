@@ -66,6 +66,7 @@ bool Plane::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origi
 	// Calculate term t in the expressen 'p = o + tD'
 	float t = Vec3Df::dotProduct(_origin - origin, normal) / denom;
 	if (t < EPSILON) return false;
+	if (t < 1e-4) return false;
 
 	new_origin = origin + t * dir;
 	return true;

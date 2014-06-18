@@ -40,6 +40,7 @@ void init()
 	shapes.push_back(new Sphere(Vec3Df(0.4, 0.4, 0  ), Vec3Df(0.2, 0.2, 0.2), Vec3Df( 0, 2, -1), 1));
 	shapes.push_back(new Sphere(Vec3Df(0.1, 0.1, 0.1), Vec3Df(1  , 1  , 1  ), Vec3Df( 2, 0, -1), 1));
 	*/
+
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
 	shapes.push_back(new Plane(Vec3Df(0.2,0.2,0.2), Vec3Df(0.5,0.5,0.5), Vec3Df(0,-1,0), Vec3Df(0,1,0)));
@@ -180,4 +181,3 @@ void yourKeyboardFunc(char t, int x, int y)
 	}
 	*/
 }
->>>>>>> Stashed changes
