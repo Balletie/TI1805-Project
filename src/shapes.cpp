@@ -22,7 +22,7 @@ Plane::Plane(Vec3Df color, Vec3Df specular, Vec3Df org, Vec3Df coeff)
 {}
 
 OurTriangle::OurTriangle(Vec3Df color, Vec3Df specular, Mesh *mesh, Triangle *triangle)
-: Shape(color, specular, mesh->vertices[triangle->v[0]].p), _mesh(mesh)
+: Shape(color, specular, mesh->vertices[triangle->v[0]].p), _mesh(mesh), _triangle(triangle)
 {}
 
 bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
@@ -93,22 +93,25 @@ void Plane::draw() {
 }
 
 bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
-	Vec3Df u = _origin - _mesh->vertices[_triangle->v[0]].p;
-	Vec3Df v = _origin - _mesh->vertices[_triangle->v[0]].p;
+	Vec3Df u = _mesh->vertices[_triangle->v[1]].p - _origin;
+	Vec3Df v = _mesh->vertices[_triangle->v[2]].p - _origin;
 
-	normal = Vec3Df::crossProduct(u - _origin, v - origin);
+	// First calculate where the ray intersects the plane in which the triangle lies
+	// Calculate the normal of the plane
+	normal = Vec3Df::crossProduct(u, v);
 	normal.normalize();
-
-	// Calculate the distance of the triangle plane to the origin
+	// Calculate the distance of the plane to the origin
 	float dist = Vec3Df::dotProduct(_origin, normal);
 	// Calculate term t in the expression 'p = o + tD'
-	float t = (dist - Vec3Df::dotProduct(origin, normal)) /
-		  (Vec3Df::dotProduct(dir, normal));
-	// This vector represents the intersect point with the plane
-	Vec3Df p = origin + t * dir;
+	float t =	(dist - Vec3Df::dotProduct(origin, normal)) /
+				(Vec3Df::dotProduct(dir, normal));
+	// This vector represents the intersection point
+	new_origin = origin + t * dir;
 
+	// If the plane is behind us, there's no intersection
+	if (t < 0) return false;
 
-	Vec3Df w = p - _origin;
+	Vec3Df w = new_origin - _origin;
 	Vec3Df uCrossW = Vec3Df::crossProduct(u, w);
 	Vec3Df uCrossV = Vec3Df::crossProduct(u, v);
 	if (Vec3Df::dotProduct(uCrossW, uCrossV) < 0)
@@ -127,9 +130,10 @@ bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new
 		return false;
 
 	normal =	(_mesh->vertices[_triangle->v[0]].n +
-				 _mesh->vertices[_triangle->v[0]].n +
-				 _mesh->vertices[_triangle->v[0]].n);
+				 _mesh->vertices[_triangle->v[1]].n +
+				 _mesh->vertices[_triangle->v[2]].n);
 	normal.normalize();
+	return true;
 }
 
 void OurTriangle::draw() {

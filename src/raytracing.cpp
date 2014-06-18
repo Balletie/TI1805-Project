@@ -40,9 +40,14 @@ void init()
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
-	shapes.push_back(new Plane(Vec3Df(0.2,0.2,0.2), Vec3Df(0.5,0.5,0.5), Vec3Df(0,-1,0), Vec3Df(0,1,0)));
+	//shapes.push_back(new Plane(Vec3Df(0.2,0.2,0.2), Vec3Df(0.5,0.5,0.5), Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
+
+	std::vector<Triangle>::iterator iter;
+	for (int i = 0; i < MyMesh.triangles.size(); i++) {
+		shapes.push_back(new OurTriangle(Vec3Df(0.2,0.2,0.2), Vec3Df(0.5,0.5,0.5), &MyMesh, &*(MyMesh.triangles.begin() + i)) );
+	}
 }
 
 //return the color of your pixel.
