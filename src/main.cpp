@@ -23,6 +23,19 @@ class RGBValue
 	, g(gI)
 	, b(bI)
 	{
+		if (r>1)
+			r=1.0;
+		if (g>1)
+			g=1.0;
+		if (b>1)
+			b=1.0;
+
+		if (r<0)
+			r=0.0;
+		if (g<0)
+			g=0.0;
+		if (b<0)
+			b=0.0;
 	};
 	
 	float operator[](int i) const

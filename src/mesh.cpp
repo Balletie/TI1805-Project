@@ -8,12 +8,14 @@
 #include <math.h>
 #include <stdlib.h>
 #include <iostream>
+#include <fstream>
 
 
    
 using namespace std;
 
 const unsigned int LINE_LEN=256;
+
 
 /************************************************************
  * Normal calculations
@@ -138,48 +140,35 @@ bool Mesh::loadMesh(const char * filename, bool randomizeTriangulation)
     memset(&s, 0, LINE_LEN);
 
     FILE * in;
-
     in =fopen(filename,"r");
 
     while(in && !feof(in) && fgets(s, LINE_LEN, in))
     {     
         // comment
-        if (s[0] == '#' || isspace(s[0])) continue;   
+        if (s[0] == '#' || isspace(s[0]) || s[0]=='\0') continue;   
 
         // material file
         else if (strncmp(s, "mtllib ", 7)==0)
         {
-
             char mtlfile[128];
-			std::string t=&(s[7]);
-			if (!t.empty() && t[t.length()-1] == '\n') {
-				t.erase(t.length()-1);
-            }
-            {
-				std::string file = path_.append(t);//mtlfile);
-#if (!defined _WIN32 && !defined _WIN64)
-                file = file.substr(0, file.size()-1);
-#endif
-                std::cerr << "DEBUG Material file: " << file << std::endl;
-				printf("Load material file %s\n", file.c_str());
-				loadMtl(file.c_str(), materialIndex);
-            }
-
-/*
             char *p0 = s+6, *p1;
             while( isspace(*++p0) ); p1=p0;
-            while(!isspace(*p1)) ++p1; *p1='\0';
+            std::string t = p1;
+			int i;
+            for (i = 0; i < t.length(); ++i)
             {
-                std::string file = path_.append(p0);
-#ifdef WIN32
-                file = file.substr(0, file.size()-1);
-#else
-                file = file.substr(0, file.size());
-#endif
-                printf("Load material file %s\n", file.c_str());
-                loadMtl(file.c_str(), materialIndex);
+				if (t[i] < 32 || t[i] == 255)
+				{
+					break; 
+				}
             }
-*/
+			std::string file;
+			if (t.length() == i)
+	    		file = path_.append(t);
+			else
+            file = path_.append(t.substr(0, i));
+			printf("Load material file %s\n", file.c_str());
+			loadMtl(file.c_str(), materialIndex);
         }
         // usemtl
         else if (strncmp(s, "usemtl ", 7)==0)
@@ -194,7 +183,6 @@ bool Mesh::loadMesh(const char * filename, bool randomizeTriangulation)
                 matname="";
             }
         }
-
         // vertex
         else if (strncmp(s, "v ", 2) == 0)
         {
@@ -262,13 +250,17 @@ bool Mesh::loadMesh(const char * filename, bool randomizeTriangulation)
                     switch (component)
                     {
                         case 0: // vertex
-							vhandles.push_back(atoi(p0)-1);
+                        {
+                            int tmp = atoi(p0)-1;
+                            vhandles.push_back(tmp);
+                        }
                         break;
                       
                         case 1: // texture coord
-                            //assert(!vhandles.empty());
-                            //assert((unsigned int)(atoi(p0)-1) < texcoords.size());
-							texhandles.push_back(atoi(p0)-1);
+                        {
+                            int tmp = atoi(p0)-1;
+                            texhandles.push_back(tmp);
+                        }
                         break;
                       
                         case 2: // normal
@@ -299,11 +291,21 @@ bool Mesh::loadMesh(const char * filename, bool randomizeTriangulation)
 				unsigned int k=(false)?(rand()%vhandles.size()):0;
 				for (unsigned int i=0;i<vhandles.size()-2;++i)
 				{
+                    const int v0 = (k+0)%vhandles.size();
+                    const int v1 = (k+i+1)%vhandles.size();
+                    const int v2 = (k+i+2)%vhandles.size();
+
+                    const int t0 = (k+0)%vhandles.size();
+                    const int t1 = (k+i+1)%vhandles.size();
+                    const int t2 = (k+i+2)%vhandles.size();
+
+                    const int m  = (materialIndex.find(matname))->second;
+
 					triangles.push_back(
-						Triangle(	vhandles[(k+0)%vhandles.size()], texhandles[(k+0)%vhandles.size()], 
-									vhandles[(k+i+1)%vhandles.size()], texhandles[(k+i+1)%vhandles.size()],
-									vhandles[(k+i+2)%vhandles.size()], texhandles[(k+i+2)%vhandles.size()]));
-					triangleMaterials.push_back((materialIndex.find(matname))->second);
+                        Triangle(	vhandles[v0], texhandles[t0],
+                                    vhandles[v1], texhandles[t1],
+                                    vhandles[v2], texhandles[t2]));
+                    triangleMaterials.push_back(m);
 				}
 			}
 			else if (vhandles.size()==3)
@@ -342,15 +344,17 @@ bool Mesh::loadMtl(const char * filename, std::map<string, unsigned int> & mater
     bool        indef = false;
 
     memset(line,0,LINE_LEN);
-    while( _in && !feof(_in) && fgets(line, LINE_LEN, _in) )
+    while( _in && !feof(_in) )
     {
+		fgets(line, LINE_LEN, _in);
+
         if (line[0] == '#') // skip comments
         {
             memset(line,0,LINE_LEN);
             continue;
         }
 
-        else if( isspace(line[0]) )
+        else if( isspace(line[0])||line[0]=='\0')
         {
             if (indef && !key.empty() && mat.is_valid())
             {
@@ -362,6 +366,8 @@ bool Mesh::loadMtl(const char * filename, std::map<string, unsigned int> & mater
                 }
                 mat.cleanup();
             }
+			if (line[0]=='\0')
+				break;
         }
         else if (strncmp(line, "newmtl ", 7)==0) // begin new material definition
         {

@@ -1,6 +1,6 @@
 # Blender v2.70 (sub 0) OBJ File: 'Pen_subsurf.blend'
 # www.blender.org
-mtllib Pen_subsurf.mtl 
+mtllib Pen_subsurf.mtl
 o Plane.001
 v -12.513195 -0.122820 14.230453
 v 12.198935 -0.122820 14.230453

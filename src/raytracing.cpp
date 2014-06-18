@@ -26,7 +26,7 @@ void init()
 	//MyMesh.loadMesh("cube.obj", true);
 	//MyMesh.loadMesh("cube2.obj", true);
 	//MyMesh.loadMesh("dodgeColorTest.obj", true);
-	MyMesh.loadMesh("cube.obj", true);
+	MyMesh.loadMesh("Pen_subsurf.obj", true);
 	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
