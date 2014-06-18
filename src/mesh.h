@@ -191,7 +191,7 @@ public:
 	//Triangles are the indices of the vertices involved in a triangle.
 	//a triplet corresponds to one triangle. 
 	//A Triangle contains the indeces of the three vertices that are neighboring
-    std::vector<Triangle> triangles;
+	std::vector<Triangle> triangles;
 	//These are the material properties
 	//each triangle (!) has a material. Use the triangle index to receive a material INDEX
 	std::vector<unsigned int> triangleMaterials;

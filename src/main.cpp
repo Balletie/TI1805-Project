@@ -5,11 +5,11 @@
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
-
+#include "shapes.h"
 #include "raytracing.h"
 #include "mesh.h"
 #include "traqueboule.h"
-
+extern std::vector<Shape*> shapes;
 Vec3Df MyCameraPosition;
 
 std::vector<Vec3Df> MyLightPositions;
@@ -276,10 +276,14 @@ int main(int argc, char** argv)
 
 	init();
 
-
     // lancement de la boucle principale
     glutMainLoop();
         
+	for(int i = 0; i < shapes.size(); i++) {
+		delete shapes[i];
+		shapes[i] = nullptr;
+	}
+
     return 0;  // instruction jamais exécutée
 }
 
