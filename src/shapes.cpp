@@ -70,12 +70,11 @@ bool Plane::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origi
 	normal.normalize();
 
 	float denom = Vec3Df::dotProduct(dir,normal);
-	if (denom < 1e-4 && denom > -1e-4) return false;
+	if (denom > -EPSILON && denom < EPSILON) return false;
 
 	// Calculate term t in the expressen 'p = o + tD'
 	float t = Vec3Df::dotProduct(_origin - origin, normal) / denom;
 	if (t < EPSILON) return false;
-	if (t < 1e-4) return false;
 
 	new_origin = origin + t * dir;
 	return true;
@@ -99,34 +98,31 @@ bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new
 	// First calculate where the ray intersects the plane in which the triangle lies
 	// Calculate the normal of the plane
 	normal = Vec3Df::crossProduct(u, v);
-	normal.normalize();
-	// Calculate the distance of the plane to the origin
-	float dist = Vec3Df::dotProduct(_origin, normal);
-	// Calculate term t in the expression 'p = o + tD'
-	float t =	(dist - Vec3Df::dotProduct(origin, normal)) /
-				(Vec3Df::dotProduct(dir, normal));
-	// This vector represents the intersection point
+
+	// Calculate the angle of the ray relative to the plane
+	float denom = Vec3Df::dotProduct(dir,normal);
+	if (denom > -EPSILON && denom < EPSILON) return false;
+
+	// Calculate term t in the expressen 'p = o + tD'
+	float t = Vec3Df::dotProduct(_origin - origin, normal) / denom;
+	if (t < EPSILON) return false;
+
 	new_origin = origin + t * dir;
-
-	// If the plane is behind us, there's no intersection
-	if (t < 0) return false;
-
 	Vec3Df w = new_origin - _origin;
 	Vec3Df uCrossW = Vec3Df::crossProduct(u, w);
 	Vec3Df uCrossV = Vec3Df::crossProduct(u, v);
-	if (Vec3Df::dotProduct(uCrossW, uCrossV) < 0)
+	if (Vec3Df::dotProduct(uCrossW, uCrossV) < -EPSILON)
 		return false;
 
 	Vec3Df vCrossW = Vec3Df::crossProduct(v, w);
 	Vec3Df vCrossU = Vec3Df::crossProduct(v, u);
-	if (Vec3Df::dotProduct(vCrossW, vCrossU) < 0)
+	if (Vec3Df::dotProduct(vCrossW, vCrossU) < -EPSILON)
 		return false;
 
-	float denom = uCrossV.getLength();
-	float a = vCrossW.getLength() / denom;
-	float b = uCrossW.getLength() / denom;
-
-	if (a + b > 1)
+	float denomUV = uCrossV.getLength();
+	float a = vCrossW.getLength() / denomUV;
+	float b = uCrossW.getLength() / denomUV;
+	if (a + b > 1 + EPSILON)
 		return false;
 
 	normal =	(_mesh->vertices[_triangle->v[0]].n +

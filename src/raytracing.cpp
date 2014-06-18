@@ -44,8 +44,8 @@ void init()
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
 
-	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
-	for (; iter != MyMesh.triangles.end(); ++iter) {
+	std::vector<Triangle>::iterator iter;
+	for (iter = MyMesh.triangles.begin(); iter != MyMesh.triangles.end(); ++iter) {
 		shapes.push_back(new OurTriangle(Vec3Df(0.2,0.2,0.2), Vec3Df(0.5,0.5,0.5), &MyMesh, &(*iter)));
 	}
 }
