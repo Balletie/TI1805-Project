@@ -24,8 +24,8 @@ void init()
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
 	//MyMesh.loadMesh("cube.obj", true);
-	//MyMesh.loadMesh("Pen_low.obj", true);
-	//MyMesh.computeVertexNormals();
+	MyMesh.loadMesh("Pen_low.obj", true);
+	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
 	//at least ONE light source has to be in the scene!!!
@@ -57,22 +57,22 @@ void init()
 	grey.set_Ks(1  , 1  , 1  );
 	materials.push_back(grey);
 
-	shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
-	shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
-	shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 2, -1), 1));
-	shapes.push_back(new Sphere(materials[4], Vec3Df( 2, 0, -1), 1));
+//	shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
+//	shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
+//	shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 2, -1), 1));
+//	shapes.push_back(new Sphere(materials[4], Vec3Df( 2, 0, -1), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
-	shapes.push_back(new Plane(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
+	//shapes.push_back(new Plane(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
-	/*
+
 	std::vector<Triangle>::iterator iter;
 	for (iter = MyMesh.triangles.begin(); iter != MyMesh.triangles.end(); ++iter) {
 		shapes.push_back(new OurTriangle(materials[2], &MyMesh, &(*iter)));
 	}
-	*/
+
 }
 
 //return the color of your pixel.
@@ -120,7 +120,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	if (!intersection)	return Vec3Df(0.f,0.f,0.f);
 
 	// Re-use intersection here
-	intersection = false;
+	/*intersection = false;
 	for (unsigned int i = 0; i < shapes.size(); i++) {
 		Vec3Df stub1;
 		Vec3Df stub2;
@@ -133,7 +133,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 		}
 	}
 	// If there was an intersection, this spot is occluded.
-	if (intersection)	return Vec3Df(0.f,0.f,0.f);
+	if (intersection)	return Vec3Df(0.f,0.f,0.f);*/
 
 	normal.normalize();
 	// Compute the reflection vector for the next recursive call.

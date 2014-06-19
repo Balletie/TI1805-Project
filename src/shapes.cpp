@@ -120,7 +120,9 @@ bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new
 	Vec3Df u = _mesh->vertices[_triangle->v[1]].p - _origin;
 	Vec3Df v = _mesh->vertices[_triangle->v[2]].p - _origin;
 
-	// First calculate where the ray intersects the plane in which the triangle lies
+	//
+	// STEP 1: First calculate where the ray intersects the plane in which the triangle lies
+	//
 	// Calculate the normal of the plane
 	normal = Vec3Df::crossProduct(u, v);
 
@@ -130,30 +132,32 @@ bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new
 
 	// Calculate term t in the expressen 'p = o + tD'
 	float t = Vec3Df::dotProduct(_origin - origin, normal) / denom;
-	if (t < EPSILON) return false;
+	if (t < 0) return false;
 
-	new_origin = origin + t * dir;
-	Vec3Df w = new_origin - _origin;
-	Vec3Df uCrossW = Vec3Df::crossProduct(u, w);
-	Vec3Df uCrossV = Vec3Df::crossProduct(u, v);
-	if (Vec3Df::dotProduct(uCrossW, uCrossV) < -EPSILON)
-		return false;
+	Vec3Df p = origin + t * dir;
 
-	Vec3Df vCrossW = Vec3Df::crossProduct(v, w);
-	Vec3Df vCrossU = Vec3Df::crossProduct(v, u);
-	if (Vec3Df::dotProduct(vCrossW, vCrossU) < -EPSILON)
-		return false;
+	//
+	// STEP 2: Check whether the insersection point p lies to the left of all edges
+	//
+	float d00 = Vec3Df::dotProduct(u, u);
+	float d01 = Vec3Df::dotProduct(u, v);
+	float d11 = Vec3Df::dotProduct(v, v);
+	float d20 = Vec3Df::dotProduct(p - _origin, u);
+	float d21 = Vec3Df::dotProduct(p - _origin, v);
+	float invDenom = 1.0 / (d00 * d11 - d01 * d01);
 
-	float denomUV = uCrossV.getLength();
-	float a = vCrossW.getLength() / denomUV;
-	float b = uCrossW.getLength() / denomUV;
-	if (a + b > 1 + EPSILON)
-		return false;
+	float a = (d11 * d20 - d01 * d21) * invDenom ;
+	if (a < -EPSILON || a > 1 + EPSILON) return false;
+
+	float b = (d00 * d21 - d01 * d20) * invDenom ;
+	if (b < -EPSILON || b > 1 + EPSILON) return false;
+	if (a + b > 1 + EPSILON) return false;
 
 	normal =	(_mesh->vertices[_triangle->v[0]].n +
 				 _mesh->vertices[_triangle->v[1]].n +
 				 _mesh->vertices[_triangle->v[2]].n);
 	normal.normalize();
+	new_origin = p;
 	return true;
 }
 
