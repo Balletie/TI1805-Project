@@ -25,7 +25,7 @@ Vec3Df Shape::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df
 	if (this->_mat.has_Kd()) {
 		diffuse = Vec3Df::dotProduct(normal, light_vec) * _mat.Kd();
 	}
-	if(this->_mat.has_Kd()){
+	if(this->_mat.has_Ks()){
 		Vec3Df reflect = light_vec - 2 * Vec3Df::dotProduct(light_vec, normal) * normal;
 		Vec3Df view = cam_pos - intersect;
 		view.normalize();
