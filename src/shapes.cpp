@@ -1,4 +1,6 @@
 #include "shapes.h"
+#include "Vertex.h"
+
 #include <stdio.h>
 #if (defined _WIN32 || defined _WIN64)
 #include <windows.h>
@@ -17,6 +19,10 @@ Sphere::Sphere(Vec3Df color, Vec3Df specular, Vec3Df org, float rad)
 
 Plane::Plane(Vec3Df color, Vec3Df specular, Vec3Df org, Vec3Df coeff)
 : Shape(color, specular, org), _coeff(coeff)
+{}
+
+OurTriangle::OurTriangle(Vec3Df color, Vec3Df specular, Mesh *mesh, Triangle *triangle)
+: Shape(color, specular, mesh->vertices[triangle->v[0]].p), _mesh(mesh), _triangle(triangle)
 {}
 
 bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
@@ -64,12 +70,11 @@ bool Plane::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origi
 	normal.normalize();
 
 	float denom = Vec3Df::dotProduct(dir,normal);
-	if (denom < 1e-4 && denom > -1e-4) return false;
+	if (denom > -EPSILON && denom < EPSILON) return false;
 
 	// Calculate term t in the expressen 'p = o + tD'
 	float t = Vec3Df::dotProduct(_origin - origin, normal) / denom;
 	if (t < EPSILON) return false;
-	if (t < 1e-4) return false;
 
 	new_origin = origin + t * dir;
 	return true;
@@ -84,4 +89,49 @@ void Plane::draw() {
 	glutSolidCube(1);
 
 	glPopMatrix();
+}
+
+bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
+	Vec3Df u = _mesh->vertices[_triangle->v[1]].p - _origin;
+	Vec3Df v = _mesh->vertices[_triangle->v[2]].p - _origin;
+
+	// First calculate where the ray intersects the plane in which the triangle lies
+	// Calculate the normal of the plane
+	normal = Vec3Df::crossProduct(u, v);
+
+	// Calculate the angle of the ray relative to the plane
+	float denom = Vec3Df::dotProduct(dir,normal);
+	if (denom > -EPSILON && denom < EPSILON) return false;
+
+	// Calculate term t in the expressen 'p = o + tD'
+	float t = Vec3Df::dotProduct(_origin - origin, normal) / denom;
+	if (t < EPSILON) return false;
+
+	new_origin = origin + t * dir;
+	Vec3Df w = new_origin - _origin;
+	Vec3Df uCrossW = Vec3Df::crossProduct(u, w);
+	Vec3Df uCrossV = Vec3Df::crossProduct(u, v);
+	if (Vec3Df::dotProduct(uCrossW, uCrossV) < -EPSILON)
+		return false;
+
+	Vec3Df vCrossW = Vec3Df::crossProduct(v, w);
+	Vec3Df vCrossU = Vec3Df::crossProduct(v, u);
+	if (Vec3Df::dotProduct(vCrossW, vCrossU) < -EPSILON)
+		return false;
+
+	float denomUV = uCrossV.getLength();
+	float a = vCrossW.getLength() / denomUV;
+	float b = uCrossW.getLength() / denomUV;
+	if (a + b > 1 + EPSILON)
+		return false;
+
+	normal =	(_mesh->vertices[_triangle->v[0]].n +
+				 _mesh->vertices[_triangle->v[1]].n +
+				 _mesh->vertices[_triangle->v[2]].n);
+	normal.normalize();
+	return true;
+}
+
+void OurTriangle::draw() {
+
 }
