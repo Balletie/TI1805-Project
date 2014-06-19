@@ -14,6 +14,7 @@ Vec3Df testRayDestination;
 Vec3Df new_orig;
 Vec3Df new_dest;
 std::vector<Shape*> shapes;
+std::vector<Material> materials;
 
 //use this function for any preprocessing of the mesh.
 void init()
@@ -31,23 +32,47 @@ void init()
 	//here, we set it to the current location of the camera
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
 
-	/*
-	shapes.push_back(new Sphere(Vec3Df(0.2, 0  , 0  ), Vec3Df(0.2, 0.2, 0.2), Vec3Df(-2, 0, -1), 1));
-	shapes.push_back(new Sphere(Vec3Df(0  , 0  , 0.2), Vec3Df(0.2, 0.2, 0.2), Vec3Df( 0, 0, -1), 1));
-	shapes.push_back(new Sphere(Vec3Df(0.4, 0.4, 0  ), Vec3Df(0.2, 0.2, 0.2), Vec3Df( 0, 2, -1), 1));
-	shapes.push_back(new Sphere(Vec3Df(0.1, 0.1, 0.1), Vec3Df(1  , 1  , 1  ), Vec3Df( 2, 0, -1), 1));
-	*/
+	Material plane_mat;
+	plane_mat.set_Kd(0.2,0.2,0.2);
+	plane_mat.set_Ks(0.5,0.5,0.5);
+	materials.push_back(plane_mat);
+
+	Material red;
+	red.set_Kd(0.2,0.f,0.f);
+	red.set_Ks(0.2,0.2,0.2);
+	materials.push_back(red);
+
+	Material blue;
+	blue.set_Kd(0  , 0  , 0.2);
+	blue.set_Ks(0.2, 0.2, 0.2);
+	materials.push_back(blue);
+	
+	Material brown_ish;
+	brown_ish.set_Kd(0.4, 0.4, 0  );
+	brown_ish.set_Ks(0.2, 0.2, 0.2);
+	materials.push_back(brown_ish);
+
+	Material grey;
+	grey.set_Kd(0.1, 0.1, 0.1);
+	grey.set_Ks(1  , 1  , 1  );
+	materials.push_back(grey);
+
+	shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
+	shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
+	shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 2, -1), 1));
+	shapes.push_back(new Sphere(materials[4], Vec3Df( 2, 0, -1), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0.2,0.2), Vec3Df(0.5,0.5,0.5), Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
-
+	/*
 	std::vector<Triangle>::iterator iter;
 	for (iter = MyMesh.triangles.begin(); iter != MyMesh.triangles.end(); ++iter) {
-		shapes.push_back(new OurTriangle(Vec3Df(0.2,0.2,0.2), Vec3Df(0.5,0.5,0.5), &MyMesh, &(*iter)));
+		shapes.push_back(new OurTriangle(materials[2], &MyMesh, &(*iter)));
 	}
+	*/
 }
 
 //return the color of your pixel.
@@ -71,9 +96,13 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	// The specularity of the intersected object.
 	Vec3Df specular;
 
+	//Reference to the intersected object.
+	Shape* intersected;
+
 	float current_depth = FLT_MAX;
 	bool intersection = false;
 
+	// Naive: trace each object.
 	for (unsigned int i = 0; i < shapes.size(); i++) {
 		Vec3Df new_new_origin;
 		Vec3Df new_normal;
@@ -84,8 +113,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 				current_depth = new_depth;
 				normal = new_normal;
 				new_origin = new_new_origin;
-				color = shapes[i]->_color;
-				specular = shapes[i]->_specular;
+				intersected = shapes[i];
 			}
 		}
 	}
@@ -110,6 +138,10 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	normal.normalize();
 	// Compute the reflection vector for the next recursive call.
 	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
+
+	// Shade the object.
+	color = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
+	specular = intersected->_mat.Ks();
 
 	if (++level == max)	return color;
 	else return color + specular * performRayTracing(new_origin, reflect, level, max);

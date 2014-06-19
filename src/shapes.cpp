@@ -9,20 +9,35 @@
 
 static const float EPSILON = 1e-4;
 
-Shape::Shape(Vec3Df color, Vec3Df specular, Vec3Df org)
-: _color(color), _specular(specular), _origin(org)
+Shape::Shape(Material& mat, Vec3Df org)
+: _mat(mat), _origin(org)
 {}
 
-Sphere::Sphere(Vec3Df color, Vec3Df specular, Vec3Df org, float rad)
-: Shape(color, specular, org), _radius(rad)
+Vec3Df Shape::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal)  {
+	Vec3Df ambient(0.f,0.f,0.f);
+	Vec3Df diffuse(0.f,0.f,0.f);
+	Vec3Df specular(0.f,0.f,0.f);
+
+	if (this->_mat.has_Ka()) ambient = _mat.Ka();
+	if (this->_mat.has_Kd()) {
+		Vec3Df light_vec = light_pos - intersect;
+		light_vec.normalize();
+		diffuse = Vec3Df::dotProduct(normal, light_vec) * _mat.Kd();
+	}
+	// TODO Phong
+	return ambient + diffuse + specular;
+}
+
+Sphere::Sphere(Material& mat, Vec3Df org, float rad)
+: Shape(mat, org), _radius(rad)
 {}
 
-Plane::Plane(Vec3Df color, Vec3Df specular, Vec3Df org, Vec3Df coeff)
-: Shape(color, specular, org), _coeff(coeff)
+Plane::Plane(Material& mat, Vec3Df org, Vec3Df coeff)
+: Shape(mat, org), _coeff(coeff)
 {}
 
-OurTriangle::OurTriangle(Vec3Df color, Vec3Df specular, Mesh *mesh, Triangle *triangle)
-: Shape(color, specular, mesh->vertices[triangle->v[0]].p), _mesh(mesh), _triangle(triangle)
+OurTriangle::OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle)
+: Shape(mat, mesh->vertices[triangle->v[0]].p), _mesh(mesh), _triangle(triangle)
 {}
 
 bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
@@ -58,7 +73,7 @@ void Sphere::draw() {
 	glPushMatrix();
 
 	glTranslatef(this->_origin[0],this->_origin[1],this->_origin[2]);
-	glColor3f(this->_color[0],this->_color[1],this->_color[2]);
+	glColor3f(this->_mat.Kd()[0],this->_mat.Kd()[1],this->_mat.Kd()[2]);
 	glutSolidSphere(this->_radius, 20, 20);
 
 	glPopMatrix();
@@ -84,7 +99,7 @@ void Plane::draw() {
 	glPushMatrix();
 
 	glTranslatef(this->_origin[0],this->_origin[1],this->_origin[2]);
-	glColor3f(this->_color[0],this->_color[1],this->_color[2]);
+	glColor3f(this->_mat.Kd()[0],this->_mat.Kd()[1],this->_mat.Kd()[2]);
 	glScalef(10,0.4,10);
 	glutSolidCube(1);
 

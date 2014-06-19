@@ -54,13 +54,13 @@ class Material {
 		return Kd_is_set_ || Ka_is_set_ || Ks_is_set_ || Tr_is_set_;
 	}
 
-	bool has_Kd(void) { return Kd_is_set_; }
-	bool has_Ka(void) { return Ka_is_set_; }
-	bool has_Ks(void) { return Ks_is_set_; }
-	bool has_Ns(void) { return Ns_is_set_; }
-	bool has_Ni(void) { return Ni_is_set_; }
-	bool has_illum(void) { return illum_is_set_; }
-	bool has_Tr(void) { return Tr_is_set_; }
+	bool has_Kd(void) const { return Kd_is_set_; }
+	bool has_Ka(void) const { return Ka_is_set_; }
+	bool has_Ks(void) const { return Ks_is_set_; }
+	bool has_Ns(void) const { return Ns_is_set_; }
+	bool has_Ni(void) const { return Ni_is_set_; }
+	bool has_illum(void) const { return illum_is_set_; }
+	bool has_Tr(void) const { return Tr_is_set_; }
 
 	void set_Kd( float r, float g, float b ) {
 		Kd_=Vec3Df(r,g,b); Kd_is_set_=true;
