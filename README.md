@@ -12,11 +12,10 @@ jouw functionaliteit compleet is.
 
 | Functionaliteit | Wie?!?!          | Status           |
 | --------------- | ---------------- | ---------------- |
-| Material class  | Skip & Arjan     |                  |
-| Phong shading   | Piet & Owen      | Completed                  |
+| Textures        | ??               |                  |
 | Mesh & Triangle | Richard & Gerlof | Meshes werken, rounding errors fixen |
 | Refraction      | Jente & Dennis   |                  |
-| Kd-Tree         | Gerlof & Skip    |                  |
+| Kd-Tree         | Gerlof & Skip    | RESEARCH :L                  |
 
 Hoe te compilen?!
 =================
