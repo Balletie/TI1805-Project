@@ -11,6 +11,10 @@ Shape::Shape(Vec3Df color, Vec3Df specular, Vec3Df org)
 : _color(color), _specular(specular), _origin(org)
 {}
 
+Vec3Df Shape::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal)  {
+	return Vec3Df(0.f,0.f,0.f);
+}
+
 Sphere::Sphere(Vec3Df color, Vec3Df specular, Vec3Df org, float rad)
 : Shape(color, specular, org), _radius(rad)
 {}

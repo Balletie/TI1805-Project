@@ -6,7 +6,7 @@
 
 class Shape {
   public:
-	Shape(Vec3Df color, Vec3Df specular, Vec3Df org);
+	Shape(Material& mat, Vec3Df org);
 
 	/**
 	 * Check if a ray intersects with this object.
@@ -19,19 +19,28 @@ class Shape {
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&) = 0;
 
 	/**
+	 * Shade the object using specular, diffuse and ambient terms of the Material.
+	 * @param cam_pos The camera position
+	 * @param intersect The point of intersection with this object and the ray.
+	 * @param light_pos The position of the light.
+	 * @param normal The normal at the point of intersection
+	 * @return The color for this intersection point.
+	 */
+	Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
+
+	/**
 	 * Draw the object using GLUT functions and OpenGL.
 	 * NOTE: This has nothing to do with raytracing the object!
 	 */
 	virtual void draw() = 0;
 
-  	const Vec3Df _color;
-  	const Vec3Df _specular;
+	const Material& _mat;
 	const Vec3Df _origin;
 };
 
 class Sphere : public Shape {
   public:
-	Sphere(Vec3Df color, Vec3Df specular, Vec3Df org, float rad);
+	Sphere(Material& mat, Vec3Df org, float rad);
 
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 	virtual void draw();
@@ -40,7 +49,7 @@ class Sphere : public Shape {
 
 class Plane : public Shape {
   public:
-	Plane(Vec3Df color, Vec3Df specular, Vec3Df org, Vec3Df coeff);
+	Plane(Material& mat, Vec3Df org, Vec3Df coeff);
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 	virtual void draw();
 	const Vec3Df _coeff;
