@@ -13,7 +13,7 @@ jouw functionaliteit compleet is.
 | Functionaliteit | Wie?!?!          | Status           |
 | --------------- | ---------------- | ---------------- |
 | Material class  | Skip & Arjan     |                  |
-| Phong shading   | Piet & Owen      |                  |
+| Phong shading   | Piet & Owen      | Completed                  |
 | Mesh & Triangle | Richard & Gerlof | Meshes werken, rounding errors fixen |
 | Refraction      | Jente & Dennis   |                  |
 | Kd-Tree         | Gerlof & Skip    |                  |
