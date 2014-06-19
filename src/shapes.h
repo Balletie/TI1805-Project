@@ -2,6 +2,7 @@
 #define __SHAPE_H__
 
 #include <stdint.h>
+#include "mesh.h"
 #include "Vec3D.h"
 
 class Shape {

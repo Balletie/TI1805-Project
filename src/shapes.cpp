@@ -57,7 +57,7 @@ void Sphere::draw() {
 	glPushMatrix();
 
 	glTranslatef(this->_origin[0],this->_origin[1],this->_origin[2]);
-	glColor3f(this->_color[0],this->_color[1],this->_color[2]);
+	glColor3f(this->_mat.Kd()[0],this->_mat.Kd()[1],this->_mat.Kd()[2]);
 	glutSolidSphere(this->_radius, 20, 20);
 
 	glPopMatrix();
@@ -84,7 +84,7 @@ void Plane::draw() {
 	glPushMatrix();
 
 	glTranslatef(this->_origin[0],this->_origin[1],this->_origin[2]);
-	glColor3f(this->_color[0],this->_color[1],this->_color[2]);
+	glColor3f(this->_mat.Kd()[0],this->_mat.Kd()[1],this->_mat.Kd()[2]);
 	glScalef(10,0.4,10);
 	glutSolidCube(1);
 
