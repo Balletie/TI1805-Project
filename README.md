@@ -1,5 +1,5 @@
-TI1805-Project
-==============
+TI1805-Project | [Check de wiki!!](https://github.com/Balletie/TI1805-Project/wiki)
+===================================================================================
 
 Final project for TI1805 Computer Graphics course.
 
