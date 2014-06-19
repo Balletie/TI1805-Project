@@ -24,25 +24,43 @@ void init()
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
 	//MyMesh.loadMesh("cube.obj", true);
-	MyMesh.loadMesh("Pen_subsurf.obj", true);
-	MyMesh.computeVertexNormals();
+	//MyMesh.loadMesh("Pen_subsurf.obj", true);
+	//MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
 	//at least ONE light source has to be in the scene!!!
 	//here, we set it to the current location of the camera
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
 
-	Material mat;
-	mat.set_Kd(0.2,0.2,0.2);
-	mat.set_Ks(0.5,0.5,0.5);
-	materials.push_back(mat);
+	Material plane_mat;
+	plane_mat.set_Kd(0.2,0.2,0.2);
+	plane_mat.set_Ks(0.5,0.5,0.5);
+	materials.push_back(plane_mat);
 
-	/*
-	shapes.push_back(new Sphere(Vec3Df(0.2, 0  , 0  ), Vec3Df(0.2, 0.2, 0.2), Vec3Df(-2, 0, -1), 1));
-	shapes.push_back(new Sphere(Vec3Df(0  , 0  , 0.2), Vec3Df(0.2, 0.2, 0.2), Vec3Df( 0, 0, -1), 1));
-	shapes.push_back(new Sphere(Vec3Df(0.4, 0.4, 0  ), Vec3Df(0.2, 0.2, 0.2), Vec3Df( 0, 2, -1), 1));
-	shapes.push_back(new Sphere(Vec3Df(0.1, 0.1, 0.1), Vec3Df(1  , 1  , 1  ), Vec3Df( 2, 0, -1), 1));
-	*/
+	Material red;
+	red.set_Kd(0.2,0.f,0.f);
+	red.set_Ks(0.2,0.2,0.2);
+	materials.push_back(red);
+
+	Material blue;
+	blue.set_Kd(0  , 0  , 0.2);
+	blue.set_Ks(0.2, 0.2, 0.2);
+	materials.push_back(blue);
+	
+	Material brown_ish;
+	brown_ish.set_Kd(0.4, 0.4, 0  );
+	brown_ish.set_Ks(0.2, 0.2, 0.2);
+	materials.push_back(brown_ish);
+
+	Material grey;
+	grey.set_Kd(0.1, 0.1, 0.1);
+	grey.set_Ks(1  , 1  , 1  );
+	materials.push_back(grey);
+
+	shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
+	shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
+	shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 2, -1), 1));
+	shapes.push_back(new Sphere(materials[4], Vec3Df( 2, 0, -1), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
