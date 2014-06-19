@@ -120,7 +120,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	if (!intersection)	return Vec3Df(0.f,0.f,0.f);
 
 	// Re-use intersection here
-	/*intersection = false;
+	intersection = false;
 	for (unsigned int i = 0; i < shapes.size(); i++) {
 		Vec3Df stub1;
 		Vec3Df stub2;
@@ -133,7 +133,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 		}
 	}
 	// If there was an intersection, this spot is occluded.
-	if (intersection)	return Vec3Df(0.f,0.f,0.f);*/
+	if (intersection)	return Vec3Df(0.f,0.f,0.f);
 
 	normal.normalize();
 	// Compute the reflection vector for the next recursive call.

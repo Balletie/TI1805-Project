@@ -132,7 +132,7 @@ bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new
 
 	// Calculate term t in the expressen 'p = o + tD'
 	float t = Vec3Df::dotProduct(_origin - origin, normal) / denom;
-	if (t < 0) return false;
+	if (t < EPSILON) return false;
 
 	Vec3Df p = origin + t * dir;
 
@@ -147,11 +147,11 @@ bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new
 	float invDenom = 1.0 / (d00 * d11 - d01 * d01);
 
 	float a = (d11 * d20 - d01 * d21) * invDenom ;
-	if (a < -EPSILON || a > 1 + EPSILON) return false;
+	if (a < -EPSILON) return false;
 
 	float b = (d00 * d21 - d01 * d20) * invDenom ;
-	if (b < -EPSILON || b > 1 + EPSILON) return false;
-	if (a + b > 1 + EPSILON) return false;
+	if (b < -EPSILON) return false;
+	if (a + b > 1) return false;
 
 	normal =	(_mesh->vertices[_triangle->v[0]].n +
 				 _mesh->vertices[_triangle->v[1]].n +
