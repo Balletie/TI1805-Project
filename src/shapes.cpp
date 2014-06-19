@@ -14,8 +14,18 @@ Shape::Shape(Material& mat, Vec3Df org)
 {}
 
 Vec3Df Shape::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal)  {
-	// TODO
-	return Vec3Df(0.f,0.f,0.f);
+	Vec3Df ambient(0.f,0.f,0.f);
+	Vec3Df diffuse(0.f,0.f,0.f);
+	Vec3Df specular(0.f,0.f,0.f);
+
+	if (this->_mat.has_Ka()) ambient = _mat.Ka();
+	if (this->_mat.has_Kd()) {
+		Vec3Df light_vec = light_pos - intersect;
+		light_vec.normalize();
+		diffuse = Vec3Df::dotProduct(normal, light_vec) * _mat.Kd();
+	}
+	// TODO Phong
+	return ambient + diffuse + specular;
 }
 
 Sphere::Sphere(Material& mat, Vec3Df org, float rad)
@@ -26,8 +36,8 @@ Plane::Plane(Material& mat, Vec3Df org, Vec3Df coeff)
 : Shape(mat, org), _coeff(coeff)
 {}
 
-OurTriangle::OurTriangle(Vec3Df color, Vec3Df specular, Mesh *mesh, Triangle *triangle)
-: Shape(color, specular, mesh->vertices[triangle->v[0]].p), _mesh(mesh), _triangle(triangle)
+OurTriangle::OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle)
+: Shape(mat, mesh->vertices[triangle->v[0]].p), _mesh(mesh), _triangle(triangle)
 {}
 
 bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {

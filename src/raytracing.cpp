@@ -67,11 +67,12 @@ void init()
 	//shapes.push_back(new Plane(Vec3Df(0.2,0.2,0.2), Vec3Df(0.5,0.5,0.5), Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
-
+	/*
 	std::vector<Triangle>::iterator iter;
 	for (iter = MyMesh.triangles.begin(); iter != MyMesh.triangles.end(); ++iter) {
-		shapes.push_back(new OurTriangle(Vec3Df(0.2,0.2,0.2), Vec3Df(0.5,0.5,0.5), &MyMesh, &(*iter)));
+		shapes.push_back(new OurTriangle(materials[2], &MyMesh, &(*iter)));
 	}
+	*/
 }
 
 //return the color of your pixel.
@@ -95,9 +96,13 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	// The specularity of the intersected object.
 	Vec3Df specular;
 
+	//Reference to the intersected object.
+	Shape* intersected;
+
 	float current_depth = FLT_MAX;
 	bool intersection = false;
 
+	// Naive: trace each object.
 	for (unsigned int i = 0; i < shapes.size(); i++) {
 		Vec3Df new_new_origin;
 		Vec3Df new_normal;
@@ -108,8 +113,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 				current_depth = new_depth;
 				normal = new_normal;
 				new_origin = new_new_origin;
-				color = shapes[i]->_mat.Kd();
-				specular = shapes[i]->_mat.Ks();
+				intersected = shapes[i];
 			}
 		}
 	}
@@ -134,6 +138,10 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	normal.normalize();
 	// Compute the reflection vector for the next recursive call.
 	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
+
+	// Shade the object.
+	color = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
+	specular = intersected->_mat.Ks();
 
 	if (++level == max)	return color;
 	else return color + specular * performRayTracing(new_origin, reflect, level, max);

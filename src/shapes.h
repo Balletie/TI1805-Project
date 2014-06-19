@@ -58,7 +58,7 @@ class Plane : public Shape {
 
 class OurTriangle : public Shape {
   public:
-	OurTriangle(Vec3Df color, Vec3Df specular, Mesh *mesh, Triangle *triangle);
+	OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle);
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 	virtual void draw();
 	const Mesh* _mesh;
