@@ -29,7 +29,10 @@ Vec3Df Shape::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df
 		Vec3Df reflect = light_vec - 2 * Vec3Df::dotProduct(light_vec, normal) * normal;
 		Vec3Df view = cam_pos - intersect;
 		view.normalize();
-		float shininess = 20;
+
+		float shininess;
+		if (this->_mat.has_Ns()) 	shininess = _mat.Ns();
+		else				shininess = 2;
 		specular = pow(Vec3Df::dotProduct(reflect, view), shininess) * _mat.Kd();
 	}
 	return ambient + diffuse + specular;
