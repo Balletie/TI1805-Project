@@ -93,8 +93,8 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 
 	// The color if the intersected object.
 	Vec3Df color;
-	// The specularity of the intersected object.
-	Vec3Df specular;
+	// The reflectivity of the intersected object.
+	Vec3Df reflectivity;
 
 	//Reference to the intersected object.
 	Shape* intersected;
@@ -141,10 +141,10 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 
 	// Shade the object.
 	color = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
-	specular = intersected->_mat.Ks();
+	reflectivity = intersected->_mat.Ks();
 
 	if (++level == max)	return color;
-	else return color + specular * performRayTracing(new_origin, reflect, level, max);
+	else return color + reflectivity * performRayTracing(new_origin, reflect, level, max);
 }
 
 void yourDebugDraw()
