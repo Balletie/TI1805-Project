@@ -7,20 +7,21 @@
 
 static const float EPSILON = 1e-4;
 
-Shape::Shape(Vec3Df color, Vec3Df specular, Vec3Df org)
-: _color(color), _specular(specular), _origin(org)
+Shape::Shape(Material& mat, Vec3Df org)
+: _mat(mat), _origin(org)
 {}
 
 Vec3Df Shape::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal)  {
+	// TODO
 	return Vec3Df(0.f,0.f,0.f);
 }
 
-Sphere::Sphere(Vec3Df color, Vec3Df specular, Vec3Df org, float rad)
-: Shape(color, specular, org), _radius(rad)
+Sphere::Sphere(Material& mat, Vec3Df org, float rad)
+: Shape(mat, org), _radius(rad)
 {}
 
-Plane::Plane(Vec3Df color, Vec3Df specular, Vec3Df org, Vec3Df coeff)
-: Shape(color, specular, org), _coeff(coeff)
+Plane::Plane(Material& mat, Vec3Df org, Vec3Df coeff)
+: Shape(mat, org), _coeff(coeff)
 {}
 
 bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {

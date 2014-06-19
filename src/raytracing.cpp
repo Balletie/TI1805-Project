@@ -14,6 +14,7 @@ Vec3Df testRayDestination;
 Vec3Df new_orig;
 Vec3Df new_dest;
 std::vector<Shape*> shapes;
+std::vector<Material> materials;
 
 //use this function for any preprocessing of the mesh.
 void init()
@@ -31,6 +32,11 @@ void init()
 	//here, we set it to the current location of the camera
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
 
+	Material mat;
+	mat.setKd(0.2,0.2,0.2);
+	mat.setKs(0.5,0.5,0.5);
+	materials.push_back(mat);
+
 	/*
 	shapes.push_back(new Sphere(Vec3Df(0.2, 0  , 0  ), Vec3Df(0.2, 0.2, 0.2), Vec3Df(-2, 0, -1), 1));
 	shapes.push_back(new Sphere(Vec3Df(0  , 0  , 0.2), Vec3Df(0.2, 0.2, 0.2), Vec3Df( 0, 0, -1), 1));
@@ -40,7 +46,7 @@ void init()
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
-	shapes.push_back(new Plane(Vec3Df(0.2,0.2,0.2), Vec3Df(0.5,0.5,0.5), Vec3Df(0,-1,0), Vec3Df(0,1,0)));
+	shapes.push_back(new Plane(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
 }
@@ -79,8 +85,8 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 				current_depth = new_depth;
 				normal = new_normal;
 				new_origin = new_new_origin;
-				color = shapes[i]->_color;
-				specular = shapes[i]->_specular;
+				color = shapes[i]->_mat.Kd();
+				specular = shapes[i]->_mat.Ks();
 			}
 		}
 	}
