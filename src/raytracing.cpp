@@ -74,10 +74,9 @@ void init()
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
 
-	//std::vector<Triangle>::iterator iter;
-    //int i;
-	//for (iter = MyMesh.triangles.begin(), i = 0; iter != MyMesh.triangles.end(), i < MyMesh.triangles.size(); ++iter, i++) {
-    //    shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &(*iter)));
+	//std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
+	//for (int i = 0; i < MyMesh.triangles.size(); i++) {
+	//	shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
 	//}
 }
 
