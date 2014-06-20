@@ -27,7 +27,7 @@ class Shape {
 	 * @param normal The normal at the point of intersection
 	 * @return The color for this intersection point.
 	 */
-	Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
+	virtual Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
 
 	/**
 	 * Draw the object using GLUT functions and OpenGL.
@@ -54,6 +54,14 @@ class Plane : public Shape {
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 	virtual void draw();
 	const Vec3Df _coeff;
+};
+
+class Checkerboard : public Plane {
+  public:
+	Checkerboard(Material& mat, Vec3Df org, Vec3Df coeff);
+	Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
+  private:
+	const float checker_size = 2.f;
 };
 
 class OurTriangle : public Shape {

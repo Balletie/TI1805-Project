@@ -24,8 +24,8 @@ void init()
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
 	//MyMesh.loadMesh("cube.obj", true);
-	MyMesh.loadMesh("Pen_low.obj", true);
-	MyMesh.computeVertexNormals();
+	//MyMesh.loadMesh("Pen_low.obj", true);
+	//MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
 	//at least ONE light source has to be in the scene!!!
@@ -68,11 +68,14 @@ void init()
 	//shapes.push_back(new Plane(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
-    
-	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
-	for (int i = 0; i < MyMesh.triangles.size(); i++) {
-        shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
-	}
+	// Checkerboard
+	shapes.push_back(new Checkerboard(plane_mat, Vec3Df(0,-1,0), Vec3Df(0,1,0)));
+
+	//std::vector<Triangle>::iterator iter;
+	//for (iter = MyMesh.triangles.begin(); iter != MyMesh.triangles.end(); ++iter) {
+	//	shapes.push_back(new OurTriangle(materials[2], &MyMesh, &(*iter)));
+	//}
+
 }
 
 //return the color of your pixel.
