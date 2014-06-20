@@ -128,14 +128,14 @@ bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new
 	// STEP 1: First calculate where the ray intersects the plane in which the triangle lies
 	//
 	// Calculate the normal of the plane
-	normal = Vec3Df::crossProduct(u, v);
+	Vec3Df planeNormal = Vec3Df::crossProduct(u, v);
 
 	// Calculate the angle of the ray relative to the plane
-	float denom = Vec3Df::dotProduct(dir,normal);
+	float denom = Vec3Df::dotProduct(dir,planeNormal);
 	if (denom > -EPSILON && denom < EPSILON) return false;
 
 	// Calculate term t in the expressen 'p = o + tD'
-	float t = Vec3Df::dotProduct(_origin - origin, normal) / denom;
+	float t = Vec3Df::dotProduct(_origin - origin, planeNormal) / denom;
 	if (t < EPSILON) return false;
 
 	Vec3Df p = origin + t * dir;
@@ -157,9 +157,9 @@ bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new
 	if (b < -EPSILON) return false;
 	if (a + b > 1) return false;
 
-	normal =	(a * _mesh->vertices[_triangle->v[0]].n +
-				 b * _mesh->vertices[_triangle->v[1]].n +
-				 (1 - a - b) * _mesh->vertices[_triangle->v[2]].n);
+	normal =	(1 - a - b) * _mesh->vertices[_triangle->v[0]].n +
+				 a * _mesh->vertices[_triangle->v[1]].n +
+				 b * _mesh->vertices[_triangle->v[2]].n;
 	normal.normalize();
 	new_origin = p;
 	return true;
