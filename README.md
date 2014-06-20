@@ -13,9 +13,12 @@ jouw functionaliteit compleet is.
 | Functionaliteit | Wie?!?!          | Status           |
 | --------------- | ---------------- | ---------------- |
 | Textures        | ??               |                  |
+| Soft Shadows    | ??               |                  |
+| Anti-Aliasing   | ??               |                  |
+| Depth of Field  | ??               |                  |
 | Mesh & Triangle | Richard & Gerlof | Meshes werken, rounding errors fixen |
 | Refraction      | Jente & Dennis   |                  |
-| Kd-Tree         | Gerlof & Skip    | RESEARCH :L                  |
+| Kd-Tree         | Gerlof & Skip    | RESEARCH :L      |
 
 Hoe te compilen?!
 =================
