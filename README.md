@@ -10,15 +10,17 @@ jouw functionaliteit compleet is.
 
 ###Taakverdeling (18 - 06 - 2014)
 
-| Functionaliteit | Wie?!?!                 | Status           |
-| --------------- | ------------------------| ---------------- |
-| Textures        | Owen & Piet             |                  |
-| Soft Shadows    | ??                      |                  |
-| Anti-Aliasing   | ??                      |                  |
-| Depth of Field  | ??                      |                  |
-| Refraction      | Jente & Dennis & Skip   |                  |
-| Kd-Tree         | Gerlof & Skip           | RESEARCH :L      |
-| Blender scene   | ??Arjan / Piet??        |                  |
+| Functionaliteit | Wie?!?!                 | Status           | Af       |
+| --------------- | ------------------------| ---------------- | -------- |
+| Textures        | Owen & Piet             |                  | Zaterdag |
+| Soft Shadows    | ??                      |                  |          |
+| Anti-Aliasing   | ??                      |                  |          |
+| Depth of Field  | ??                      |                  |          |
+| Refraction      | Jente & Dennis & Skip   |                  | Zaterdag |
+| Kd-Tree         | Gerlof & Skip           | RESEARCH :L      | Zondag   |
+| Blender scene   | ??Arjan / Piet??        |                  |          |
+| Presentatie     | ??                      |                  | Dinsdag  |
+| Verslag         | ??                      |                  | Dinsdag  |
 
 Groepsleden:
 Owen
