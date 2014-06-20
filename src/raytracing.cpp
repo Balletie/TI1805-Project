@@ -35,31 +35,31 @@ void init()
 	Material plane_mat;
 	plane_mat.set_Kd(0.2,0.2,0.2);
 	plane_mat.set_Ks(0.5,0.5,0.5);
-	//plane_mat.set_Ni(1.7); //glass refractive index;
+	plane_mat.set_Ni(1.7); //glass refractive index;
 	materials.push_back(plane_mat);
 
 	Material red;
 	red.set_Kd(0.2,0.f,0.f);
 	red.set_Ks(0.2,0.2,0.2);
-	//red.set_Ni(1.7); //glass refractive index;
+	red.set_Ni(1.7); //glass refractive index;
 	materials.push_back(red);
 
 	Material blue;
 	blue.set_Kd(0  , 0  , 0.2);
 	blue.set_Ks(0.2, 0.2, 0.2);
-	//blue.set_Ni(1.7); //glass refractive index;
+	blue.set_Ni(1.7); //glass refractive index;
 	materials.push_back(blue);
 	
 	Material brown_ish;
 	brown_ish.set_Kd(0.4, 0.4, 0  );
 	brown_ish.set_Ks(0.2, 0.2, 0.2);
-	//brown_ish.set_Ni(1.7); //glass refractive index;
+	brown_ish.set_Ni(1.7); //glass refractive index;
 	materials.push_back(brown_ish);
 
 	Material grey;
 	grey.set_Kd(0.1, 0.1, 0.1);
 	grey.set_Ks(1  , 1  , 1  );
-	//grey.set_Ni(1.7); //glass refractive index;
+	grey.set_Ni(1.7); //glass refractive index;
 	materials.push_back(grey);
 
 	shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
@@ -73,10 +73,10 @@ void init()
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
 
-	/*std::vector<Triangle>::iterator iter;
-	for (iter = MyMesh.triangles.begin(); iter != MyMesh.triangles.end(); ++iter) {
-		shapes.push_back(new OurTriangle(materials[2], &MyMesh, &(*iter)));
-	}*/
+	//std::vector<Triangle>::iterator iter;
+	//for (iter = MyMesh.triangles.begin(); iter != MyMesh.triangles.end(); ++iter) {
+	//	shapes.push_back(new OurTriangle(materials[2], &MyMesh, &(*iter)));
+	//}
 }
 
 //return the color of your pixel.
