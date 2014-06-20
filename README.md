@@ -31,6 +31,8 @@ Gerlof
 Skip
 Arjan
 
+![interpolate_pen](https://github.com/Balletie/TI1805-Project/raw/master/interpolate_pen.png)
+
 Hoe te compilen?!
 =================
 
