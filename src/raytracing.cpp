@@ -75,8 +75,6 @@ void init()
         material = MyMesh.materials[MyMesh.triangleMaterials[i]];
 		shapes.push_back(new OurTriangle(material, &MyMesh, &(*iter)));
 	}
-    
-    std::cout<<MyMesh.triangleMaterials.size()<<std::endl;
 
 }
 
