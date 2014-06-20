@@ -13,7 +13,7 @@ Shape::Shape(Material& mat, Vec3Df org)
 : _mat(mat), _origin(org)
 {}
 
-Vec3Df Shape::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal)  {
+Vec3Df Shape::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal) {
 	Vec3Df ambient(0.f,0.f,0.f);
 	Vec3Df diffuse(0.f,0.f,0.f);
 	Vec3Df specular(0.f,0.f,0.f);
@@ -36,6 +36,20 @@ Vec3Df Shape::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df
 		specular = pow(Vec3Df::dotProduct(reflect, view), shininess) * _mat.Kd();
 	}
 	return ambient + diffuse + specular;
+}
+
+Vec3Df Shape::refract(const Vec3Df &intersect, const Vec3Df &normal, const float dotProduct, const double ni1, const double ni2) {
+	Vec3Df refract = Vec3Df(0.f, 0.f, 0.f);
+	double ratio = ni1 / ni2;
+	double root = 1 - ni1 * ni1 * (1 - dotProduct * dotProduct) / (ni2 * ni2);
+
+	// If root < 0, total internal reflection takes place. In this case,
+	// the refraction vector should be black. It already is, so do nothing then.
+	if (root >= 0) {
+		refract = ratio * (intersect - dotProduct * normal) - normal * sqrt(root);
+	}
+
+	return refract;
 }
 
 Sphere::Sphere(Material& mat, Vec3Df org, float rad)

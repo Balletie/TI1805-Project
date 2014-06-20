@@ -30,6 +30,17 @@ class Shape {
 	Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
 
 	/**
+	 * Calculate the refraction vector. For simplicity, all vectors must be normalized.
+	 * It is assumed we are either inside an object or in air.
+	 * @param intersect The intersection point.
+	 * @param normal The normal at the point of intersection.
+	 * @param dotProduct The dot product of the normal and intersection vectors.
+	 * @param ni1 The first refraction index.
+	 * @param ni2 The second refraction index.
+	 */
+	Vec3Df refract(const Vec3Df&, const Vec3Df&, const float, const double, const double);
+
+	/**
 	 * Draw the object using GLUT functions and OpenGL.
 	 * NOTE: This has nothing to do with raytracing the object!
 	 */
