@@ -154,7 +154,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 		double ni_air = 1.0;
 		double dotProduct = Vec3Df::dotProduct(dir, normal);
 		if (dotProduct > 0) refract = intersected->refract(dir, normal, dotProduct, intersected->_mat.Ni(), ni_air);
-		else refract = intersected->refract(dir, normal, dotProduct, ni_air, ni_mat);
+		else refract = intersected->refract(dir, normal, dotProduct, ni_air, intersected->_mat.Ni());
 	}
 
 	if (++level == max) {
