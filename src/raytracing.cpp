@@ -33,6 +33,7 @@ void init()
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
 
 	Material plane_mat;
+	plane_mat.set_Ka(0.2,0.2,0.2);
 	plane_mat.set_Kd(0.2,0.2,0.2);
 	plane_mat.set_Ks(0.5,0.5,0.5);
 	materials.push_back(plane_mat);
