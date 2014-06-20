@@ -16,7 +16,7 @@ jouw functionaliteit compleet is.
 | Soft Shadows    | ??               |                  |
 | Anti-Aliasing   | ??               |                  |
 | Depth of Field  | ??               |                  |
-| Mesh & Triangle | Richard & Gerlof | Meshes werken, rounding errors fixen |
+| Mesh & Triangle | Gerlof | new intersection algorithm, shadows fixed, DONE! |
 | Refraction      | Jente & Dennis   | Brekingsindex moet in de mtl voor de pen |
 | Kd-Tree         | Gerlof & Skip    | RESEARCH :L      |
 
