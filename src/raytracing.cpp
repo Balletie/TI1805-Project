@@ -69,9 +69,14 @@ void init()
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
 
 	std::vector<Triangle>::iterator iter;
-	for (iter = MyMesh.triangles.begin(); iter != MyMesh.triangles.end(); ++iter) {
-		shapes.push_back(new OurTriangle(materials[2], &MyMesh, &(*iter)));
+    int i;
+    Material material;
+	for (iter = MyMesh.triangles.begin(), i = 0; iter != MyMesh.triangles.end(), i < MyMesh.triangles.size(); ++iter, i++) {
+        material = MyMesh.materials[MyMesh.triangleMaterials[i]];
+		shapes.push_back(new OurTriangle(material, &MyMesh, &(*iter)));
 	}
+    
+    std::cout<<MyMesh.triangleMaterials.size()<<std::endl;
 
 }
 
