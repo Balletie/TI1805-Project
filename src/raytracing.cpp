@@ -35,31 +35,31 @@ void init()
 	Material plane_mat;
 	plane_mat.set_Kd(0.2,0.2,0.2);
 	plane_mat.set_Ks(0.5,0.5,0.5);
-	plane_mat.set_Ni(1.7); //glass refractive index;
+	//plane_mat.set_Ni(1.7); //glass refractive index;
 	materials.push_back(plane_mat);
 
 	Material red;
 	red.set_Kd(0.2,0.f,0.f);
 	red.set_Ks(0.2,0.2,0.2);
-	red.set_Ni(1.7); //glass refractive index;
+	//red.set_Ni(1.7); //glass refractive index;
 	materials.push_back(red);
 
 	Material blue;
 	blue.set_Kd(0  , 0  , 0.2);
 	blue.set_Ks(0.2, 0.2, 0.2);
-	blue.set_Ni(1.7); //glass refractive index;
+	//blue.set_Ni(1.7); //glass refractive index;
 	materials.push_back(blue);
 	
 	Material brown_ish;
 	brown_ish.set_Kd(0.4, 0.4, 0  );
 	brown_ish.set_Ks(0.2, 0.2, 0.2);
-	brown_ish.set_Ni(1.7); //glass refractive index;
+	//brown_ish.set_Ni(1.7); //glass refractive index;
 	materials.push_back(brown_ish);
 
 	Material grey;
 	grey.set_Kd(0.1, 0.1, 0.1);
 	grey.set_Ks(1  , 1  , 1  );
-	grey.set_Ni(1.7); //glass refractive index;
+	//grey.set_Ni(1.7); //glass refractive index;
 	materials.push_back(grey);
 
 	shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
@@ -77,7 +77,6 @@ void init()
 	for (iter = MyMesh.triangles.begin(); iter != MyMesh.triangles.end(); ++iter) {
 		shapes.push_back(new OurTriangle(materials[2], &MyMesh, &(*iter)));
 	}*/
-
 }
 
 //return the color of your pixel.
@@ -148,17 +147,22 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	color = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
 	reflectivity = intersected->_mat.Ks();
 
-	// Calculate refractions. For simplicity, it is assumed that all vectors
-	// are normalized.
-	float index_air = 1.0;
-	float index_mat = intersected->_mat.Ni();
-	float dotProduct = Vec3Df::dotProduct(dir, normal);
-	float root = sqrt(1 - ((pow(index_air, 2) * (1 - pow(dotProduct, 2))) / pow(index_mat, 2)));
-	Vec3Df t = ((index_air / index_mat) * (dir - dotProduct * normal) - (normal * root));
+	// Calculate refractions. For simplicity, all vectors must be normalized.
+	// It is also assumed that we always look at an object through air.
+	Vec3Df refract = Vec3Df(0.f, 0.f, 0.f);
+	bool has_Ni = intersected->_mat.has_Ni();
+	if (has_Ni) {
+		float index_air = 1.0;
+		float index_mat = intersected->_mat.Ni();
+		float dotProduct = Vec3Df::dotProduct(dir, normal);
+		float root = sqrt(1 - ((pow(index_air, 2) * (1 - pow(dotProduct, 2))) / pow(index_mat, 2)));
+		// Calculate the refraction vector.
+		refract = ((index_air / index_mat) * (dir - dotProduct * normal) - (normal * root));
+	}
 
-	if (++level == max)	return color;
+	if (++level == max) return color;
 	else return color + reflectivity * performRayTracing(new_origin, reflect, level, max)
-		+ reflectivity * performRayTracing(new_origin, t, level, max);
+			+ (has_Ni ? reflectivity * performRayTracing(new_origin, refract, level, max) : refract);
 }
 
 void yourDebugDraw()
