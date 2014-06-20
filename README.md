@@ -17,7 +17,7 @@ jouw functionaliteit compleet is.
 | Anti-Aliasing   | ??               |                  |
 | Depth of Field  | ??               |                  |
 | Mesh & Triangle | Richard & Gerlof | Meshes werken, rounding errors fixen |
-| Refraction      | Jente & Dennis   |                  |
+| Refraction      | Jente & Dennis   | Brekingsindex moet in de mtl voor de pen |
 | Kd-Tree         | Gerlof & Skip    | RESEARCH :L      |
 
 Hoe te compilen?!
