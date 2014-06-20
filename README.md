@@ -16,7 +16,7 @@ jouw functionaliteit compleet is.
 | Soft Shadows    | ??               |                  |
 | Anti-Aliasing   | ??               |                  |
 | Depth of Field  | ??               |                  |
-| Mesh & Triangle | Richard & Gerlof | new intersection algorithm, shadows fixed, DONE! |
+| Mesh & Triangle | Gerlof | new intersection algorithm, shadows fixed, DONE! |
 | Refraction      | Jente & Dennis   |                  |
 | Kd-Tree         | Gerlof & Skip    | RESEARCH :L      |
 
