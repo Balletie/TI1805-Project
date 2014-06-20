@@ -30,10 +30,14 @@ Vec3Df Shape::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df
 		Vec3Df view = cam_pos - intersect;
 		view.normalize();
 
-		float shininess;
-		if (this->_mat.has_Ns()) 	shininess = _mat.Ns();
-		else				shininess = 21;
-		specular = pow(Vec3Df::dotProduct(reflect, view), shininess) * _mat.Kd();
+		if (Vec3Df::dotProduct(view, reflect) < 0) {
+			specular = Vec3Df(0, 0, 0);
+		} else {
+			float shininess;
+			if (this->_mat.has_Ns()) 	shininess = _mat.Ns();
+			else				shininess = 21;
+			specular = pow(Vec3Df::dotProduct(reflect, view), shininess) * _mat.Ks();
+		}
 	}
 	return ambient + diffuse + specular;
 }
@@ -153,9 +157,9 @@ bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new
 	if (b < -EPSILON) return false;
 	if (a + b > 1) return false;
 
-	normal =	(_mesh->vertices[_triangle->v[0]].n +
-				 _mesh->vertices[_triangle->v[1]].n +
-				 _mesh->vertices[_triangle->v[2]].n);
+	normal =	(a * _mesh->vertices[_triangle->v[0]].n +
+				 b * _mesh->vertices[_triangle->v[1]].n +
+				 (1 - a - b) * _mesh->vertices[_triangle->v[2]].n);
 	normal.normalize();
 	new_origin = p;
 	return true;
