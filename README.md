@@ -10,15 +10,24 @@ jouw functionaliteit compleet is.
 
 ###Taakverdeling (18 - 06 - 2014)
 
-| Functionaliteit | Wie?!?!          | Status           |
-| --------------- | ---------------- | ---------------- |
-| Textures        | ??               |                  |
-| Soft Shadows    | ??               |                  |
-| Anti-Aliasing   | ??               |                  |
-| Depth of Field  | ??               |                  |
-| Mesh & Triangle | Gerlof | new intersection algorithm, shadows fixed, DONE! |
-| Refraction      | Jente & Dennis   |                  |
-| Kd-Tree         | Gerlof & Skip    | RESEARCH :L      |
+| Functionaliteit | Wie?!?!                 | Status           |
+| --------------- | ------------------------| ---------------- |
+| Textures        | Owen & Piet             |                  |
+| Soft Shadows    | ??                      |                  |
+| Anti-Aliasing   | ??                      |                  |
+| Depth of Field  | ??                      |                  |
+| Refraction      | Jente & Dennis & Skip   |                  |
+| Kd-Tree         | Gerlof & Skip           | RESEARCH :L      |
+| Blender scene   | ??Arjan / Piet??        |                  |
+
+Groepsleden:
+Owen
+Piet
+Dennis
+Jente
+Gerlof
+Skip
+Arjan
 
 Hoe te compilen?!
 =================
