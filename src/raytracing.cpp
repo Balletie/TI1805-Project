@@ -150,6 +150,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	reflectivity = intersected->_mat.Ks();
 
 	// Calculate refractions. For simplicity, all vectors must be normalized.
+	// It is assumed we are either inside an object or in air.
 	Vec3Df refract = Vec3Df(0.f, 0.f, 0.f);
 	bool has_Ni = intersected->_mat.has_Ni();
 	if (has_Ni) {
@@ -170,16 +171,20 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 			root = 1 - ni_air * ni_air * (1 - dotProduct * dotProduct) / (ni_mat * ni_mat);
 		}
 		// If root < 0, total internal reflection takes place. In this case,
-		// the vector should be black. It already is, so do nothing here.
+		// the refraction vector should be black. It already is, so do nothing here.
 		if (root >= 0) {
-			// Calculate the refraction vector.
 			refract = ratio * (dir - dotProduct * normal) - normal * sqrt(root);
 		}
 	}
 
-	if (++level == max) return color;
-	else return color + reflectivity * performRayTracing(new_origin, reflect, level, max)
-			+ (has_Ni ? performRayTracing(dir, refract, level, max) : refract);
+	if (++level == max) {
+		return color;
+	} else if (refract.getLength() != 0) {
+		return color + reflectivity * performRayTracing(new_origin, reflect, level, max)
+			+ performRayTracing(dir, refract, level, max);
+	} else {
+		return color + reflectivity * performRayTracing(new_origin, reflect, level, max);
+	}
 }
 
 void yourDebugDraw()
