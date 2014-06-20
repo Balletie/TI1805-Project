@@ -149,7 +149,8 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 
 	// Calculate refractions. For simplicity, all vectors must be normalized.
 	Vec3Df refract = Vec3Df(0.f, 0.f, 0.f);
-	if (intersected->_mat.has_Ni()) {
+	bool has_Ni = intersected->_mat.has_Ni();
+	if (has_Ni) {
 		double ratio = 0.f;
 		double ni_air = 1.0;
 		double ni_mat = intersected->_mat.Ni();
@@ -172,7 +173,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 
 	if (++level == max) return color;
 	else return color + reflectivity * performRayTracing(new_origin, reflect, level, max)
-			+ performRayTracing(dir, refract, level, max);
+			+ (has_Ni ? performRayTracing(dir, refract, level, max) : refract);
 }
 
 void yourDebugDraw()
