@@ -33,6 +33,7 @@ void init()
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
 
 	Material plane_mat;
+	plane_mat.set_Ka(0.2,0.2,0.2);
 	plane_mat.set_Kd(0.2,0.2,0.2);
 	plane_mat.set_Ks(0.5,0.5,0.5);
 	plane_mat.set_Ni(1.7); //glass refractive index;
@@ -74,8 +75,9 @@ void init()
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
 
 	//std::vector<Triangle>::iterator iter;
-	//for (iter = MyMesh.triangles.begin(); iter != MyMesh.triangles.end(); ++iter) {
-	//	shapes.push_back(new OurTriangle(materials[2], &MyMesh, &(*iter)));
+    //int i;
+	//for (iter = MyMesh.triangles.begin(), i = 0; iter != MyMesh.triangles.end(), i < MyMesh.triangles.size(); ++iter, i++) {
+    //    shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &(*iter)));
 	//}
 }
 
