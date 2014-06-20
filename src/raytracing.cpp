@@ -148,21 +148,31 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	reflectivity = intersected->_mat.Ks();
 
 	// Calculate refractions. For simplicity, all vectors must be normalized.
-	// It is also assumed that we always look at an object through air.
 	Vec3Df refract = Vec3Df(0.f, 0.f, 0.f);
-	bool has_Ni = intersected->_mat.has_Ni();
-	if (has_Ni) {
-		float index_air = 1.0;
-		float index_mat = intersected->_mat.Ni();
-		float dotProduct = Vec3Df::dotProduct(dir, normal);
-		float root = sqrt(1 - ((pow(index_air, 2) * (1 - pow(dotProduct, 2))) / pow(index_mat, 2)));
-		// Calculate the refraction vector.
-		refract = ((index_air / index_mat) * (dir - dotProduct * normal) - (normal * root));
+	if (intersected->_mat.has_Ni()) {
+		double ratio = 0.f;
+		double ni_air = 1.0;
+		double ni_mat = intersected->_mat.Ni();
+		double dotProduct = Vec3Df::dotProduct(dir, normal);
+		if (dotProduct > 0) {
+			// The normal and dir are in the same direction.
+			ratio = ni_mat / ni_air;
+		} else {
+			// The normal and dir are in the opposite direction.
+			ratio = ni_air / ni_mat;
+		}
+		double root = sqrt(1 - (ni_air * ni_air * (1 - dotProduct * dotProduct)) / (ni_mat * ni_mat));
+		// If root < 0, total internal reflection takes place. In this case,
+		// the vector should be black. It already is, so do nothing here.
+		if (root >= 0) {
+			// Calculate the refraction vector.
+			refract = (ratio * (dir - dotProduct * normal) - (normal * root));
+		}
 	}
 
 	if (++level == max) return color;
 	else return color + reflectivity * performRayTracing(new_origin, reflect, level, max)
-			+ (has_Ni ? reflectivity * performRayTracing(new_origin, refract, level, max) : refract);
+			+ performRayTracing(dir, refract, level, max);
 }
 
 void yourDebugDraw()
