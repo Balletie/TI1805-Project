@@ -56,6 +56,19 @@ Vec3Df Shape::refract(const Vec3Df &intersect, const Vec3Df &normal, const float
 	return refract;
 }
 
+Vec3Df Checkerboard::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal) {
+	int u = intersect[0]/checker_size;
+	int v = intersect[1]/checker_size;
+	int8_t u_even = u % 2;
+	int8_t v_even = v % 2;
+	int8_t mask_u = u_even >> 7;
+	int8_t mask_v = v_even >> 7;
+	uint8_t abs_u_even = (u_even ^ mask_u) - mask_u;
+	uint8_t abs_v_even = (v_even ^ mask_v) - mask_v;
+	float xor_bw = (float) (abs_u_even^abs_v_even);
+	return xor_bw * Vec3Df(1.f,1.f,1.f);
+}
+
 Sphere::Sphere(Material& mat, Vec3Df org, float rad)
 : Shape(mat, org), _radius(rad)
 {}
@@ -64,6 +77,9 @@ Plane::Plane(Material& mat, Vec3Df org, Vec3Df coeff)
 : Shape(mat, org), _coeff(coeff)
 {}
 
+Checkerboard::Checkerboard(Material& mat, Vec3Df org, Vec3Df coeff)
+: Plane(mat, org, coeff)
+{}
 OurTriangle::OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle)
 : Shape(mat, mesh->vertices[triangle->v[0]].p), _mesh(mesh), _triangle(triangle)
 {}

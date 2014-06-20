@@ -73,10 +73,12 @@ void init()
 	//shapes.push_back(new Plane(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
+	// Checkerboard
+	shapes.push_back(new Checkerboard(plane_mat, Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 
-	//std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
-	//for (int i = 0; i < MyMesh.triangles.size(); i++) {
-	//	shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
+	//std::vector<Triangle>::iterator iter;
+	//for (iter = MyMesh.triangles.begin(); iter != MyMesh.triangles.end(); ++iter) {
+	//	shapes.push_back(new OurTriangle(materials[2], &MyMesh, &(*iter)));
 	//}
 }
 
