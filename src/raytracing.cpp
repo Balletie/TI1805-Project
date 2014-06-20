@@ -36,36 +36,36 @@ void init()
 	plane_mat.set_Ka(0.2,0.2,0.2);
 	plane_mat.set_Kd(0.2,0.2,0.2);
 	plane_mat.set_Ks(0.5,0.5,0.5);
-	plane_mat.set_Ni(1.7); //glass refractive index;
+	//plane_mat.set_Ni(1.7); //glass refractive index;
 	materials.push_back(plane_mat);
 
 	Material red;
 	red.set_Kd(0.2,0.f,0.f);
 	red.set_Ks(0.2,0.2,0.2);
-	red.set_Ni(1.7); //glass refractive index;
+	//red.set_Ni(1.7); //glass refractive index;
 	materials.push_back(red);
 
 	Material blue;
 	blue.set_Kd(0  , 0  , 0.2);
 	blue.set_Ks(0.2, 0.2, 0.2);
-	blue.set_Ni(1.7); //glass refractive index;
+	//blue.set_Ni(1.7); //glass refractive index;
 	materials.push_back(blue);
 	
 	Material brown_ish;
 	brown_ish.set_Kd(0.4, 0.4, 0  );
 	brown_ish.set_Ks(0.2, 0.2, 0.2);
-	brown_ish.set_Ni(1.7); //glass refractive index;
+	//brown_ish.set_Ni(1.7); //glass refractive index;
 	materials.push_back(brown_ish);
 
 	Material grey;
-	grey.set_Kd(0.1, 0.1, 0.1);
-	grey.set_Ks(1  , 1  , 1  );
-	grey.set_Ni(1.7); //glass refractive index;
+	//grey.set_Kd(0.1, 0.1, 0.1);
+	//grey.set_Ks(1  , 1  , 1  );
+	grey.set_Ni(1.3); //glass refractive index;
 	materials.push_back(grey);
 
-	shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
-	shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
-	shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 2, -1), 1));
+	//shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
+	//shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
+	//shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 2, -1), 1));
 	shapes.push_back(new Sphere(materials[4], Vec3Df( 2, 0, -1), 1));
 
 	// Plane(color, origin, coeff)
@@ -126,6 +126,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	}
 	if (!intersection) return Vec3Df(0.f, 0.f, 0.f);
 
+
 	// Re-use intersection here
 	intersection = false;
 	for (unsigned int i = 0; i < shapes.size(); i++) {
@@ -137,6 +138,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 		if (shapes[i]->intersect(new_origin, lightPos, stub1, stub2)) {
 			if ((stub1 - new_origin).getLength() < lightDist)
 				intersection = true;
+			if (shapes[i]->_mat.has_Ni()) intersection = false;
 		}
 	}
 	// If there was an intersection, this spot is occluded.
@@ -158,7 +160,6 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 		if (dotProduct > 0) refract = intersected->refract(dir, normal, dotProduct, intersected->_mat.Ni(), ni_air);
 		else refract = intersected->refract(dir, normal, dotProduct, ni_air, intersected->_mat.Ni());
 	}
-
 	if (++level == max) {
 		return color;
 	} else if (refract.getLength() != 0) {
