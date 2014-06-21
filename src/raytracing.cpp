@@ -24,8 +24,8 @@ void init()
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
 	//MyMesh.loadMesh("cube.obj", true);
-	//MyMesh.loadMesh("Pen_low.obj", true);
-	//MyMesh.computeVertexNormals();
+	MyMesh.loadMesh("transparantPlane.obj", true);
+	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
 	//at least ONE light source has to be in the scene!!!
@@ -33,22 +33,22 @@ void init()
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
 
 	Material plane_mat;
-	//plane_mat.set_Ka(0.2,0.2,0.2);
-	plane_mat.set_Kd(0.2,0.2,0.2);
-	plane_mat.set_Ks(0.5,0.5,0.5);
+	plane_mat.set_Ka(0.2,0.2,0.2);
+	//plane_mat.set_Kd(0.2,0.2,0.2);
+	//plane_mat.set_Ks(0.5,0.5,0.5);
 	//plane_mat.set_Ni(1.7); //glass refractive index;
 	materials.push_back(plane_mat);
 
 	Material red;
-	red.set_Kd(0.2,0.f,0.f);
-	red.set_Ks(0.2,0.2,0.2);
-	//red.set_Ni(1.7); //glass refractive index;
+	//red.set_Kd(0.2,0.f,0.f);
+	//red.set_Ks(0.2,0.2,0.2);
+	red.set_Ni(1.1); //glass refractive index;
 	materials.push_back(red);
 
 	Material blue;
 	blue.set_Kd(0  , 0  , 0.2);
 	blue.set_Ks(0.2, 0.2, 0.2);
-	//blue.set_Ni(1.7); //glass refractive index;
+	//blue.set_Ni(1.1); //glass refractive index;
 	materials.push_back(blue);
 	
 	Material brown_ish;
@@ -64,9 +64,9 @@ void init()
 	materials.push_back(grey);
 
 	//shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
-	//shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
-	shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 0, -3), 1));
-	shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, -1), 1));
+	shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
+	//shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 0, -3), 1));
+	//shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, -1), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
@@ -76,10 +76,10 @@ void init()
 	// Checkerboard
 	shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 
-	//std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
-	//for (int i = 0; i < MyMesh.triangles.size(); i++) {
-	//	shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
-	//}
+	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
+	for (int i = 0; i < MyMesh.triangles.size(); i++) {
+		shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
+	}
 }
 
 //return the color of your pixel.
@@ -98,7 +98,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	// This will be instantiated with the coordinates of the intersection point.
 	Vec3Df new_origin;
 	//Reference to the intersected object.
-	Shape *intersected;
+	Shape *intersected = nullptr;
 
 	float current_depth = FLT_MAX;
 	bool intersection = false;
@@ -140,21 +140,50 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	// The color of the intersected object.
 	Vec3Df color = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
 
+
+	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
+
+	Vec3Df refractedColor = Vec3Df(0.f, 0.f, 0.f);
+	Vec3Df reflectedColor = Vec3Df(0.f, 0.f, 0.f);
+
+
+
 	if (++level == max) return color;
 
+
 	if (intersected->_mat.has_Ni()) {
+	float ni_air = 1.0f;
+	Vec3Df refract = intersected->refract(normal, dir, ni_air);
+
+	float ni_mat = intersected->_mat.has_Ks();
+	double dotProduct = Vec3Df::dotProduct(dir, normal);
+	if (dotProduct < 0){
+		ni_air = ni_mat;
+		ni_mat = 1.0;
+	}
+
+	float fzero = pow(((ni_air - ni_mat) / (ni_air + ni_mat)), 2);
+	float fresnel = (fzero + (1 - fzero) * pow((1 - dotProduct), 5))/100;
+
+	//double dotProductRefract = Vec3Df::dotProduct(refract, ( normal * -1));
+	//double fresnelParallel = (ni_mat * dotProduct - ni_air * dotProductRefract) / (ni_mat * dotProduct + ni_air * dotProductRefract);
+	//double fresnelOrthogonal = (ni_air *dotProduct - ni_mat * dotProductRefract) / (ni_air * dotProduct + ni_mat * dotProductRefract);
+	//double fresnel = 0.5 * (pow(fresnelParallel, 2) + pow(fresnelOrthogonal, 2));
+
+
 		// Compute the refraction vector for the next recursive call.
-		float air = 1.0f;
-		Vec3Df refract = intersected->refract(normal, dir, air);
-		return color + performRayTracing(new_origin + EPSILON * refract, refract, level, max);
+
+	refractedColor = ((1 - fresnel) * performRayTracing(new_origin + EPSILON * refract, refract, level, max));
+		reflectedColor = fresnel * performRayTracing(new_origin, reflect, level, max);
 	} else if (intersected->_mat.has_Ks()) {
 		// Compute the reflection vector for the next recursive call.
 		// What to do with reflection when combining it with refraction?
 		Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
-		return color + performRayTracing(new_origin, reflect, level, max);
+		reflectedColor = color + performRayTracing(new_origin, reflect, level, max);
 	} else {
 		return color;
 	}
+	return color + reflectedColor + refractedColor;
 }
 
 void yourDebugDraw()
