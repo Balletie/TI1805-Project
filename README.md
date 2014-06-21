@@ -19,6 +19,7 @@ jouw functionaliteit compleet is.
 | Refraction      | Jente & Dennis & Skip   |                  | Zaterdag |
 | Kd-Tree         | Gerlof & Skip           | RESEARCH :L      | Zondag   |
 | Blender scene   | ??Arjan / Piet??        |                  |          |
+| Fractals        | Skip (als ie voldoende tijd heeft), of iemand anders | | Maandag/Dinsdag |
 | Presentatie     | ??                      |                  | Dinsdag  |
 | Verslag         | ??                      |                  | Dinsdag  |
 
