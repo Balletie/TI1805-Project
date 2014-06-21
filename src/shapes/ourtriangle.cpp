@@ -59,6 +59,12 @@ bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new
 	return true;
 }
 
+Vec3Df OurTriangle::getMidPoint() {
+	return	_origin +
+			1/3 * (_mesh->vertices[_triangle->v[1]].p - _origin) +
+			1/3 * (_mesh->vertices[_triangle->v[2]].p - _origin);
+}
+
 void OurTriangle::draw() {
 
 }

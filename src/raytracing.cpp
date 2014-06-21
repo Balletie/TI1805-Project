@@ -18,6 +18,8 @@ Vec3Df new_orig;
 Vec3Df new_dest;
 std::vector<Shape*> shapes;
 std::vector<Material> materials;
+std::vector<OurTriangle*> triangles;
+KDNode* node = new KDNode();
 
 //use this function for any preprocessing of the mesh.
 void init()
@@ -26,8 +28,8 @@ void init()
 	//feel free to replace cube by a path to another model
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
-	//MyMesh.loadMesh("meshes/cube.obj", true);
-	MyMesh.loadMesh("meshes/Pen_low.obj", true);
+	MyMesh.loadMesh("meshes/cube.obj", true);
+	//MyMesh.loadMesh("meshes/Pen_low.obj", true);
 	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
@@ -74,14 +76,12 @@ void init()
 	// Checkerboard
 	//shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 
-
-	BoundingBox box;
-	std::vector<OurTriangle*> triangles;
 	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
 		triangles.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
-		box.expand(triangles[i]->getBoundingBox());
 	}
+
+	node = node->build(triangles, 10);
 }
 
 //return the color of your pixel.
@@ -106,30 +106,13 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	Vec3Df reflectivity;
 
 	//Reference to the intersected object.
-	Shape* intersected;
+	OurTriangle* intersected;
 
 	float current_depth = FLT_MAX;
-	bool intersection = false;
-
-	// Naive: trace each object.
-	for (unsigned int i = 0; i < shapes.size(); i++) {
-		Vec3Df new_new_origin;
-		Vec3Df new_normal;
-		if (shapes[i]->intersect(origin, dir, new_new_origin, new_normal)) {
-			intersection = true;
-			float new_depth = (new_new_origin - origin).getLength();
-			if (new_depth < current_depth) {
-				current_depth = new_depth;
-				normal = new_normal;
-				new_origin = new_new_origin;
-				intersected = shapes[i];
-			}
-		}
-	}
-	if (!intersection)	return Vec3Df(0.f,0.f,0.f);
+	if(!node->intersect(node, origin, dir, &intersected, new_origin, normal)) return Vec3Df(0.f,0.f,0.f);
 
 	// Re-use intersection here
-	intersection = false;
+	bool intersection = false;
 	for (unsigned int i = 0; i < shapes.size(); i++) {
 		Vec3Df stub1;
 		Vec3Df stub2;

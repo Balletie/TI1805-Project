@@ -76,6 +76,7 @@ class OurTriangle : public Shape {
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 	virtual void draw();
 	BoundingBox getBoundingBox();
+	Vec3Df getMidPoint();
 	const Mesh* _mesh;
 	const Triangle* _triangle;
 };
