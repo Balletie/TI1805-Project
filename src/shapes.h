@@ -35,7 +35,7 @@ class Shape {
 	 */
 	virtual void draw() = 0;
 
-	const Material& _mat;
+	Material& _mat;
 	const Vec3Df _origin;
 };
 

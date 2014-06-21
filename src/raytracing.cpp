@@ -33,7 +33,7 @@ void init()
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
 
 	Material plane_mat;
-	plane_mat.set_Ka(0.2,0.2,0.2);
+	//plane_mat.set_Ka(0.2,0.2,0.2);
 	plane_mat.set_Kd(0.2,0.2,0.2);
 	plane_mat.set_Ks(0.5,0.5,0.5);
 	materials.push_back(plane_mat);
@@ -58,10 +58,10 @@ void init()
 	grey.set_Ks(1  , 1  , 1  );
 	materials.push_back(grey);
 
-//	shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
-//	shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
-//	shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 2, -1), 1));
-//	shapes.push_back(new Sphere(materials[4], Vec3Df( 2, 0, -1), 1));
+	//shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
+	//shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
+	//shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 2, -1), 1));
+	shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 2, -1), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
@@ -69,7 +69,7 @@ void init()
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
 	// Checkerboard
-	shapes.push_back(new Checkerboard(plane_mat, Vec3Df(0,-1,0), Vec3Df(0,1,0)));
+	shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 
 	//std::vector<Triangle>::iterator iter;
 	//for (iter = MyMesh.triangles.begin(); iter != MyMesh.triangles.end(); ++iter) {
