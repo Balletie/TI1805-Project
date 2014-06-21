@@ -1,9 +1,11 @@
-file (GLOB SOURCES ourtriangle.cpp shapes.cpp kdnode.cpp raytracing.cpp mesh.cpp main.cpp)
-add_executable (project ${SOURCES})
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	include_directories(/opt/X11/include)
-	link_directories(/opt/X11/lib)
-	add_definitions(-w)
-ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-add_definitions(-std=c++11)
-target_link_libraries (project ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+add_subdirectory(shapes)
+
+set (main
+	kdnode.cpp
+	raytracing.cpp
+	mesh.cpp
+	main.cpp
+)
+
+add_executable (project ${main})
+target_link_libraries (project shapes ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})

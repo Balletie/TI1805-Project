@@ -1,5 +1,9 @@
 #include "shapes.h"
 
+OurTriangle::OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle)
+: Shape(mat, mesh->vertices[triangle->v[0]].p), _mesh(mesh), _triangle(triangle)
+{}
+
 bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
 	Vec3Df u = _mesh->vertices[_triangle->v[1]].p - _origin;
 	Vec3Df v = _mesh->vertices[_triangle->v[2]].p - _origin;

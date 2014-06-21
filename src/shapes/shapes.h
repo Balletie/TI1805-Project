@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#include "mesh.h"
-#include "Vec3D.h"
+#include "../mesh.h"
+#include "../Vec3D.h"
 
 static const float EPSILON = 1e-4;
 

@@ -8,7 +8,7 @@
 
 #include "kdnode.h"
 #include "raytracing.h"
-#include "shapes.h"
+#include "shapes/shapes.h"
 
 //temporary variables
 Vec3Df testRayOrigin;

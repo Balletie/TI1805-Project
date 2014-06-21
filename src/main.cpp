@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
-#include "shapes.h"
+#include "shapes/shapes.h"
 #include "raytracing.h"
 #include "mesh.h"
 #include "traqueboule.h"

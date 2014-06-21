@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "shapes.h"
+#include "shapes/shapes.h"
 
 class BoundingBox {
 

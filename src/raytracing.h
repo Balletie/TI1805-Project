@@ -1,10 +1,9 @@
 #ifndef RAYTRACING_Hjdslkjfadjfasljf
 #define RAYTRACING_Hjdslkjfadjfasljf
+
 #include <vector>
+
 #include "mesh.h"
-#include "shapes.h"
-//Welcome to your assignment...
-//this is an important file, raytracing.cpp is what you need to fill out
 
 extern Mesh MyMesh; //Main mesh
 extern std::vector<Vec3Df> MyLightPositions;
