@@ -33,7 +33,7 @@ void init()
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
 
 	Material plane_mat;
-	plane_mat.set_Ka(0.2,0.2,0.2);
+	//plane_mat.set_Ka(0.2,0.2,0.2);
 	plane_mat.set_Kd(0.2,0.2,0.2);
 	plane_mat.set_Ks(0.5,0.5,0.5);
 	//plane_mat.set_Ni(1.7); //glass refractive index;
@@ -70,11 +70,11 @@ void init()
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
-	shapes.push_back(new Plane(materials[0], Vec3Df(0,-2,0), Vec3Df(0,1,0)));
+	//shapes.push_back(new Plane(materials[0], Vec3Df(0,-2,0), Vec3Df(0,1,0)));
 	// Vertical red plane
-	shapes.push_back(new Plane(materials[1], Vec3Df(0,0,-4), Vec3Df(0,0,1)));
+	//shapes.push_back(new Plane(materials[1], Vec3Df(0,0,-4), Vec3Df(0,0,1)));
 	// Checkerboard
-	//shapes.push_back(new Checkerboard(plane_mat, Vec3Df(0,-1,0), Vec3Df(0,1,0)));
+	shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 
 	//std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
 	//for (int i = 0; i < MyMesh.triangles.size(); i++) {
