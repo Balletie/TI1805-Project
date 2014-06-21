@@ -10,15 +10,28 @@ jouw functionaliteit compleet is.
 
 ###Taakverdeling (18 - 06 - 2014)
 
-| Functionaliteit | Wie?!?!          | Status           |
-| --------------- | ---------------- | ---------------- |
-| Textures        | ??               |                  |
-| Soft Shadows    | ??               |                  |
-| Anti-Aliasing   | ??               |                  |
-| Depth of Field  | ??               |                  |
-| Mesh & Triangle | Gerlof | new intersection algorithm, shadows fixed, DONE! |
-| Refraction      | Jente & Dennis   |                  |
-| Kd-Tree         | Gerlof & Skip    | RESEARCH :L      |
+| Functionaliteit | Wie?!?!                 | Status           | Af       |
+| --------------- | ------------------------| ---------------- | -------- |
+| Textures        | Owen & Piet             |                  | Zaterdag |
+| Soft Shadows    | ??                      |                  |          |
+| Anti-Aliasing   | ??                      |                  |          |
+| Depth of Field  | ??                      |                  |          |
+| Refraction      | Jente & Dennis & Skip   |                  | Zaterdag |
+| Kd-Tree         | Gerlof & Skip           | RESEARCH :L      | Zondag   |
+| Blender scene   | ??Arjan / Piet??        |                  |          |
+| Presentatie     | ??                      |                  | Dinsdag  |
+| Verslag         | ??                      |                  | Dinsdag  |
+
+Groepsleden:
+Owen
+Piet
+Dennis
+Jente
+Gerlof
+Skip
+Arjan
+
+![interpolate_pen](https://github.com/Balletie/TI1805-Project/raw/master/interpolate_pen.png)
 
 Hoe te compilen?!
 =================

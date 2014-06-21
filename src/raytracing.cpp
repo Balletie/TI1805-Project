@@ -71,9 +71,9 @@ void init()
 	// Checkerboard
 	shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 
-	//std::vector<Triangle>::iterator iter;
-	//for (iter = MyMesh.triangles.begin(); iter != MyMesh.triangles.end(); ++iter) {
-	//	shapes.push_back(new OurTriangle(materials[2], &MyMesh, &(*iter)));
+	//std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
+	//for (int i = 0; i < MyMesh.triangles.size(); i++) {
+	//	shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
 	//}
 
 }
