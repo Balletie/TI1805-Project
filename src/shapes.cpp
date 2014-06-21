@@ -32,15 +32,15 @@ Vec3Df Shape::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df
 			specular = Vec3Df(0, 0, 0);
 		} else {
 			float shininess;
-			if (this->_mat.has_Ns()) 	shininess = _mat.Ns();
-			else				shininess = 21;
+			if (this->_mat.has_Ns()) shininess = _mat.Ns();
+			else shininess = 21;
 			specular = pow(Vec3Df::dotProduct(reflect, view), shininess) * _mat.Ks();
 		}
 	}
 	return ambient + diffuse + specular;
 }
 
-Vec3Df Shape::refract(const Vec3Df &normal, const Vec3Df &dir, const float &ni) {
+Vec3Df Shape::refract(const Vec3Df &normal, const Vec3Df &dir, const float &ni, float &fresnel) {
 	if (this->_mat.has_Ni()) {
 		double dot = Vec3Df::dotProduct(normal, dir);
 		double ni1, ni2;
@@ -51,7 +51,14 @@ Vec3Df Shape::refract(const Vec3Df &normal, const Vec3Df &dir, const float &ni) 
 			ni1 = this->_mat.Ni();
 			ni2 = ni;
 			realNormal = -normal;
+
+			// While we're at it, calculate Fresnel with Schlick's approximation.
+			// Do nothing in the else statement, as Fresnel is initialised to zero
+			// in the calling function.
+			float fzero = pow(((ni1 - ni2) / (ni1 + ni2)), 2);
+			fresnel = (fzero + (1 - fzero) * pow((1 - dot), 5)) / 100;
 		} else {
+			// FIXME: fresnel here too?
 			ni1 = ni;
 			ni2 = this->_mat.Ni();
 			dot = -dot;

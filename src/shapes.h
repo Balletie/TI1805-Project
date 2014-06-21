@@ -34,13 +34,12 @@ class Shape {
 	/**
 	 * Calculate the refraction vector. For simplicity, all vectors must be normalized.
 	 * It is assumed we are either inside an object or in air.
-	 * @param intersect The intersection point.
 	 * @param normal The normal at the point of intersection.
-	 * @param dotProduct The dot product of the normal and intersection vectors.
-	 * @param ni1 The first refraction index.
-	 * @param ni2 The second refraction index.
+	 * @param dir The direction of the view vector.
+	 * @param ni1 The other refraction index.
+	 * @param fresnel The return address for the fresnel value.
 	 */
-	Vec3Df refract(const Vec3Df&, const Vec3Df&, const float&);
+	Vec3Df refract(const Vec3Df&, const Vec3Df&, const float&, float &fresnel);
 
 	/**
 	 * Draw the object using GLUT functions and OpenGL.

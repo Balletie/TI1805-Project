@@ -24,7 +24,7 @@ void init()
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
 	//MyMesh.loadMesh("cube.obj", true);
-	MyMesh.loadMesh("transparantPlane.obj", true);
+	MyMesh.loadMesh("Pen_low.obj", true);
 	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
@@ -42,25 +42,25 @@ void init()
 	Material red;
 	//red.set_Kd(0.2,0.f,0.f);
 	//red.set_Ks(0.2,0.2,0.2);
-	red.set_Ni(1.1); //glass refractive index;
+	red.set_Ni(1.1);
 	materials.push_back(red);
 
 	Material blue;
 	blue.set_Kd(0  , 0  , 0.2);
 	blue.set_Ks(0.2, 0.2, 0.2);
-	//blue.set_Ni(1.1); //glass refractive index;
+	blue.set_Ni(1.3330); //Water at 20 degrees C
 	materials.push_back(blue);
 	
 	Material brown_ish;
 	brown_ish.set_Kd(0.4, 0.4, 0  );
 	brown_ish.set_Ks(0.2, 0.2, 0.2);
-	//brown_ish.set_Ni(1.7); //glass refractive index;
+	brown_ish.set_Ni(1.1);
 	materials.push_back(brown_ish);
 
 	Material grey;
 	//grey.set_Kd(0.1, 0.1, 0.1);
 	//grey.set_Ks(1  , 1  , 1  );
-	grey.set_Ni(1.3); //glass refractive index;
+	grey.set_Ni(1.1);
 	materials.push_back(grey);
 
 	//shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
@@ -118,72 +118,48 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 			}
 		}
 	}
+	// There was no intersection, so return background color.
 	if (!intersection) return Vec3Df(0.f, 0.f, 0.f);
 
-	// Calculate shadows
-	intersection = false;
+	// Calculate shadows. TODO: multiple light sources.
+	Vec3Df lightPos = MyLightPositions[0] - new_origin;
+	float lightDist = lightPos.getLength();
 	for (unsigned int i = 0; i < shapes.size(); i++) {
-		Vec3Df stub1;
-		Vec3Df stub2;
-		Vec3Df lightPos = MyLightPositions[0] - new_origin;
-		float lightDist = lightPos.getLength();
-
+		Vec3Df stub1, stub2;
 		if (shapes[i]->intersect(new_origin, lightPos, stub1, stub2)) {
-			if ((stub1 - new_origin).getLength() < lightDist)
-				intersection = true;
-			if (shapes[i]->_mat.has_Ni()) intersection = false;
+			if (!((stub1 - new_origin).getLength() < lightDist) || shapes[i]->_mat.has_Ni()) {
+				// There was an intersection, this spot is occluded.
+				return Vec3Df(0.f, 0.f, 0.f);
+			}
 		}
 	}
-	// If there was an intersection, this spot is occluded.
-	if (intersection) return Vec3Df(0.f, 0.f, 0.f);
 
 	// The color of the intersected object.
-	Vec3Df color = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
-
-
-	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
-
+	Vec3Df directColor = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
 	Vec3Df refractedColor = Vec3Df(0.f, 0.f, 0.f);
 	Vec3Df reflectedColor = Vec3Df(0.f, 0.f, 0.f);
+	double dotProduct = Vec3Df::dotProduct(dir, normal);
+	double reflectivity = 1.0f, transmission = 0.f; //FIXME: initial values correct?
 
-
-
-	if (++level == max) return color;
-
+	if (++level == max) {
+		return directColor;
+	}
 
 	if (intersected->_mat.has_Ni()) {
-	float ni_air = 1.0f;
-	Vec3Df refract = intersected->refract(normal, dir, ni_air);
+		float ni_air = 1.0f;
+		float fresnel = 0.f;
 
-	float ni_mat = intersected->_mat.has_Ks();
-	double dotProduct = Vec3Df::dotProduct(dir, normal);
-	if (dotProduct < 0){
-		ni_air = ni_mat;
-		ni_mat = 1.0;
-	}
+		Vec3Df refract = intersected->refract(normal, dir, ni_air, fresnel);
+		refractedColor = performRayTracing(new_origin + EPSILON * refract, refract, level, max);
 
-	float fzero = pow(((ni_air - ni_mat) / (ni_air + ni_mat)), 2);
-	float fresnel = (fzero + (1 - fzero) * pow((1 - dotProduct), 5))/100;
-
-	//double dotProductRefract = Vec3Df::dotProduct(refract, ( normal * -1));
-	//double fresnelParallel = (ni_mat * dotProduct - ni_air * dotProductRefract) / (ni_mat * dotProduct + ni_air * dotProductRefract);
-	//double fresnelOrthogonal = (ni_air *dotProduct - ni_mat * dotProductRefract) / (ni_air * dotProduct + ni_mat * dotProductRefract);
-	//double fresnel = 0.5 * (pow(fresnelParallel, 2) + pow(fresnelOrthogonal, 2));
-
-
-		// Compute the refraction vector for the next recursive call.
-
-	refractedColor = ((1 - fresnel) * performRayTracing(new_origin + EPSILON * refract, refract, level, max));
-		reflectedColor = fresnel * performRayTracing(new_origin, reflect, level, max);
+		reflectivity = fresnel;
+		transmission = 1 - fresnel;
 	} else if (intersected->_mat.has_Ks()) {
-		// Compute the reflection vector for the next recursive call.
-		// What to do with reflection when combining it with refraction?
-		Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
-		reflectedColor = color + performRayTracing(new_origin, reflect, level, max);
-	} else {
-		return color;
+		Vec3Df reflect = dir - 2 * dotProduct * normal;
+		reflectedColor = performRayTracing(new_origin, reflect, level, max);
 	}
-	return color + reflectedColor + refractedColor;
+
+	return directColor + reflectivity * reflectedColor + transmission * refractedColor;
 }
 
 void yourDebugDraw()
