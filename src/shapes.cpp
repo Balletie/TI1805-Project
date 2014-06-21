@@ -7,8 +7,6 @@
 #endif
 #include <GL/glut.h>
 
-static const float EPSILON = 1e-4;
-
 Shape::Shape(Material& mat, Vec3Df org)
 : _mat(mat), _origin(org)
 {}
@@ -42,18 +40,35 @@ Vec3Df Shape::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df
 	return ambient + diffuse + specular;
 }
 
-Vec3Df Shape::refract(const Vec3Df &intersect, const Vec3Df &normal, const float dotProduct, const double ni1, const double ni2) {
-	Vec3Df refract = Vec3Df(0.f, 0.f, 0.f);
-	double ratio = ni1 / ni2;
-	double root = 1 - ni1 * ni1 * (1 - dotProduct * dotProduct) / (ni2 * ni2);
+Vec3Df Shape::refract(const Vec3Df &normal, const Vec3Df &dir, const float &ni) {
+	if (this->_mat.has_Ni()) {
+		double dot = Vec3Df::dotProduct(normal, dir);
+		double ni1, ni2;
+		Vec3Df realNormal = normal;
 
-	// If root < 0, total internal reflection takes place. In this case,
-	// the refraction vector should be black. It already is, so do nothing then.
-	if (root >= 0) {
-		refract = ratio * (intersect - dotProduct * normal) - normal * sqrt(root);
+		// If dot(N,D) > 0, then we're exiting the medium
+		if (dot > 0) {
+			ni1 = this->_mat.Ni();
+			ni2 = ni;
+			realNormal = -normal;
+		} else {
+			ni1 = ni;
+			ni2 = this->_mat.Ni();
+			dot = -dot;
+		}
+
+		// If root < 0, total internal reflection takes place.
+		// In this case, the refraction vector should be black.
+		// Maybe we could integrate reflection here
+		double n = ni1 / ni2;
+		double root = 1.0 - n * n * (1.0 - dot * dot);
+
+		if (root < 0) return dir - 2 * dot * realNormal;
+
+		return dir * n + (n * dot - sqrt(root)) * realNormal;
 	}
 
-	return refract;
+	return Vec3Df(0,0,0);
 }
 
 Vec3Df Checkerboard::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal) {

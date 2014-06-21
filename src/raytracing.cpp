@@ -65,16 +65,16 @@ void init()
 
 	//shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
 	//shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
-	//shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 2, -1), 1));
-	shapes.push_back(new Sphere(materials[4], Vec3Df( 2, 0, -1), 1));
+	shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 0, -3), 1));
+	shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, -1), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
-	//shapes.push_back(new Plane(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
+	shapes.push_back(new Plane(materials[0], Vec3Df(0,-2,0), Vec3Df(0,1,0)));
 	// Vertical red plane
-	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
+	shapes.push_back(new Plane(materials[1], Vec3Df(0,0,-4), Vec3Df(0,0,1)));
 	// Checkerboard
-	shapes.push_back(new Checkerboard(plane_mat, Vec3Df(0,-1,0), Vec3Df(0,1,0)));
+	//shapes.push_back(new Checkerboard(plane_mat, Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 
 	//std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
 	//for (int i = 0; i < MyMesh.triangles.size(); i++) {
@@ -97,12 +97,6 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	Vec3Df normal;
 	// This will be instantiated with the coordinates of the intersection point.
 	Vec3Df new_origin;
-
-	// The color if the intersected object.
-	Vec3Df color;
-	// The reflectivity of the intersected object.
-	Vec3Df reflectivity;
-
 	//Reference to the intersected object.
 	Shape *intersected;
 
@@ -126,8 +120,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	}
 	if (!intersection) return Vec3Df(0.f, 0.f, 0.f);
 
-
-	// Re-use intersection here
+	// Calculate shadows
 	intersection = false;
 	for (unsigned int i = 0; i < shapes.size(); i++) {
 		Vec3Df stub1;
@@ -144,29 +137,25 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	// If there was an intersection, this spot is occluded.
 	if (intersection) return Vec3Df(0.f, 0.f, 0.f);
 
-	normal.normalize();
+	// The color of the intersected object.
+	Vec3Df color = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
+
 	// Compute the reflection vector for the next recursive call.
-	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
+	// What to do with reflection when combining it with refraction?
+	//Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
 
-	// Shade the object.
-	color = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
-	reflectivity = intersected->_mat.Ks();
+	// Compute the refraction vector for the next recursive call.
+	float air = 1.0f;
+	Vec3Df refract = intersected->refract(normal, dir, air);
 
-	Vec3Df refract = Vec3Df(0.f, 0.f, 0.f);
-	bool has_Ni = intersected->_mat.has_Ni();
-	if (has_Ni) {
-		double ni_air = 1.0;
-		double dotProduct = Vec3Df::dotProduct(dir, normal);
-		if (dotProduct > 0) refract = intersected->refract(dir, normal, dotProduct, intersected->_mat.Ni(), ni_air);
-		else refract = intersected->refract(dir, normal, dotProduct, ni_air, intersected->_mat.Ni());
-	}
+	// Perform the next recursive call
 	if (++level == max) {
 		return color;
 	} else if (refract.getLength() != 0) {
-		return color + reflectivity * performRayTracing(new_origin, reflect, level, max)
-			+ performRayTracing(dir, refract, level, max);
+		return color; //+ performRayTracing(new_origin, reflect, level, max)
+					 + performRayTracing(new_origin + EPSILON * refract, refract, level, max);
 	} else {
-		return color + reflectivity * performRayTracing(new_origin, reflect, level, max);
+		return color; //+ performRayTracing(new_origin, reflect, level, max);
 	}
 }
 

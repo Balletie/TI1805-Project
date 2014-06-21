@@ -5,6 +5,8 @@
 #include "mesh.h"
 #include "Vec3D.h"
 
+static const float EPSILON = 1e-4;
+
 class Shape {
   public:
 	Shape(Material& mat, Vec3Df org);
@@ -38,7 +40,7 @@ class Shape {
 	 * @param ni1 The first refraction index.
 	 * @param ni2 The second refraction index.
 	 */
-	Vec3Df refract(const Vec3Df&, const Vec3Df&, const float, const double, const double);
+	Vec3Df refract(const Vec3Df&, const Vec3Df&, const float&);
 
 	/**
 	 * Draw the object using GLUT functions and OpenGL.
