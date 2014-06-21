@@ -71,6 +71,7 @@ class OurTriangle : public Shape {
   public:
 	OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle);
 	void barycentric(Vec3Df &p, float &a, float &b);
+	void hit(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal, Vec3Df& p);
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 	virtual void draw();
 	const Mesh* _mesh;

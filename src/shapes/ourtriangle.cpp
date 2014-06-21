@@ -19,6 +19,27 @@ void OurTriangle::barycentric(Vec3Df &p, float &a, float &b) {
 	b = (d00 * d21 - d01 * d20) * invDenom;
 }
 
+void OurTriangle::hit(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal, Vec3Df& p){
+	Vec3Df u = _mesh->vertices[_triangle->v[1]].p - _origin;
+	Vec3Df v = _mesh->vertices[_triangle->v[2]].p - _origin;
+
+	//
+	// STEP 1: First calculate where the ray intersects the plane in which the triangle lies
+	//
+	// Calculate the normal of the plane
+	Vec3Df planeNormal = Vec3Df::crossProduct(u, v);
+
+	// Calculate the angle of the ray relative to the plane
+	float denom = Vec3Df::dotProduct(dir,planeNormal);
+	if (!(denom > -EPSILON && denom < EPSILON)){
+		// Calculate term t in the expressen 'p = o + tD'
+		float t = Vec3Df::dotProduct(_origin - origin, planeNormal) / denom;
+		if (t > EPSILON){
+			p = origin + t * dir;
+		}
+	}
+}
+
 bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
 	Vec3Df u = _mesh->vertices[_triangle->v[1]].p - _origin;
 	Vec3Df v = _mesh->vertices[_triangle->v[2]].p - _origin;
