@@ -61,7 +61,7 @@ void init()
 	//shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
 	//shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
 	//shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 2, -1), 1));
-	shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 2, -1), 1));
+	shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, -1), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
