@@ -5,5 +5,14 @@ project (TI1805-Project)
 find_package (GLUT REQUIRED)
 find_package (OpenGL REQUIRED)
 
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        include_directories(/opt/X11/include)
+        link_directories(/opt/X11/lib)
+        add_definitions(-w)
+ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
+
+add_definitions(-std=c++11)
+
 add_subdirectory(src)

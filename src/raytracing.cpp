@@ -5,8 +5,10 @@
 #include <GL/glut.h>
 #include <float.h>
 #include <stdint.h>
+
+#include "kdnode.h"
 #include "raytracing.h"
-#include "shapes.h"
+#include "shapes/shapes.h"
 
 //temporary variables
 Vec3Df testRayOrigin;
@@ -23,8 +25,8 @@ void init()
 	//feel free to replace cube by a path to another model
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
-	//MyMesh.loadMesh("cube.obj", true);
-	//MyMesh.loadMesh("Pen_low.obj", true);
+	//MyMesh.loadMesh("meshes/cube.obj", true);
+	//MyMesh.loadMesh("meshes/Pen_low.obj", true);
 	MyMesh.loadMesh("textured.obj", true);
 	MyMesh.computeVertexNormals();
 
@@ -76,7 +78,6 @@ void init()
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
 		shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
 	}
-
 }
 
 //return the color of your pixel.
