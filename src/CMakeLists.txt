@@ -1,4 +1,4 @@
-file (GLOB SOURCES *.cpp)
+file (GLOB SOURCES ourtriangle.cpp shapes.cpp kdnode.cpp raytracing.cpp mesh.cpp main.cpp)
 add_executable (project ${SOURCES})
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	include_directories(/opt/X11/include)

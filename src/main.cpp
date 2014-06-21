@@ -138,8 +138,8 @@ Mesh MyMesh; //Main mesh
 
 
 
-// Utilisé pour essayer différents types de rendu
-// Utilisé via le paramètre "-t" en ligne de commande
+// Utilisï¿½ pour essayer diffï¿½rents types de rendu
+// Utilisï¿½ via le paramï¿½tre "-t" en ligne de commande
 enum { TRIANGLE=0, MODEL=1, };
 unsigned int type = MODEL;
 
@@ -173,7 +173,7 @@ void dessinerRepere(float length)
 }
 
 /**
- * Appel des différentes fonctions de dessin
+ * Appel des diffï¿½rentes fonctions de dessin
 */
 void dessiner( )
 {
@@ -198,7 +198,7 @@ void dessiner( )
 			//glEnd();
 		}
 	default:
-		dessinerRepere(1); // Par défaut
+		dessinerRepere(1); // Par dï¿½faut
 		break;
 	}
 	
@@ -240,7 +240,7 @@ int main(int argc, char** argv)
     tbHelp();                      // affiche l'aide sur la traqueboule
 	MyCameraPosition=getCameraPosition();
     //
-    // Active la lumière
+    // Active la lumiï¿½re
     // Pour la partie
     // ECLAIRAGE
          
@@ -256,7 +256,7 @@ int main(int argc, char** argv)
 	glEnable(GL_NORMALIZE);
     glClearColor (0.0, 0.0, 0.0, 0.0);
 
-	// Details sur le mode de tracé
+	// Details sur le mode de tracï¿½
     glEnable( GL_DEPTH_TEST );            // effectuer le test de profondeur
     //glEnable(GL_CULL_FACE);
     //glCullFace(GL_BACK);
@@ -284,11 +284,11 @@ int main(int argc, char** argv)
 		shapes[i] = nullptr;
 	}
 
-    return 0;  // instruction jamais exécutée
+    return 0;  // instruction jamais exï¿½cutï¿½e
 }
 
 /**
- * Fonctions de gestion opengl à ne pas toucher
+ * Fonctions de gestion opengl ï¿½ ne pas toucher
  */
 // Actions d'affichage
 // Ne pas changer
@@ -387,8 +387,8 @@ void keyboard(unsigned char key, int x, int y)
 		for (unsigned int y=0; y<WindowSize_Y;++y)
 			for (unsigned int x=0; x<WindowSize_X;++x)
 			{
-				//svp, decidez vous memes quels parametres vous allez passer à la fonction
-				//e.g., maillage, triangles, sphères etc.
+				//svp, decidez vous memes quels parametres vous allez passer ï¿½ la fonction
+				//e.g., maillage, triangles, sphï¿½res etc.
 				float xscale=1.0f-float(x)/(WindowSize_X-1);
 				float yscale=float(y)/(WindowSize_Y-1);
 

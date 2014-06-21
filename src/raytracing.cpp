@@ -5,6 +5,8 @@
 #include <GL/glut.h>
 #include <float.h>
 #include <stdint.h>
+
+#include "kdnode.h"
 #include "raytracing.h"
 #include "shapes.h"
 
@@ -71,11 +73,15 @@ void init()
 	// Checkerboard
 	shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 
-	//std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
-	//for (int i = 0; i < MyMesh.triangles.size(); i++) {
-	//	shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
-	//}
 
+	std::vector<OurTriangle*> triangles;
+	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
+	for (int i = 0; i < MyMesh.triangles.size(); i++) {
+		triangles.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
+	}
+
+	KDNode tree;
+	//tree.build(triangles, 2);
 }
 
 //return the color of your pixel.
