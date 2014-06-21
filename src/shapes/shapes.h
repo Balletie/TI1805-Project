@@ -6,6 +6,8 @@
 #include "../mesh.h"
 #include "../Vec3D.h"
 
+#include "../kdtree/kdnode.h"
+
 static const float EPSILON = 1e-4;
 
 class Shape {
@@ -72,6 +74,7 @@ class OurTriangle : public Shape {
 	OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle);
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 	virtual void draw();
+	BoundingBox getBoundingBox();
 	const Mesh* _mesh;
 	const Triangle* _triangle;
 };

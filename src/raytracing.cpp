@@ -6,8 +6,9 @@
 #include <float.h>
 #include <stdint.h>
 
-#include "kdnode.h"
 #include "raytracing.h"
+
+#include "kdtree/kdnode.h"
 #include "shapes/shapes.h"
 
 //temporary variables
@@ -25,9 +26,9 @@ void init()
 	//feel free to replace cube by a path to another model
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
-	//MyMesh.loadMesh("cube.obj", true);
+	MyMesh.loadMesh("cube.obj", true);
 	//MyMesh.loadMesh("Pen_low.obj", true);
-	//MyMesh.computeVertexNormals();
+	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
 	//at least ONE light source has to be in the scene!!!
@@ -63,7 +64,7 @@ void init()
 	//shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
 	//shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
 	//shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 2, -1), 1));
-	shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, -1), 1));
+	//shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, -1), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
@@ -71,13 +72,14 @@ void init()
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
 	// Checkerboard
-	shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
+	//shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 
 
 	std::vector<OurTriangle*> triangles;
 	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
 		triangles.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
+		triangles[i]->getBoundingBox();
 	}
 }
 
@@ -187,34 +189,5 @@ void yourKeyboardFunc(char t, int x, int y)
 {
 	// do what you want with the keyboard input t.
 	// x, y are the screen position
-
-	//here I use it to get the coordinates of a ray, which I then draw in the debug function.
-	produceRay(x, y, testRayOrigin, testRayDestination);
-
-	Vec3Df orig = testRayOrigin;
-	Vec3Df dir = testRayDestination - testRayOrigin;
-	dir.normalize();
-
-	Vec3Df normal;
-	if (shapes[0]->intersect(orig, dir, new_orig, normal)) {
-		printf("intersection!!\n");
-		Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
-		new_dest = 20 * reflect;
-	}
-
 	std::cout<< t <<" pressed! The mouse was in location "<<x<<","<<y<<"!"<<std::endl;
-
-	/*
-	Triangle triangle;
-	Vertex vertex;
-	for (int i = 0; i < MyMesh.triangles.size(); i++) {
-		triangle = MyMesh.triangles[i];
-		printf("triangle index v: %d\t %d\t %d\n", triangle.v[0], triangle.v[1], triangle.v[2]);
-		printf("triangle index t: %d\t %d\t %d\n", triangle.t[0], triangle.t[1], triangle.t[2]);
-		for (int j = 0; j < 3; j++) {
-			vertex = MyMesh.vertices[triangle.v[j]];
-			printf("triangle coords: %f\t %f\t %f\n", vertex.p[0], vertex.p[1], vertex.p[2]);
-		}
-	}
-	*/
 }

@@ -3,10 +3,16 @@
 
 #include <vector>
 
-#include "shapes/shapes.h"
+#include "../Vec3D.h"
+
+// FORWARD DECLARATION
+class OurTriangle;
 
 class BoundingBox {
-
+public:
+	BoundingBox(const Vec3Df min, const Vec3Df max);
+	Vec3Df _min;
+	Vec3Df _max;
 };
 
 class KDNode {
