@@ -154,7 +154,9 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 
 		reflectivity = fresnel;
 		transmission = 1 - fresnel;
-	} else if (intersected->_mat.has_Ks()) {
+	}
+
+	if (intersected->_mat.has_Ks()) {
 		Vec3Df reflect = dir - 2 * dotProduct * normal;
 		reflectedColor = performRayTracing(new_origin, reflect, level, max);
 	}
