@@ -25,7 +25,8 @@ void init()
 	//Nonetheless, if they come from Blender, they should.
 	//MyMesh.loadMesh("cube.obj", true);
 	//MyMesh.loadMesh("Pen_low.obj", true);
-	//MyMesh.computeVertexNormals();
+	MyMesh.loadMesh("textured.obj", true);
+	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
 	//at least ONE light source has to be in the scene!!!
@@ -61,7 +62,7 @@ void init()
 	//shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
 	//shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
 	//shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 2, -1), 1));
-	shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, -1), 1));
+	//shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, -1), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
@@ -69,12 +70,12 @@ void init()
 	// Vertical red plane
 	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
 	// Checkerboard
-	shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
+	//shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 
-	//std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
-	//for (int i = 0; i < MyMesh.triangles.size(); i++) {
-	//	shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
-	//}
+	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
+	for (int i = 0; i < MyMesh.triangles.size(); i++) {
+		shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
+	}
 
 }
 
