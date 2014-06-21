@@ -140,22 +140,20 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	// The color of the intersected object.
 	Vec3Df color = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
 
-	// Compute the reflection vector for the next recursive call.
-	// What to do with reflection when combining it with refraction?
-	//Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
+	if (++level == max) return color;
 
-	// Compute the refraction vector for the next recursive call.
-	float air = 1.0f;
-	Vec3Df refract = intersected->refract(normal, dir, air);
-
-	// Perform the next recursive call
-	if (++level == max) {
-		return color;
-	} else if (refract.getLength() != 0) {
-		return color; //+ performRayTracing(new_origin, reflect, level, max)
-					 + performRayTracing(new_origin + EPSILON * refract, refract, level, max);
+	if (intersected->_mat.has_Ni()) {
+		// Compute the refraction vector for the next recursive call.
+		float air = 1.0f;
+		Vec3Df refract = intersected->refract(normal, dir, air);
+		return color + performRayTracing(new_origin + EPSILON * refract, refract, level, max);
+	} else if (intersected->_mat.has_Ks()) {
+		// Compute the reflection vector for the next recursive call.
+		// What to do with reflection when combining it with refraction?
+		Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
+		return color + performRayTracing(new_origin, reflect, level, max);
 	} else {
-		return color; //+ performRayTracing(new_origin, reflect, level, max);
+		return color;
 	}
 }
 
