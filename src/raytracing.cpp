@@ -79,9 +79,6 @@ void init()
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
 		triangles.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
 	}
-
-	KDNode tree;
-	//tree.build(triangles, 2);
 }
 
 //return the color of your pixel.

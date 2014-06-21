@@ -11,6 +11,8 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         add_definitions(-w)
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
+
 add_definitions(-std=c++11)
 
 add_subdirectory(src)
