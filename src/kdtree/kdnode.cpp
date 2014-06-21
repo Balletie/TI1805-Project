@@ -1,10 +1,17 @@
 #include "kdnode.h"
 
-BoundingBox::BoundingBox(Vec3Df min = Vec3Df(0,0,0), Vec3Df max = Vec3Df(0,0,0))
+BoundingBox::BoundingBox(Vec3Df min, Vec3Df max)
 : _min(min), _max(max)
-{
-	printf("min: %f %f %f\n", min[0], min[1], min[2]);
-	printf("max: %f %f %f\n", max[0], max[1], max[2]);
+{}
+
+void BoundingBox::expand(BoundingBox box) {
+	for (int i = 0; i < 3; i++) {
+		if (box._min[i] < _min[i]) _min[i] = box._min[i];
+		if (box._max[i] > _max[i]) _max[i] = box._max[i];
+	}
+
+	printf("min: %f %f %f\n", _min[0], _min[1], _min[2]);
+	printf("max: %f %f %f\n", _max[0], _max[1], _max[2]);
 }
 
 

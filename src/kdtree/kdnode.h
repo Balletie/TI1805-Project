@@ -2,6 +2,7 @@
 #define KDNODE_H_
 
 #include <vector>
+#include "float.h"
 
 #include "../Vec3D.h"
 
@@ -10,7 +11,8 @@ class OurTriangle;
 
 class BoundingBox {
 public:
-	BoundingBox(const Vec3Df min, const Vec3Df max);
+	BoundingBox(Vec3Df min = Vec3Df(FLT_MAX, FLT_MAX, FLT_MAX), Vec3Df max = Vec3Df(-FLT_MAX, -FLT_MAX, -FLT_MAX));
+	void expand(BoundingBox box);
 	Vec3Df _min;
 	Vec3Df _max;
 };
