@@ -148,6 +148,15 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	color = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
 	reflectivity = intersected->_mat.Ks();
 
+
+	// debug purposes for texture loading
+//	for(int i = 0; i < MyMesh.materials.size(); i++){
+//		Material a = MyMesh.materials[i];
+//		if(a.has_textureName()){
+//			std::cout<<"Material nr.: "<<i<<" has a texture! \n";
+//		}
+//	}
+
 	if (++level == max)	return color;
 	else return color + reflectivity * performRayTracing(new_origin, reflect, level, max);
 }

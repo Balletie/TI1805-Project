@@ -370,6 +370,7 @@ bool Mesh::loadMtl(const char * filename, std::map<string, unsigned int> & mater
 			if (!t.empty() && t[t.length()-1] == '\n') {
 				t.erase(t.length()-1);
 			}
+			std::cout<<"Texture: "<<t<<" is set. \n";
 			// map_Kd, diffuse map
 			// map_Ks, specular map
 			// map_Ka, ambient map
