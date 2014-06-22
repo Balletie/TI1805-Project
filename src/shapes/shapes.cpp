@@ -59,6 +59,9 @@ Vec3Df Shape::refract(const Vec3Df &normal, const Vec3Df &dir, const float &ni, 
 			ni1 = ni;
 			ni2 = this->_mat.Ni();
 			dot = -dot;
+			
+			float fzero = pow(((ni1 - ni2) / (ni1 + ni2)), 2);
+			fresnel = (fzero + (1 - fzero) * pow((1 - dot), 5)) / 100;
 		}
 
 		// If root < 0, total internal reflection takes place.
