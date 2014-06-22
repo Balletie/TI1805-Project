@@ -125,6 +125,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 			}
 		}
 	}
+	if (!intersection) return Vec3Df(0.f,0.f,0.f);
 
 	// Re-use intersection here
 	intersection = false;

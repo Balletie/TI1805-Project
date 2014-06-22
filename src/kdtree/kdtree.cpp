@@ -6,11 +6,8 @@ KDTree::KDTree(std::vector<OurTriangle*>& triangles) {
 }
 
 bool KDTree::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
-	OurTriangle* pt;
 	float depth = FLT_MAX;
-	bool success = _root->intersect(_root, origin, dir, pt, new_origin, normal, depth);
-	_intersected = pt;
-	return success;
+	return _root->intersect(_root, origin, dir, _intersected, new_origin, normal, depth);
 }
 
 Vec3Df KDTree::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal) {
