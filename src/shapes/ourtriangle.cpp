@@ -55,3 +55,11 @@ bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new
 void OurTriangle::draw() {
 
 }
+
+Vertex  OurTriangle::operator[] (int i) {
+	return _mesh->vertices[_triangle->v[i]];
+}
+
+Vertex& OurTriangle::operator[] (int i) const {
+	return _mesh->vertices[_triangle->v[i]];
+}
