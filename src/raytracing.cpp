@@ -6,8 +6,9 @@
 #include <float.h>
 #include <stdint.h>
 
-#include "kdnode.h"
 #include "raytracing.h"
+
+#include "kdtree/kdtree.h"
 #include "shapes/shapes.h"
 
 //temporary variables
@@ -15,8 +16,9 @@ Vec3Df testRayOrigin;
 Vec3Df testRayDestination;
 Vec3Df new_orig;
 Vec3Df new_dest;
-std::vector<Shape*> shapes;
+std::vector<OurObject*> shapes;
 std::vector<Material> materials;
+std::vector<OurTriangle*> triangles;
 
 //use this function for any preprocessing of the mesh.
 void init()
@@ -26,8 +28,8 @@ void init()
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
 	//MyMesh.loadMesh("meshes/cube.obj", true);
-	//MyMesh.loadMesh("meshes/Pen_low.obj", true);
-	//MyMesh.computeVertexNormals();
+	MyMesh.loadMesh("meshes/Pen_subsurf.obj", true);
+	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
 	//at least ONE light source has to be in the scene!!!
@@ -85,8 +87,10 @@ void init()
 
 	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
-		shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
+		triangles.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
 	}
+
+	shapes.push_back(new KDTree(triangles));
 }
 
 //return the color of your pixel.
@@ -105,18 +109,18 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	// This will be instantiated with the coordinates of the intersection point.
 	Vec3Df new_origin;
 	//Reference to the intersected object.
-	Shape *intersected = nullptr;
+	OurObject* intersected;
 
 	float current_depth = FLT_MAX;
 	bool intersection = false;
-
-	// Naive: trace each object.
-	for (unsigned int i = 0; i < shapes.size(); i++) {
+	for (int i = 0; i < shapes.size(); i++) {
 		Vec3Df new_new_origin;
 		Vec3Df new_normal;
+
 		if (shapes[i]->intersect(origin, dir, new_new_origin, new_normal)) {
 			intersection = true;
 			float new_depth = (new_new_origin - origin).getLength();
+
 			if (new_depth < current_depth) {
 				current_depth = new_depth;
 				normal = new_normal;
@@ -152,7 +156,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 		return directColor;
 	}
 
-	if (intersected->_mat.has_Ni()) {
+	if (intersected->hasMat() && intersected->getMat().has_Ni()) {
 		float ni_air = 1.0f;
 		float fresnel = 0.f;
 
@@ -182,9 +186,9 @@ void yourDebugDraw()
 	glDisable(GL_LIGHTING);
 
 	// Draw all the shapes for the viewport window.
-	for (int i = 0; i < shapes.size(); i++) {
-		shapes[i]->draw();
-	}
+	//for (int i = 0; i < shapes.size(); i++) {
+	//	shapes[i]->draw();
+	//}
 
 	glColor3f(0,1,1);
 	glBegin(GL_LINES);
@@ -206,34 +210,5 @@ void yourKeyboardFunc(char t, int x, int y)
 {
 	// do what you want with the keyboard input t.
 	// x, y are the screen position
-
-	//here I use it to get the coordinates of a ray, which I then draw in the debug function.
-	produceRay(x, y, testRayOrigin, testRayDestination);
-
-	Vec3Df orig = testRayOrigin;
-	Vec3Df dir = testRayDestination - testRayOrigin;
-	dir.normalize();
-
-	Vec3Df normal;
-	if (shapes[0]->intersect(orig, dir, new_orig, normal)) {
-		printf("intersection!!\n");
-		Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
-		new_dest = 20 * reflect;
-	}
-
 	std::cout<< t <<" pressed! The mouse was in location "<<x<<","<<y<<"!"<<std::endl;
-
-	/*
-	Triangle triangle;
-	Vertex vertex;
-	for (int i = 0; i < MyMesh.triangles.size(); i++) {
-		triangle = MyMesh.triangles[i];
-		printf("triangle index v: %d\t %d\t %d\n", triangle.v[0], triangle.v[1], triangle.v[2]);
-		printf("triangle index t: %d\t %d\t %d\n", triangle.t[0], triangle.t[1], triangle.t[2]);
-		for (int j = 0; j < 3; j++) {
-			vertex = MyMesh.vertices[triangle.v[j]];
-			printf("triangle coords: %f\t %f\t %f\n", vertex.p[0], vertex.p[1], vertex.p[2]);
-		}
-	}
-	*/
 }

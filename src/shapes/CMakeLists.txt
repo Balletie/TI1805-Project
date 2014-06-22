@@ -4,5 +4,6 @@ set (shapes_sources
 	sphere.cpp
 	plane.cpp
 	ourtriangle.cpp
+	boundingbox.cpp
 )
 add_library (shapes ${shapes_sources})

@@ -1,5 +1,7 @@
 #include "shapes.h"
 
+#include "float.h"
+
 OurTriangle::OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle)
 : Shape(mat, mesh->vertices[triangle->v[0]].p), _mesh(mesh), _triangle(triangle)
 {}
@@ -57,8 +59,31 @@ bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new
 	return true;
 }
 
+Vec3Df OurTriangle::getMidPoint() {
+	return	_origin +
+			1/3 * (_mesh->vertices[_triangle->v[1]].p - _origin) +
+			1/3 * (_mesh->vertices[_triangle->v[2]].p - _origin);
+}
+
 void OurTriangle::draw() {
 
+}
+
+BoundingBox OurTriangle::getBoundingBox() {
+	Vec3Df min(FLT_MAX, FLT_MAX, FLT_MAX);
+	Vec3Df max = -min;
+
+	// Loop over the 3 vertices that make up this triangle
+	for (int i = 0; i < 3; i++) {
+		// Loop over x, y, z
+		for (int j = 0; j < 3; j++) {
+			// Store the current coordinate value
+			float cur = _mesh->vertices[_triangle->v[i]].p[j];
+			if (cur < min[j]) min[j] = cur;
+			if (cur > max[j]) max[j] = cur;
+		}
+	}
+	return BoundingBox(min, max);
 }
 
 Vertex  OurTriangle::operator[] (int i) const {
