@@ -85,7 +85,6 @@ class OurTriangle : public Shape {
 	virtual void draw();
 	const Mesh* _mesh;
 	const Triangle* _triangle;
-	Vertex& operator[] (int i);
 	Vertex  operator[] (int i) const;
 };
 
