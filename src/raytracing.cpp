@@ -80,25 +80,22 @@ void init()
 		shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
 	}
     
-    // apply textures
-    BMPImage image = *loadBMP("red_wood_texture_grain_natural_wooden_paneling_sur.bmp");
-    GLuint _textureId = loadTexture(&image);
+    GLuint id = loadBMP_custom("./red_wood_texture_grain_natural_wooden_paneling_sur.bmp");
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, _textureId);
-    
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    
     glBegin(GL_TRIANGLES);
-    for (int j = 0; j < MyMesh.triangles.size(); j++) {
-        for (int v = 0; v < 3; v++) {
+    for (unsigned int i=0;i<MyMesh.triangles.size();++i) {
+		Vec3Df col= MyMesh.materials[MyMesh.triangleMaterials[i]].Kd();
+		glColor3fv(col.pointer());
+		for(int v = 0; v < 3 ; v++){
+			glNormal3f(MyMesh.vertices[MyMesh.triangles[i].v[v]].n[0], MyMesh.vertices[MyMesh.triangles[i].v[v]].n[1], MyMesh.vertices[MyMesh.triangles[i].v[v]].n[2]);
             glTexCoord2f(MyMesh.texcoords[v].p[0], MyMesh.texcoords[v].p[1]);
-            glVertex3f(MyMesh.vertices[MyMesh.triangles[j].v[v]].p[0], MyMesh.vertices[MyMesh.triangles[j].v[v]].p[1], MyMesh.vertices[MyMesh.triangles[j].v[v]].p[2]);
-        }
-    }
-    glEnd();
+			glVertex3f(MyMesh.vertices[MyMesh.triangles[i].v[v]].p[0], MyMesh.vertices[MyMesh.triangles[i].v[v]].p[1], MyMesh.vertices[MyMesh.triangles[i].v[v]].p[2]);
+		}
+	}
+	glEnd();
     glDisable(GL_TEXTURE_2D);
+    
+    
 }
 
 //return the color of your pixel.
@@ -249,21 +246,81 @@ void yourKeyboardFunc(char t, int x, int y)
 }
 
 //Makes the image into a texture, and returns the id of the texture
-GLuint loadTexture(BMPImage* image) {
-	GLuint textureId;
-	glGenTextures(1, &textureId); //Make room for our texture
-	glBindTexture(GL_TEXTURE_2D, textureId); //Tell OpenGL which texture to edit
-	//Map the image to the texture
-	glTexImage2D(GL_TEXTURE_2D,                //Always GL_TEXTURE_2D
-				 0,                            //0 for now
-				 GL_RGB,                       //Format OpenGL uses for image
-				 image->width, image->height,  //Width and height
-				 0,                            //The border of the image
-				 GL_RGB, //GL_RGB, because pixels are stored in RGB format
-				 GL_UNSIGNED_BYTE, //GL_UNSIGNED_BYTE, because pixels are stored
-                 //as unsigned numbers
-				 image->pixels);               //The actual pixel data
-	return textureId; //Returns the id of the texture
+//GLuint loadTexture(BMPImage* image) {
+//	GLuint textureId;
+//	glGenTextures(1, &textureId); //Make room for our texture
+//	glBindTexture(GL_TEXTURE_2D, textureId); //Tell OpenGL which texture to edit
+//	//Map the image to the texture
+//	glTexImage2D(GL_TEXTURE_2D,                //Always GL_TEXTURE_2D
+//				 0,                            //0 for now
+//				 GL_RGB,                       //Format OpenGL uses for image
+//				 image->width, image->height,  //Width and height
+//				 0,                            //The border of the image
+//				 GL_RGB, //GL_RGB, because pixels are stored in RGB format
+//				 GL_UNSIGNED_BYTE, //GL_UNSIGNED_BYTE, because pixels are stored
+//                 //as unsigned numbers
+//				 image->pixels);               //The actual pixel data
+//	return textureId; //Returns the id of the texture
+//}
+
+GLuint loadBMP_custom(const char* imagepath) {
+    // Data read from the header of the BMP file
+    unsigned char header[54]; // Each BMP file begins by a 54-bytes header
+    unsigned int dataPos;     // Position in the file where the actual data begins
+    unsigned int width, height;
+    unsigned int imageSize;   // = width*height*3
+    // Actual RGB data
+    unsigned char * data;
+    
+    // Open the file
+    FILE* file = fopen(imagepath, "rb");
+    if (!file) {
+        printf("Image could not be opened\n");
+        return 0;
+    }
+    if (fread(header, 1, 54, file) != 54) {
+        printf("Not a correct BMP file\n");
+        return false;
+    }
+    // since BMP header always starts with 'B' and 'M', first two bytes should be those chars
+    if (header[0] != 'B' || header[1] != 'M') {
+        printf("Not a correct BPM file\n");
+        return 0;
+    }
+    
+    // Read ints from the byte array
+    dataPos    = *(int*)&(header[0x0A]);
+    imageSize  = *(int*)&(header[0x22]);
+    width      = *(int*)&(header[0x12]);
+    height     = *(int*)&(header[0x16]);
+    
+    // Some BMP files are misformatted, guess missing information
+    if (imageSize==0)    imageSize=width*height*3; // 3 : one byte for each Red, Green and Blue component
+    if (dataPos==0)      dataPos=54; // The BMP header is done that way
+    
+    // Create a buffer
+    data = new unsigned char [imageSize];
+    
+    // Read the actual data from the file into the buffer
+    fread(data,1,imageSize,file);
+    
+    //Everything is in memory now, the file can be closed
+    fclose(file);
+    
+    // Create one OpenGL texture
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    
+    // "Bind" the newly created texture : all future texture functions will modify this texture
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    
+    // Give the image to OpenGL
+    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    
+    return textureID;
 }
 
 

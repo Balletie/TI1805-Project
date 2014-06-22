@@ -35,5 +35,6 @@ void yourDebugDraw();
 //want keyboard interaction? Here it is...
 void yourKeyboardFunc(char t, int x, int y);
 
-GLuint loadTexture(BMPImage*);
+//GLuint loadTexture(BMPImage*);
+GLuint loadBMP_custom(const char* imagepath);
 #endif
