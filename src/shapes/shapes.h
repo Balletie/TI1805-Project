@@ -10,10 +10,8 @@
 
 static const float EPSILON = 1e-4;
 
-class Shape {
+class OurObject {
   public:
-	Shape(Material& mat, Vec3Df org);
-
 	/**
 	 * Check if a ray intersects with this object.
 	 * @param origin Where the ray came from.
@@ -32,8 +30,28 @@ class Shape {
 	 * @param normal The normal at the point of intersection
 	 * @return The color for this intersection point.
 	 */
+	virtual Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&) = 0;
+
+	virtual bool hasMat() = 0;
+	virtual Material& getMat() = 0;
+};
+
+class Shape : public OurObject {
+  public:
+	Shape(Material& mat, Vec3Df org);
+
+	/**
+	 * Shade the object using specular, diffuse and ambient terms of the Material.
+	 * @param cam_pos The camera position
+	 * @param intersect The point of intersection with this object and the ray.
+	 * @param light_pos The position of the light.
+	 * @param normal The normal at the point of intersection
+	 * @return The color for this intersection point.
+	 */
 	virtual Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
 
+	virtual bool hasMat() { return true; }
+	virtual Material& getMat() { return _mat; }
 	/**
 	 * Draw the object using GLUT functions and OpenGL.
 	 * NOTE: This has nothing to do with raytracing the object!

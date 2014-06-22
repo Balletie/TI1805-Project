@@ -8,7 +8,7 @@
 
 #include "raytracing.h"
 
-#include "kdtree/kdnode.h"
+#include "kdtree/kdtree.h"
 #include "shapes/shapes.h"
 
 //temporary variables
@@ -16,10 +16,9 @@ Vec3Df testRayOrigin;
 Vec3Df testRayDestination;
 Vec3Df new_orig;
 Vec3Df new_dest;
-std::vector<Shape*> shapes;
+std::vector<OurObject*> shapes;
 std::vector<Material> materials;
 std::vector<OurTriangle*> triangles;
-KDNode* node = new KDNode();
 
 //use this function for any preprocessing of the mesh.
 void init()
@@ -81,7 +80,7 @@ void init()
 		triangles.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
 	}
 
-	node = node->build(triangles, 10);
+	shapes.push_back(new KDTree(triangles));
 }
 
 //return the color of your pixel.
@@ -106,13 +105,29 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	Vec3Df reflectivity;
 
 	//Reference to the intersected object.
-	OurTriangle* intersected;
+	OurObject* intersected;
 
 	float current_depth = FLT_MAX;
-	if(!node->intersect(node, origin, dir, intersected, new_origin, normal, current_depth)) return Vec3Df(0.f,0.f,0.f);
+	bool intersection = false;
+	for (int i = 0; i < shapes.size(); i++) {
+		Vec3Df new_new_origin;
+		Vec3Df new_normal;
+
+		if (shapes[i]->intersect(origin, dir, new_new_origin, new_normal)) {
+			intersection = true;
+			float new_depth = (new_new_origin - origin).getLength();
+
+			if (new_depth < current_depth) {
+				current_depth = new_depth;
+				normal = new_normal;
+				new_origin = new_new_origin;
+				intersected = shapes[i];
+			}
+		}
+	}
 
 	// Re-use intersection here
-	bool intersection = false;
+	intersection = false;
 	for (unsigned int i = 0; i < shapes.size(); i++) {
 		Vec3Df stub1;
 		Vec3Df stub2;
@@ -133,7 +148,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 
 	// Shade the object.
 	color = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
-	reflectivity = intersected->_mat.Ks();
+	reflectivity = intersected->getMat().Ks();
 
 	if (++level == max)	return color;
 	else return color + reflectivity * performRayTracing(new_origin, reflect, level, max);
@@ -149,9 +164,9 @@ void yourDebugDraw()
 	glDisable(GL_LIGHTING);
 
 	// Draw all the shapes for the viewport window.
-	for (int i = 0; i < shapes.size(); i++) {
-		shapes[i]->draw();
-	}
+	//for (int i = 0; i < shapes.size(); i++) {
+	//	shapes[i]->draw();
+	//}
 
 	glColor3f(0,1,1);
 	glBegin(GL_LINES);
