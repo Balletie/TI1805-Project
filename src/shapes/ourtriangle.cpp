@@ -10,6 +10,15 @@ void OurTriangle::barycentric(Vec3Df &p, float &a, float &b) {
 	Vec3Df u = _mesh->vertices[_triangle->v[1]].p - _origin;
 	Vec3Df v = _mesh->vertices[_triangle->v[2]].p - _origin;
 
+	float d00 = Vec3Df::dotProduct(u, u);
+	float d01 = Vec3Df::dotProduct(u, v);
+	float d11 = Vec3Df::dotProduct(v, v);
+	float d20 = Vec3Df::dotProduct(p - _origin, u);
+	float d21 = Vec3Df::dotProduct(p - _origin, v);
+	float invDenom = 1.0 / (d00 * d11 - d01 * d01);
+
+	a = (d11 * d20 - d01 * d21) * invDenom;
+	b = (d00 * d21 - d01 * d20) * invDenom;
 }
 
 bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
@@ -35,16 +44,8 @@ bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new
 	//
 	// STEP 2: Determine barycentric coordinates using Cramer's rule
 	//
-	float d00 = Vec3Df::dotProduct(u, u);
-	float d01 = Vec3Df::dotProduct(u, v);
-	float d11 = Vec3Df::dotProduct(v, v);
-	float d20 = Vec3Df::dotProduct(p - _origin, u);
-	float d21 = Vec3Df::dotProduct(p - _origin, v);
-	float invDenom = 1.0 / (d00 * d11 - d01 * d01);
-
-	float a = (d11 * d20 - d01 * d21) * invDenom;
-	float b = (d00 * d21 - d01 * d20) * invDenom;
-
+	float a, b;
+	barycentric(p, a, b);
 	if (a < -EPSILON || b < -EPSILON || a + b > 1) return false;
 
 	//
