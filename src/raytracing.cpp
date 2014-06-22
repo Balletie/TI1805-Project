@@ -28,8 +28,8 @@ void init()
 	//feel free to replace cube by a path to another model
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
-	MyMesh.loadMesh("meshes/cube.obj", true);
-	//MyMesh.loadMesh("meshes/Pen_subsurf.obj", true);
+	//MyMesh.loadMesh("meshes/cube.obj", true);
+	MyMesh.loadMesh("meshes/Pen_subsurf.obj", true);
 	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
@@ -82,26 +82,6 @@ void init()
 	}
 
 	node = node->build(triangles, 10);
-
-	printf("root: %d\n", node->triangles.size());
-	printf("min: %f %f %f\n", node->bbox._min[0], node->bbox._min[1], node->bbox._min[2]);
-	printf("max: %f %f %f\n", node->bbox._max[0], node->bbox._max[1], node->bbox._max[2]);
-	printf("root->left: %d\n", node->left->triangles.size());
-	printf("root->left->min: %f %f %f\n", node->left->bbox._min[0], node->left->bbox._min[1], node->left->bbox._min[2]);
-	printf("root->left->max: %f %f %f\n", node->left->bbox._max[0], node->left->bbox._max[1], node->left->bbox._max[2]);
-	Vec3Df x = MyMesh.vertices[node->left->triangles[0]->_triangle->v[0]].p;
-	Vec3Df y = MyMesh.vertices[node->left->triangles[0]->_triangle->v[1]].p;
-	Vec3Df z = MyMesh.vertices[node->left->triangles[0]->_triangle->v[2]].p;
-	printf("root->left->triangle[0].x: %f %f %f\n", x[0], x[1], x[2]);
-	printf("root->left->triangle[0].y: %f %f %f\n", y[0], y[1], y[2]);
-	printf("root->left->triangle[0].z: %f %f %f\n", z[0], z[1], z[2]);
-	x = MyMesh.vertices[node->left->triangles[1]->_triangle->v[0]].p;
-	y = MyMesh.vertices[node->left->triangles[1]->_triangle->v[1]].p;
-	z = MyMesh.vertices[node->left->triangles[1]->_triangle->v[2]].p;
-	printf("root->left->triangle[1].x: %f %f %f\n", x[0], x[1], x[2]);
-	printf("root->left->triangle[1].y: %f %f %f\n", y[0], y[1], y[2]);
-	printf("root->left->triangle[1].z: %f %f %f\n", z[0], z[1], z[2]);
-	printf("root->right: %d\n", node->right->triangles.size());
 }
 
 //return the color of your pixel.
@@ -132,7 +112,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	if(!node->intersect(node, origin, dir, intersected, new_origin, normal, current_depth)) return Vec3Df(0.f,0.f,0.f);
 
 	// Re-use intersection here
-	/*bool intersection = false;
+	bool intersection = false;
 	for (unsigned int i = 0; i < shapes.size(); i++) {
 		Vec3Df stub1;
 		Vec3Df stub2;
@@ -145,7 +125,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 		}
 	}
 	// If there was an intersection, this spot is occluded.
-	if (intersection)	return Vec3Df(0.f,0.f,0.f);*/
+	if (intersection)	return Vec3Df(0.f,0.f,0.f);
 
 	normal.normalize();
 	// Compute the reflection vector for the next recursive call.
@@ -194,17 +174,4 @@ void yourKeyboardFunc(char t, int x, int y)
 	// do what you want with the keyboard input t.
 	// x, y are the screen position
 	std::cout<< t <<" pressed! The mouse was in location "<<x<<","<<y<<"!"<<std::endl;
-	produceRay(x, y, testRayOrigin, testRayDestination);
-
-	Vec3Df orig = testRayOrigin;
-	Vec3Df dir = testRayDestination - testRayOrigin;
-	dir.normalize();
-
-	OurTriangle *intersected;
-	Vec3Df new_orig;
-	Vec3Df normal;
-	float depth = FLT_MAX;
-	node->intersect(node, orig, dir, intersected, new_orig, normal, depth);
-	printf("\n\n");
-	//node->left->bbox.intersect(orig, dir);
 }

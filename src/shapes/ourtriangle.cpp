@@ -16,11 +16,6 @@ bool OurTriangle::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new
 	Vec3Df u = _mesh->vertices[_triangle->v[1]].p - _origin;
 	Vec3Df v = _mesh->vertices[_triangle->v[2]].p - _origin;
 
-	printf("------------------------\n");
-	printf("v1: %f %f %f\n", _origin[0], _origin[1], _origin[2]);
-	printf("v2: %f %f %f\n", _mesh->vertices[_triangle->v[1]].p[0], _mesh->vertices[_triangle->v[1]].p[1], _mesh->vertices[_triangle->v[1]].p[2]);
-	printf("v3: %f %f %f\n", _mesh->vertices[_triangle->v[2]].p[0], _mesh->vertices[_triangle->v[2]].p[1], _mesh->vertices[_triangle->v[2]].p[2]);
-
 	//
 	// STEP 1: First calculate where the ray intersects the plane in which the triangle lies
 	//
