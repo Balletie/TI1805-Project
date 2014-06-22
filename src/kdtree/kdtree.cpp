@@ -18,7 +18,7 @@ Vec3Df KDTree::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3D
 	}
 }
 
-Vec3Df KDTree::refract(const Vec3Df &normal, const Vec3Df &dir, const float &ni, const float &fresnel) {
+Vec3Df KDTree::refract(const Vec3Df &normal, const Vec3Df &dir, const float &ni, float &fresnel) {
 	if (this->hasMat()) {
 		return _intersected->refract(normal, dir, ni, fresnel);
 	} else {

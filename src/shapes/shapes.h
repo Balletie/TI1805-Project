@@ -40,7 +40,7 @@ class OurObject {
 	 * @param ni1 The other refraction index.
 	 * @param fresnel The return address for the fresnel value.
 	 */
-	virtual Vec3Df refract(const Vec3Df&, const Vec3Df&, const float&, const float &fresnel) = 0;
+	virtual Vec3Df refract(const Vec3Df&, const Vec3Df&, const float&, float &fresnel) = 0;
 
 	virtual bool hasMat() = 0;
 	virtual Material& getMat() = 0;
@@ -68,7 +68,7 @@ class Shape : public OurObject {
 	 * @param ni1 The other refraction index.
 	 * @param fresnel The return address for the fresnel value.
 	 */
-	Vec3Df refract(const Vec3Df&, const Vec3Df&, const float&, const float &fresnel);
+	Vec3Df refract(const Vec3Df&, const Vec3Df&, const float&, float &fresnel);
 
 	virtual bool hasMat() { return true; }
 	virtual Material& getMat() { return _mat; }

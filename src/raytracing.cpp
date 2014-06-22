@@ -156,21 +156,23 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 		return directColor;
 	}
 
-	if (intersected->hasMat() && intersected->getMat().has_Ni()) {
-		float ni_air = 1.0f;
-		float fresnel = 0.f;
+	if (intersected->hasMat()) {
+		if (intersected->getMat().has_Ni()) {
+			float ni_air = 1.0f;
+			float fresnel = 0.f;
 
-		Vec3Df refract = intersected->refract(normal, dir, ni_air, fresnel);
-		float translucency = 1 - intersected->_mat.Tr();
-		if (translucency > 0)
-			refractedColor = translucency * performRayTracing(new_origin + EPSILON * refract, refract, level, max);
+			Vec3Df refract = intersected->refract(normal, dir, ni_air, fresnel);
+			float translucency = 1 - intersected->getMat().Tr();
+			if (translucency > 0)
+				refractedColor = translucency * performRayTracing(new_origin + EPSILON * refract, refract, level, max);
 
-		reflectivity = fresnel;
-		transmission = 1 - fresnel;
-	}
-	if (intersected->_mat.has_Ks()) {
-		Vec3Df reflect = dir - 2 * dotProduct * normal;
-		reflectedColor = performRayTracing(new_origin, reflect, level, max);
+			reflectivity = fresnel;
+			transmission = 1 - fresnel;
+		}
+		if (intersected->getMat().has_Ks()) {
+			Vec3Df reflect = dir - 2 * dotProduct * normal;
+			reflectedColor = performRayTracing(new_origin, reflect, level, max);
+		}
 	}
 
 	return directColor + reflectivity * reflectedColor + transmission * refractedColor;
