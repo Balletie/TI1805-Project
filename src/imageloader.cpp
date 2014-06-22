@@ -18,9 +18,7 @@
  */
 /* File for "Textures" lesson of the OpenGL tutorial on
  * www.videotutorialsrock.com
- */
-
-
+ */ 
 
 #include <assert.h>
 #include <fstream>
@@ -29,11 +27,11 @@
 
 using namespace std;
 
-Image::Image(char* ps, int w, int h) : pixels(ps), width(w), height(h) {
+BMPImage::BMPImage(char* ps, int w, int h) : pixels(ps), width(w), height(h) {
 	
 }
 
-Image::~Image() {
+BMPImage::~BMPImage() {
 	delete[] pixels;
 }
 
@@ -132,7 +130,7 @@ namespace {
 	};
 }
 
-Image* loadBMP(const char* filename) {
+BMPImage* loadBMP(const char* filename) {
 	ifstream input;
 	input.open(filename, ifstream::binary);
 	assert(!input.fail() || !"Could not find file");
@@ -197,14 +195,5 @@ Image* loadBMP(const char* filename) {
 	}
 	
 	input.close();
-	return new Image(pixels2.release(), width, height);
+	return new BMPImage(pixels2.release(), width, height);
 }
-
-
-
-
-
-
-
-
-

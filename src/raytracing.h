@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "mesh.h"
+#include "imageloader.h"
 
 extern Mesh MyMesh; //Main mesh
 extern std::vector<Vec3Df> MyLightPositions;
@@ -34,4 +35,5 @@ void yourDebugDraw();
 //want keyboard interaction? Here it is...
 void yourKeyboardFunc(char t, int x, int y);
 
+GLuint loadTexture(BMPImage*);
 #endif
