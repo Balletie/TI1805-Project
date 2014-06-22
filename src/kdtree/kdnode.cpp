@@ -143,7 +143,7 @@ bool KDNode::intersect(KDNode* node, const Vec3Df& origin, const Vec3Df& dir, Ou
 						depth = new_depth;
 						normal = new_normal;
 						new_origin = new_new_origin;
-						intersected = triangles[i];
+						intersected = node->triangles[i];
 					}
 				}
 			}

@@ -119,7 +119,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 		Vec3Df lightPos = MyLightPositions[0] - new_origin;
 		float lightDist = lightPos.getLength();
 
-		if (shapes[i]->intersect(new_origin, lightPos, stub1, stub2)) {
+		if (triangles[i]->intersect(new_origin, lightPos, stub1, stub2)) {
 			if ((stub1 - new_origin).getLength() < lightDist)
 				intersection = true;
 		}
