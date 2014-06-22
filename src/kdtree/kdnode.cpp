@@ -11,9 +11,6 @@ void BoundingBox::expand(BoundingBox box) {
 		if (box._min[i] < _min[i]) _min[i] = box._min[i];
 		if (box._max[i] > _max[i]) _max[i] = box._max[i];
 	}
-
-	printf("min: %f %f %f\n", _min[0], _min[1], _min[2]);
-	printf("max: %f %f %f\n", _max[0], _max[1], _max[2]);
 }
 
 int BoundingBox::longestAxis() {
@@ -29,26 +26,35 @@ int BoundingBox::longestAxis() {
 }
 
 bool BoundingBox::intersect(const Vec3Df& origin, const Vec3Df& dir) {
-	float tmin = (_min[0] - origin[0]) / dir[0];
-	float tmax = (_max[0] - origin[0]) / dir[0];
-	if (tmin > tmax) std::swap(tmin, tmax);
-
+	float txmin = (_min[0] - origin[0]) / dir[0];
 	float tymin = (_min[1] - origin[1]) / dir[1];
-	float tymax = (_max[1] - origin[1]) / dir[1];
-	if (tymin > tymax) std::swap(tymin, tymax);
-
-	if ((tmin > tymax) || (tymin > tmax)) return false;
-	if (tymin > tmin) tmin = tymin;
-	if (tymax < tmax) tmax = tymax;
-
 	float tzmin = (_min[2] - origin[2]) / dir[2];
+
+	float txmax = (_max[0] - origin[0]) / dir[0];
+	float tymax = (_max[1] - origin[1]) / dir[1];
 	float tzmax = (_max[2] - origin[2]) / dir[2];
-	if (tzmin > tzmax) std::swap(tzmin, tzmax);
 
-	if ((tmin > tzmax) || (tzmin > tmax)) return false;
-	if (tzmin > tmin) tmin = tzmin;
-	if (tzmax < tmax) tmax = tzmax;
+	float tinx = std::min(txmin, txmax);
+	float toutx = std::max(txmin, txmax);
 
+	float tiny = std::min(tymin, tymax);
+	float touty = std::max(tymin, tymax);
+
+	float tinz = std::min(tzmin, tzmax);
+	float toutz = std::max(tzmin, tzmax);
+
+	printf("tinx: %f\n", tinx);
+	printf("toutx: %f\n", toutx);
+	printf("tiny: %f\n", tiny);
+	printf("touty: %f\n", touty);
+	printf("tinz: %f\n", tinz);
+	printf("toutz: %f\n", toutz);
+
+	if (tinx > toutx || toutx < 0) return false;
+	if (tiny > touty || touty < 0) return false;
+	if (tinz > toutz || toutz < 0) return false;
+
+	printf("intersect!\n");
 	return true;
 }
 
@@ -130,35 +136,41 @@ KDNode* KDNode::build(std::vector<OurTriangle*>& tris, int depth) const {
 	return node;
 }
 
-bool KDNode::intersect(KDNode* node, const Vec3Df& origin, const Vec3Df& dir, OurTriangle** intersected, Vec3Df& new_origin, Vec3Df& normal) {
+bool KDNode::intersect(KDNode* node, const Vec3Df& origin, const Vec3Df& dir, OurTriangle*& intersected, Vec3Df& new_origin, Vec3Df& normal, float& depth) {
+	printf("------------------------\n");
 	if (node->bbox.intersect(origin, dir)) {
-		printf("hit box!\n");
-		printf("left size: %d\n", node->left->triangles.size());
-		printf("right size: %d\n", node->right->triangles.size());
-
 		if (node->left->triangles.size() > 0 || node->right->triangles.size() > 0) {
-			bool hitLeft = intersect(node->left, origin, dir, intersected, new_origin, normal);
-			bool hitRight = intersect(node->right, origin, dir, intersected, new_origin, normal);
+			bool hitLeft = intersect(node->left, origin, dir, intersected, new_origin, normal, depth);
+			bool hitRight = intersect(node->right, origin, dir, intersected, new_origin, normal, depth);
 
 			return hitLeft || hitRight;
 		} else {
-			float current_depth = FLT_MAX;
+			printf("my size: %d\n", node->triangles.size());
+
 			bool intersection = false;
 			for (int i = 0; i < node->triangles.size(); i++) {
 				Vec3Df new_new_origin;
 				Vec3Df new_normal;
 
-				if (triangles[i]->intersect(origin, dir, new_new_origin, new_normal)) {
+				printf("testing triangle %d\n", i);
+
+				if (node->triangles[i]->intersect(origin, dir, new_new_origin, new_normal)) {
 					intersection = true;
 					float new_depth = (new_new_origin - origin).getLength();
-					if (new_depth < current_depth) {
-						current_depth = new_depth;
+
+					printf("depth: %f\n", new_depth);
+					printf("hit: %f %f %f\n", new_origin[0], new_origin[1], new_origin[2]);
+
+					if (new_depth < depth) {
+						depth = new_depth;
 						normal = new_normal;
 						new_origin = new_new_origin;
-						*intersected = triangles[i];
+						intersected = triangles[i];
 					}
 				}
 			}
+			printf("smallest depth: %f\n", depth);
+
 			return intersection;
 		}
 	}

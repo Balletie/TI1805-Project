@@ -37,7 +37,7 @@ public:
 	virtual ~KDNode();
 
 	KDNode* build(std::vector<OurTriangle*>& triangles, int depth) const;
-	bool intersect(KDNode* node, const Vec3Df& origin, const Vec3Df& dir, OurTriangle** intersected, Vec3Df& new_origin, Vec3Df& normal);
+	bool intersect(KDNode* node, const Vec3Df& origin, const Vec3Df& dir, OurTriangle*& intersected, Vec3Df& new_origin, Vec3Df& normal, float& depth);
 };
 
 #endif /* KDNODE_H_ */
