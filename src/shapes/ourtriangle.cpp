@@ -86,10 +86,6 @@ BoundingBox OurTriangle::getBoundingBox() {
 	return BoundingBox(min, max);
 }
 
-Vertex  OurTriangle::operator[] (int i) {
-	return _mesh->vertices[_triangle->v[i]];
-}
-
-Vertex& OurTriangle::operator[] (int i) const {
+Vertex  OurTriangle::operator[] (int i) const {
 	return _mesh->vertices[_triangle->v[i]];
 }
