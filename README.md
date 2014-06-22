@@ -12,12 +12,11 @@ jouw functionaliteit compleet is.
 
 | Functionaliteit | Wie?!?!                 | Status           | Af       |
 | --------------- | ------------------------| ---------------- | -------- |
-| Textures        | Owen & Piet             |                  | Zaterdag |
+| Textures        | Owen & Piet             |                  | Zondag   |
 | Soft Shadows    | Richard                 |                  | Zondag   |
-| Anti-Aliasing   | ??                      |                  |          |
+| Anti-Aliasing   | ??                      |                  | Maandag  |
 | Depth of Field  | ??                      |                  |          |
-| Refraction      | Jente & Dennis & Skip   |                  | Zaterdag |
-| Kd-Tree         | Gerlof & Skip           | RESEARCH :L      | Zondag   |
+| Refraction      | Jente & Dennis & Skip   |                  | Zondag   |
 | Blender scene   | Arjan                   |                  |          |
 | Fractals        | Skip (als ie voldoende tijd heeft), of iemand anders | | Maandag/Dinsdag |
 | Presentatie     | ??                      |                  | Dinsdag  |
