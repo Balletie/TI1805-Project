@@ -2,8 +2,9 @@
 #define __SHAPE_H__
 
 #include <stdint.h>
-#include "mesh.h"
-#include "Vec3D.h"
+
+#include "../mesh.h"
+#include "../Vec3D.h"
 
 static const float EPSILON = 1e-4;
 
@@ -79,6 +80,7 @@ class Checkerboard : public Plane {
 class OurTriangle : public Shape {
   public:
 	OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle);
+	void barycentric(Vec3Df &p, float &a, float &b);
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 	virtual void draw();
 	const Mesh* _mesh;

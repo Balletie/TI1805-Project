@@ -5,8 +5,10 @@
 #include <GL/glut.h>
 #include <float.h>
 #include <stdint.h>
+
+#include "kdnode.h"
 #include "raytracing.h"
-#include "shapes.h"
+#include "shapes/shapes.h"
 
 //temporary variables
 Vec3Df testRayOrigin;
@@ -23,9 +25,9 @@ void init()
 	//feel free to replace cube by a path to another model
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
-	//MyMesh.loadMesh("cube.obj", true);
-	MyMesh.loadMesh("Pen_low.obj", true);
-	MyMesh.computeVertexNormals();
+	//MyMesh.loadMesh("meshes/cube.obj", true);
+	//MyMesh.loadMesh("meshes/Pen_low.obj", true);
+	//MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
 	//at least ONE light source has to be in the scene!!!
