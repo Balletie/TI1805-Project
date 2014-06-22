@@ -1,5 +1,7 @@
 #include "boundingbox.h"
 
+#include <algorithm>
+
 BoundingBox::BoundingBox(Vec3Df min, Vec3Df max)
 : _min(min), _max(max)
 {}

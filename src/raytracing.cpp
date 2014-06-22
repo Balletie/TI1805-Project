@@ -106,7 +106,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	Vec3Df reflectivity;
 
 	//Reference to the intersected object.
-	OurObject* intersected;
+	OurObject* intersected = nullptr;
 
 	float current_depth = FLT_MAX;
 	bool intersection = false;
