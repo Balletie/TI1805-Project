@@ -70,6 +70,7 @@ class Checkerboard : public Plane {
 class OurTriangle : public Shape {
   public:
 	OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle);
+	void barycentric(Vec3Df &p, float &a, float &b);
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 	virtual void draw();
 	const Mesh* _mesh;
