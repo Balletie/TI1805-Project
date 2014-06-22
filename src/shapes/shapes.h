@@ -79,6 +79,8 @@ class OurTriangle : public Shape {
 	Vec3Df getMidPoint();
 	const Mesh* _mesh;
 	const Triangle* _triangle;
+	Vertex& operator[] (int i);
+	Vertex  operator[] (int i) const;
 };
 
 #endif
