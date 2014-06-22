@@ -36,9 +36,8 @@ void init()
 	//at least ONE light source has to be in the scene!!!
 	//here, we set it to the current location of the camera
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
-	MyLightPositions.push_back(MyCameraPosition);
 
-	Material plane_mat;
+		Material plane_mat;
 	plane_mat.set_Ka(0.2,0.2,0.2);
 	//plane_mat.set_Kd(0.2,0.2,0.2);
 	//plane_mat.set_Ks(0.5,0.5,0.5);
@@ -56,28 +55,28 @@ void init()
 	Material blue;
 	blue.set_Kd(0  , 0  , 0.2);
 	blue.set_Ks(0.2, 0.2, 0.2);
-	blue.set_Ni(1.3); //Water at 20 degrees C
+	blue.set_Ni(1.3330); //Water at 20 degrees C
 	blue.set_Tr(0.5);
 	materials.push_back(blue);
 	
 	Material brown_ish;
 	brown_ish.set_Kd(0.4, 0.4, 0  );
 	brown_ish.set_Ks(0.2, 0.2, 0.2);
-	brown_ish.set_Ni(1.3);
-	brown_ish.set_Tr(0.5);
+	brown_ish.set_Ni(3.0);
+	brown_ish.set_Tr(1);
 	materials.push_back(brown_ish);
 
 	Material grey;
 	//grey.set_Kd(0.1, 0.1, 0.1);
 	//grey.set_Ks(1  , 1  , 1  );
 	grey.set_Ni(1.3);
-	grey.set_Tr(0.5);
+	grey.set_Tr(0.3);
 	materials.push_back(grey);
 
 	shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
-	shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
-	shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 0, -3), 1));
-	shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, 1), 1));
+	//shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
+	//shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 0, -3), 1));
+	//shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, 1), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
@@ -134,29 +133,27 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	// There was no intersection, so return background color.
 	if (!intersection) return Vec3Df(0.f, 0.f, 0.f);
 
-	// The colors of the intersected object.
-	Vec3Df directColor = Vec3Df(0.f, 0.f, 0.f);
+	/*// Calculate shadows. TODO: multiple light sources.
+	Vec3Df lightPos = MyLightPositions[0] - new_origin;
+	float lightDist = lightPos.getLength();
+	for (unsigned int i = 0; i < shapes.size(); i++) {
+		Vec3Df stub1, stub2;
+		if (shapes[i]->intersect(new_origin, lightPos, stub1, stub2)) {
+			if (((stub1 - new_origin).getLength() < lightDist) || shapes[i]->_mat.Tr() == 1.0) {
+				// There was an intersection, this spot is occluded.
+				return Vec3Df(0.f, 0.f, 0.f);
+			}
+		}
+	}*/
+
+	// The color of the intersected object.
+	Vec3Df directColor = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
 	Vec3Df refractedColor = Vec3Df(0.f, 0.f, 0.f);
 	Vec3Df reflectedColor = Vec3Df(0.f, 0.f, 0.f);
 	double dotProduct = Vec3Df::dotProduct(dir, normal);
 	double reflectivity = 1.0f, transmission = 0.f; //FIXME: initial values correct?
 
-	// Calculate shadows.
-	for (unsigned int j = 0; j < MyLightPositions.size(); j++) {
-		Vec3Df lightPos = MyLightPositions[j] - new_origin;
-		float lightDist = lightPos.getLength();
-		for (unsigned int i = 0; i < shapes.size(); i++) {
-			Vec3Df stub1, stub2;
-			if (shapes[i]->intersect(new_origin, lightPos, stub1, stub2)) {
-				if (!((stub1 - new_origin).getLength() < lightDist)) { // || shapes[i]->getMat().Tr() != 1.0) {
-					// There was no intersection, this spot is not occluded.
-					directColor += intersected->shade(origin, new_origin, MyLightPositions[j], normal);
-				}
-			}
-		}
-	}
-
-	if (++level == max || directColor == Vec3Df(0.f, 0.f, 0.f)) {
+	if (++level == max) {
 		return directColor;
 	}
 
@@ -170,7 +167,6 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 			if (translucency > 0)
 				refractedColor = translucency * performRayTracing(new_origin + EPSILON * refract, refract, level, max);
 
-			// FIXME: only if translucency > 0?
 			reflectivity = fresnel;
 			transmission = 1 - fresnel;
 		}
