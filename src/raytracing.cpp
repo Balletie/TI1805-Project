@@ -28,6 +28,7 @@ void init()
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
 	//MyMesh.loadMesh("meshes/cube.obj", true);
+	//MyMesh.loadMesh("meshes/altair.obj", true);
 	MyMesh.loadMesh("meshes/Pen_subsurf.obj", true);
 	MyMesh.computeVertexNormals();
 
@@ -109,7 +110,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	// This will be instantiated with the coordinates of the intersection point.
 	Vec3Df new_origin;
 	//Reference to the intersected object.
-	OurObject* intersected;
+	OurObject* intersected = nullptr;
 
 	float current_depth = FLT_MAX;
 	bool intersection = false;
