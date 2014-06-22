@@ -6,7 +6,7 @@
 #include "../mesh.h"
 #include "../Vec3D.h"
 
-#include "../kdtree/kdnode.h"
+#include "boundingbox.h"
 
 static const float EPSILON = 1e-4;
 

@@ -6,25 +6,11 @@
 
 #include "../Vec3D.h"
 
-enum AXES {
-	X,
-	Y,
-	Z
-};
+#include "../shapes/boundingbox.h"
 
 // FORWARD DECLARATION
 class OurTriangle;
 class Shape;
-
-class BoundingBox {
-public:
-	BoundingBox(Vec3Df min = Vec3Df(FLT_MAX, FLT_MAX, FLT_MAX), Vec3Df max = Vec3Df(-FLT_MAX, -FLT_MAX, -FLT_MAX));
-	void expand(BoundingBox box);
-	int longestAxis();
-	bool intersect(const Vec3Df& origin, const Vec3Df& dir);
-	Vec3Df _min;
-	Vec3Df _max;
-};
 
 class KDNode {
 public:
