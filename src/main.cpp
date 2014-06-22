@@ -9,7 +9,7 @@
 #include "raytracing.h"
 #include "mesh.h"
 #include "traqueboule.h"
-extern std::vector<Shape*> shapes;
+extern std::vector<OurObject*> shapes;
 Vec3Df MyCameraPosition;
 
 std::vector<Vec3Df> MyLightPositions;
