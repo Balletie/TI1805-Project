@@ -378,29 +378,58 @@ void keyboard(unsigned char key, int x, int y)
 		Vec3Df origin11, dest11;
 		Vec3Df origin, dest;
 
-
+		// Shoot rays to obtain their coordinates in world space
 		produceRay(0,0, &origin00, &dest00);
 		produceRay(0,WindowSize_Y-1, &origin01, &dest01);
 		produceRay(WindowSize_X-1,0, &origin10, &dest10);
 		produceRay(WindowSize_X-1,WindowSize_Y-1, &origin11, &dest11);
 
-		for (unsigned int y=0; y<WindowSize_Y;++y)
-			for (unsigned int x=0; x<WindowSize_X;++x)
-			{
-				//svp, decidez vous memes quels parametres vous allez passer � la fonction
-				//e.g., maillage, triangles, sph�res etc.
-				float xscale=1.0f-float(x)/(WindowSize_X-1);
-				float yscale=float(y)/(WindowSize_Y-1);
+		// Translate the origin of the ray and mirror it
+		Vec3Df torig01 = origin01 - origin00;
+		Vec3Df torig10 = origin10 - origin00;
 
-				origin=yscale*(xscale*origin00+(1-xscale)*origin10)+
-					(1-yscale)*(xscale*origin01+(1-xscale)*origin11);
-				dest=yscale*(xscale*dest00+(1-xscale)*dest10)+
-					(1-yscale)*(xscale*dest01+(1-xscale)*dest11);
+		// Translate the destination of the ray and mirror it
+		Vec3Df tdest01 = dest01 - dest00;
+		Vec3Df tdest10 = dest10 - dest00;
 
-		
-				Vec3Df rgb = performRayTracing(origin, dest);
+		// SET YOUR MULTISAMPLING LEVEL HERE //
+		// 0 = undefined
+		// 1 = undefined
+		// 2 = multisampling x4
+		// 3 = multisampling x8
+		// 4 = multisampling x16
+		int samplinglevel = 2;
+		int samples = pow(2, samplinglevel);
+
+		// IF YOU WANT TO DISABLE MULTISAMPLING //
+		//int samplinglevel = 1;
+		//int samples = 1;
+
+		for (unsigned int y=0; y<WindowSize_Y;++y) {
+			for (unsigned int x=0; x<WindowSize_X;++x) {
+				// Initialize our color to black
+				Vec3Df rgb(0, 0, 0);
+
+				float deltaX = 1.0f / (WindowSize_X * samplinglevel - 1);
+				float deltaY = 1.0f / (WindowSize_Y * samplinglevel - 1);
+
+				float xscale = 		x * deltaX * samplinglevel;
+				float yscale = 1 -	y * deltaY * samplinglevel;
+
+				// Multiply our origins with xscale and yscale and translate back to world space
+				origin = 	xscale * torig10 + yscale * torig01 + origin00;
+				for (int i = 0; i < samples; i++) {
+					// Multiply our destinations with *scale + multisampling coordinate and translate back to world space
+					dest = 		(xscale + i / samplinglevel * deltaX) * tdest10 +
+								(yscale + i % samplinglevel * deltaY) * tdest01 + dest00;
+					rgb += performRayTracing(origin, dest);
+				}
+
+				// Divide the color by the number of samples we've taken
+				rgb = rgb / samples;
 				result.setPixel(x,y, RGBValue(rgb[0], rgb[1], rgb[2]));
 			}
+		}
 		
 
 		result.writeImage("result.ppm");
