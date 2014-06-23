@@ -103,7 +103,7 @@ class Plane : public Shape {
 class Checkerboard : public Plane {
   public:
 	Checkerboard(Material& mat, Vec3Df org, Vec3Df coeff);
-	Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
+	virtual Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
   private:
 	const float checker_size = 2.f;
 };
@@ -111,6 +111,7 @@ class Checkerboard : public Plane {
 class OurTriangle : public Shape {
   public:
 	OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle);
+	virtual Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
 	void barycentric(Vec3Df &p, float &a, float &b);
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 	virtual void draw();

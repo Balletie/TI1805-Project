@@ -6,6 +6,11 @@ OurTriangle::OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle)
 : Shape(mat, mesh->vertices[triangle->v[0]].p), _mesh(mesh), _triangle(triangle)
 {}
 
+Vec3Df OurTriangle::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal) {
+	int u = 0;
+	int v = 0;
+	return Shape::shade(cam_pos, intersect, light_pos, normal);
+}
 void OurTriangle::barycentric(Vec3Df &p, float &a, float &b) {
 	Vec3Df u = _mesh->vertices[_triangle->v[1]].p - _origin;
 	Vec3Df v = _mesh->vertices[_triangle->v[2]].p - _origin;
