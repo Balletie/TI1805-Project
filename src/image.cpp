@@ -35,7 +35,7 @@ bool Image::readImage(const char * filename)
 	FILE* file;
 	file = fopen(filename, "r");
 	if (!file) {
-		printf("ERROR: No such file\n");
+		printf("ERROR: No file called %s!\n", filename);
 		return false;
 	}	
 	char* type[2];
@@ -48,17 +48,17 @@ bool Image::readImage(const char * filename)
 
 	sscanf(buf, "%i %i\n", &width, &height);
 	fscanf(file, "255\n");
-	printf("width %i height %i\n", width, height);
 	this->_width = width;
 	this->_height = height;
 	std::vector<unsigned char> imageC(width * height * 3);
 	int t = fread(&(imageC[0]), width * height * 3, 1, file);
 	for (int i = 0; i < imageC.size(); i++) {
 		_image.push_back((float)imageC[i]/255.0f);
-		printf("%f ", _image[i]);
-		if ((i + 1) % 3 == 0) printf("\n");
+		//printf("%f ", _image[i]);
+		//if ((i + 1) % 3 == 0) printf("\n");
 	}
-	printf("\n");
+	printf("Loaded texture %s\n", filename);
+	return true;
 }
 
 Vec3Df Texture::getColor(int u, int v) {

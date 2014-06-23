@@ -1,3 +1,5 @@
+#ifndef _IMAGE_H_
+#define _IMAGE_H_
 #include <stdlib.h>
 #include "Vec3D.h"
 #include <vector>
@@ -94,5 +96,6 @@ class Texture {
 	void convertBarycentricToTexCoord(float a, float b, Vec3Df* texcoords, int& tex_u, int& tex_v);
 	Vec3Df getColor(int u, int v);
 	private:
-	const Image _image_data;
+	Image _image_data;
 };
+#endif
