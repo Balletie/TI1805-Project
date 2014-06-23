@@ -18,6 +18,14 @@ Vec3Df KDTree::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3D
 	}
 }
 
+Vec3Df KDTree::refract(const Vec3Df &normal, const Vec3Df &dir, const float &ni, float &fresnel) {
+	if (this->hasMat()) {
+		return _intersected->refract(normal, dir, ni, fresnel);
+	} else {
+		return Vec3Df(0.f,0.f,0.f);
+	}
+}
+
 KDNode* KDTree::build(std::vector<OurTriangle*>& tris) {
 	KDNode* node = new KDNode();
 	node->triangles = tris;
