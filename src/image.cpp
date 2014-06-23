@@ -1,4 +1,5 @@
 #include "image.h"
+#include <stdio.h>
 
 bool Image::writeImage(const char * filename)
 {
