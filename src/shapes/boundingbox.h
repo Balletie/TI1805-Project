@@ -16,7 +16,7 @@ public:
 	BoundingBox(Vec3Df min = Vec3Df(FLT_MAX, FLT_MAX, FLT_MAX), Vec3Df max = Vec3Df(-FLT_MAX, -FLT_MAX, -FLT_MAX));
 	void expand(BoundingBox box);
 	int longestAxis();
-	bool intersect(const Vec3Df& origin, const Vec3Df& dir);
+	bool intersect(const Vec3Df& origin, const Vec3Df& dir, float depth);
 	Vec3Df _min;
 	Vec3Df _max;
 };

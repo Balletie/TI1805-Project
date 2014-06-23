@@ -22,7 +22,7 @@ public:
 	KDNode();
 	virtual ~KDNode();
 
-	bool intersect(KDNode* node, const Vec3Df& origin, const Vec3Df& dir, OurTriangle*& intersected, Vec3Df& new_origin, Vec3Df& normal, float& depth);
+	bool intersect(const Vec3Df& origin, const Vec3Df& dir, OurTriangle*& intersected, Vec3Df& new_origin, Vec3Df& normal, float& depth);
 };
 
 #endif /* KDNODE_H_ */

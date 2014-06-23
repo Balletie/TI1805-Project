@@ -25,7 +25,7 @@ int BoundingBox::longestAxis() {
 	return Z;
 }
 
-bool BoundingBox::intersect(const Vec3Df& origin, const Vec3Df& dir) {
+bool BoundingBox::intersect(const Vec3Df& origin, const Vec3Df& dir, float depth) {
 	float denomx = 1.0f / dir[0];
 	float denomy = 1.0f / dir[1];
 	float denomz = 1.0f / dir[2];
@@ -44,5 +44,7 @@ bool BoundingBox::intersect(const Vec3Df& origin, const Vec3Df& dir) {
 	if (tmax < 0) return false;
 	if (tmin > tmax) return false;
 
+	Vec3Df intersect = tmin * dir;
+	depth = intersect.getLength();
 	return true;
 }

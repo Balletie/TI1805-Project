@@ -7,7 +7,7 @@ KDTree::KDTree(std::vector<OurTriangle*>& triangles) {
 
 bool KDTree::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
 	float depth = FLT_MAX;
-	return _root->intersect(_root, origin, dir, _intersected, new_origin, normal, depth);
+	return _root->intersect(origin, dir, _intersected, new_origin, normal, depth);
 }
 
 Vec3Df KDTree::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal) {

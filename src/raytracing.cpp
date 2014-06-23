@@ -28,8 +28,8 @@ void init()
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
 	//MyMesh.loadMesh("meshes/cube.obj", true);
-	//MyMesh.loadMesh("meshes/altair.obj", true);
 	MyMesh.loadMesh("meshes/altair.obj", true);
+	//MyMesh.loadMesh("meshes/Pen_subsurf.obj", true);
 	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
