@@ -47,14 +47,16 @@ bool Image::readImage(const char * filename)
 	int t = fread(&(imageC[0]), width * height * 3, 1, file);
 	for (int i = 0; i < imageC.size(); i++) {
 		_image.push_back((float)imageC[i]/255.0f);
-		printf("%f",_image[i]);
+		printf("%f ", _image[i]);
+		if (i % 3) printf("\n");
 	}
+	printf("\n");
 }
 
 Vec3Df Texture::getColor(int u, int v) {
 	Vec3Df rgb(0.f,0.f,0.f);
 	for (int i = 0; i < 3; i++) {
-		rgb[i] = _image_data[u * 3 + v * 3 * _width + i];
+		rgb[i] = _image_data._image[u * 3 + v * 3 * _image_data._width + i];
 	}
 	return rgb;
 }
@@ -62,7 +64,7 @@ Vec3Df Texture::getColor(int u, int v) {
 void Texture::convertBarycentricToTexCoord(float a, float b, Vec3Df* texcoords, int& tex_u, int& tex_v) {
 	//calculate third barycentric coordinate
 	float c = 1 - a - b;
-	Vec3Df& uv = a * texcoords[0] + b * texcoords[1] + c * texcoords[2];
+	Vec3Df uv = a * texcoords[0] + b * texcoords[1] + c * texcoords[2];
 	tex_u = uv[0];
 	tex_v = uv[1];
 }

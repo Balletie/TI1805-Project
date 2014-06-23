@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "Vec3D.h"
 #include <vector>
 
 //image class just dumped to hide...

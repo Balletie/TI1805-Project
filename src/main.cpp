@@ -154,6 +154,9 @@ int main(int argc, char** argv)
 
 
 	Image img("test.ppm");
+	Texture tex(img);
+	Vec3Df test = tex.getColor(2,0);
+	printf("%f %f %f\n", test[0], test[1], test[2]);
 	init();
 
     // lancement de la boucle principale
