@@ -1,4 +1,5 @@
 #include "image.h"
+#include <stdio.h>
 
 bool Image::writeImage(const char * filename)
 {
@@ -55,7 +56,7 @@ bool Image::readImage(const char * filename)
 	for (int i = 0; i < imageC.size(); i++) {
 		_image.push_back((float)imageC[i]/255.0f);
 		printf("%f ", _image[i]);
-		if (i % 3) printf("\n");
+		if ((i + 1) % 3 == 0) printf("\n");
 	}
 	printf("\n");
 }
