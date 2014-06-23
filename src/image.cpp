@@ -39,7 +39,14 @@ bool Image::readImage(const char * filename)
 	}	
 	char* type[2];
 	int width, height;
-	fscanf(file, "%s\n%i %i\n255\n", &type, &width, &height);
+	fscanf(file, "%*s\n");
+	char buf[256];
+	while (fgets(buf, 256, file) && buf[0] == '#') {
+		printf(buf);
+	}
+
+	sscanf(buf, "%i %i\n", &width, &height);
+	fscanf(file, "255\n");
 	printf("width %i height %i\n", width, height);
 	this->_width = width;
 	this->_height = height;
@@ -65,6 +72,6 @@ void Texture::convertBarycentricToTexCoord(float a, float b, Vec3Df* texcoords, 
 	//calculate third barycentric coordinate
 	float c = 1 - a - b;
 	Vec3Df uv = a * texcoords[0] + b * texcoords[1] + c * texcoords[2];
-	tex_u = uv[0];
-	tex_v = uv[1];
+	tex_u = _image_data._width * uv[0];
+	tex_v = _image_data._width * uv[1];
 }
