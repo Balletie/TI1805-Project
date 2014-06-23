@@ -1,5 +1,6 @@
 #include "shapes.h"
 
+#include <stdio.h>
 #include "float.h"
 
 OurTriangle::OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle)
