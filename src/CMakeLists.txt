@@ -2,6 +2,7 @@ add_subdirectory(kdtree)
 add_subdirectory(shapes)
 
 set (main
+	image.cpp
 	raytracing.cpp
 	mesh.cpp
 	main.cpp

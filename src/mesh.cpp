@@ -370,6 +370,7 @@ bool Mesh::loadMtl(const char * filename, std::map<string, unsigned int> & mater
 			if (!t.empty() && t[t.length()-1] == '\n') {
 				t.erase(t.length()-1);
 			}
+			//Image tex_img(t);
 			// map_Kd, diffuse map
 			// map_Ks, specular map
 			// map_Ka, ambient map
@@ -377,6 +378,7 @@ bool Mesh::loadMtl(const char * filename, std::map<string, unsigned int> & mater
 			// map_d,  opacity map
 			// just skip this
 			mat.set_textureName(t);
+			
 		}
 		else if (strncmp(line, "Tr ", 3) == 0) { // transparency value
 			sscanf(line, "Tr %f", &f1);
