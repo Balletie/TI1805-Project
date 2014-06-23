@@ -5,6 +5,7 @@
 #include <GL/glut.h>
 #include <float.h>
 #include <stdint.h>
+#include <omp.h>
 
 #include "raytracing.h"
 
@@ -29,7 +30,7 @@ void init()
 	//Nonetheless, if they come from Blender, they should.
 	//MyMesh.loadMesh("meshes/cube.obj", true);
 	//MyMesh.loadMesh("meshes/altair.obj", true);
-	MyMesh.loadMesh("meshes/pen_low.obj", true);
+	MyMesh.loadMesh("meshes/test.obj", true);
 	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
@@ -40,12 +41,13 @@ void init()
 		Material plane_mat;
 	//plane_mat.set_Ka(0.2,0.2,0.2);
 	//plane_mat.set_Kd(0.2,0.2,0.2);
-	plane_mat.set_Ks(0.5,0.5,0.5);
+	//plane_mat.set_Ks(0.5,0.5,0.5);
 	//plane_mat.set_Ni(1.7); //glass refractive index;
 	plane_mat.set_Tr(1.0);
 	materials.push_back(plane_mat);
 
 	Material red;
+	red.set_Ka(0.2, 0.f, 0.f);
 	red.set_Kd(0.2,0.f,0.f);
 	red.set_Ks(0.2,0.2,0.2);
 	red.set_Ni(1.3);
@@ -53,6 +55,7 @@ void init()
 	materials.push_back(red);
 
 	Material blue;
+	blue.set_Ka(0, 0, 0.2);
 	blue.set_Kd(0  , 0  , 0.2);
 	blue.set_Ks(0.2, 0.2, 0.2);
 	blue.set_Ni(1.3330); //Water at 20 degrees C
@@ -60,6 +63,7 @@ void init()
 	materials.push_back(blue);
 	
 	Material brown_ish;
+	brown_ish.set_Ka(0.4, 0.4, 0);
 	brown_ish.set_Kd(0.4, 0.4, 0  );
 	brown_ish.set_Ks(0.2, 0.2, 0.2);
 	brown_ish.set_Ni(3.0);
@@ -67,6 +71,7 @@ void init()
 	materials.push_back(brown_ish);
 
 	Material grey;
+	grey.set_Ka(0.1, 0.1, 0.1);
 	//grey.set_Kd(0.1, 0.1, 0.1);
 	//grey.set_Ks(1  , 1  , 1  );
 	grey.set_Ni(1.3);
@@ -74,9 +79,9 @@ void init()
 	materials.push_back(grey);
 
 	shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
-	//shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
-	//shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 0, -3), 1));
-	//shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, 1), 1));
+	shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
+	shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 0, -3), 1));
+	shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, 1), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
@@ -89,6 +94,8 @@ void init()
 	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
 		triangles.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
+		
+		//std::cout << Mymesh.triang << " texture coords" << std::endl;
 	}
 
 	shapes.push_back(new KDTree(triangles));
@@ -133,21 +140,13 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	// There was no intersection, so return background color.
 	if (!intersection) return Vec3Df(0.f, 0.f, 0.f);
 
-	/*// Calculate shadows. TODO: multiple light sources.
-	Vec3Df lightPos = MyLightPositions[0] - new_origin;
-	float lightDist = lightPos.getLength();
-	for (unsigned int i = 0; i < shapes.size(); i++) {
-		Vec3Df stub1, stub2;
-		if (shapes[i]->intersect(new_origin, lightPos, stub1, stub2)) {
-			if (((stub1 - new_origin).getLength() < lightDist) || shapes[i]->_mat.Tr() == 1.0) {
-				// There was an intersection, this spot is occluded.
-				return Vec3Df(0.f, 0.f, 0.f);
-			}
-		}
-	}*/
 
-	// The color of the intersected object.
-	Vec3Df directColor = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
+
+	// The color of the intersected object for all lightsources.
+	Vec3Df directColor = Vec3Df(0.f, 0.f, 0.f); 
+	for (unsigned int j = 0; j < MyLightPositions.size(); j++)
+		directColor = directColor + intersected->shade(origin, new_origin, MyLightPositions[j], normal);
+
 	Vec3Df refractedColor = Vec3Df(0.f, 0.f, 0.f);
 	Vec3Df reflectedColor = Vec3Df(0.f, 0.f, 0.f);
 	double dotProduct = Vec3Df::dotProduct(dir, normal);
@@ -158,6 +157,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	}
 
 	if (intersected->hasMat()) {
+		//refraction
 		if (intersected->getMat().has_Ni()) {
 			float ni_air = 1.0f;
 			float fresnel = 0.f;
@@ -167,23 +167,51 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 			if (intersected->getMat().has_Tr())
 				translucency = 1 - intersected->getMat().Tr();
 			if (translucency > 0)
-				refractedColor = translucency * performRayTracing(new_origin + refract * EPSILON, refract, level, max);
-
+					refractedColor = translucency * performRayTracing(new_origin + refract * EPSILON, refract, level, max);
 			reflectivity = fresnel;
 			transmission = 1 - fresnel;
+
 		}
+		//refection
 		if (intersected->getMat().has_Ks()) {
 			Vec3Df reflect = dir - 2 * dotProduct * normal;
-			if (reflectivity > 0)
-			reflectedColor = performRayTracing(new_origin, reflect, level, max);
+			if (reflectivity > 0) 
+					reflectedColor = performRayTracing(new_origin, reflect, level, max);
 		}
+
 	}
-	
-	return directColor + reflectivity * reflectedColor + transmission * refractedColor;
+
+	boolean clear = false; // is not fully in a shadow
+	intersection = false;
+	// Calculate shadows. multiple light sources. tansparant shadows.
+	for (unsigned int j = 0; j < MyLightPositions.size(); j++) {
+		Vec3Df lightPos = MyLightPositions[j] - new_origin;
+		float lightDist = lightPos.getLength();
+		for (unsigned int i = 0; i < shapes.size(); i++) {
+			Vec3Df stub1, stub2;
+			if (shapes[i]->intersect(new_origin, lightPos, stub1, stub2)) {
+				if (((stub1 - new_origin).getLength() < lightDist) && shapes[i]->getMat().Tr() == 1.0)
+					// There was an intersection, this spot is occluded.
+					intersection = true;
+				else if (((stub1 - new_origin).getLength() < lightDist) && shapes[i]->getMat().Ka() != Vec3Df(0.f, 0.f, 0.f))
+					directColor = directColor + intersected->shade(origin, new_origin, MyLightPositions[j], normal) * shapes[i]->getMat().Ka();
+				else if ((stub1 - new_origin).getLength() < lightDist)
+					directColor = directColor / 1.25;
+			}
+		}
+		if (!intersection)
+			clear = true;
+		else directColor = (directColor / 2);
+	}
+	if (clear)
+		return directColor + reflectivity * reflectedColor + transmission * refractedColor;
+	else
+		return reflectivity * reflectedColor + transmission * refractedColor;
 }
 
 void yourDebugDraw()
 {
+	
 	//draw open gl debug stuff
 	//this function is called every frame
 
