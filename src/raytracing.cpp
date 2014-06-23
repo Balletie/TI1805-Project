@@ -99,10 +99,10 @@ for(auto it = textures.cbegin(); it != textures.cend(); ++it)
 		if (mat.has_tex()) {
 			t->setTexture(textures.at(mat.textureName()));
 		}
-		triangles.push_back(t);
+		shapes.push_back(t);
 	}
 
-	shapes.push_back(new KDTree(triangles));
+//	shapes.push_back(new KDTree(triangles));
 }
 
 //return the color of your pixel.
