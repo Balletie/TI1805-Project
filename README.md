@@ -19,6 +19,7 @@ jouw functionaliteit compleet is.
 | Refraction      | Jente & Dennis & Skip   |                  | Zondag   |
 | Blender scene   | Arjan                   |                  |          |
 | Fractals        | Skip (als ie voldoende tijd heeft), of iemand anders | | Maandag/Dinsdag |
+| Light intensity | Piet		    |		       | Dinsdag  |
 | Presentatie     | ??                      |                  | Dinsdag  |
 | Verslag         | ??                      |                  | Dinsdag  |
 
