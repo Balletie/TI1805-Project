@@ -29,7 +29,7 @@ void init()
 	//Nonetheless, if they come from Blender, they should.
 	//MyMesh.loadMesh("meshes/cube.obj", true);
 	//MyMesh.loadMesh("meshes/altair.obj", true);
-	MyMesh.loadMesh("meshes/pen_low.obj", true);
+	MyMesh.loadMesh("meshes/Pen_low.obj", true);
 	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
@@ -37,7 +37,7 @@ void init()
 	//here, we set it to the current location of the camera
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
 
-		Material plane_mat;
+	Material plane_mat;
 	//plane_mat.set_Ka(0.2,0.2,0.2);
 	//plane_mat.set_Kd(0.2,0.2,0.2);
 	plane_mat.set_Ks(0.5,0.5,0.5);
@@ -117,11 +117,9 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	for (int i = 0; i < shapes.size(); i++) {
 		Vec3Df new_new_origin;
 		Vec3Df new_normal;
-
 		if (shapes[i]->intersect(origin, dir, new_new_origin, new_normal)) {
 			intersection = true;
 			float new_depth = (new_new_origin - origin).getLength();
-
 			if (new_depth < current_depth) {
 				current_depth = new_depth;
 				normal = new_normal;
@@ -163,19 +161,20 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 			float fresnel = 0.f;
 
 			Vec3Df refract = intersected->refract(normal, dir, ni_air, fresnel);
-			float translucency = 0;
-			if (intersected->getMat().has_Tr())
-				translucency = 1 - intersected->getMat().Tr();
-			if (translucency > 0)
-				refractedColor = translucency * performRayTracing(new_origin + refract * EPSILON, refract, level, max);
-
 			reflectivity = fresnel;
 			transmission = 1 - fresnel;
+
+			float translucency = 0.f;
+			if (intersected->getMat().has_Tr()) {
+				translucency = 1 - intersected->getMat().Tr();
+				if (translucency > 0)
+					refractedColor = translucency * performRayTracing(new_origin + refract * EPSILON, refract, level, max);
+			}
 		}
 		if (intersected->getMat().has_Ks()) {
 			Vec3Df reflect = dir - 2 * dotProduct * normal;
 			if (reflectivity > 0)
-			reflectedColor = performRayTracing(new_origin, reflect, level, max);
+				reflectedColor = performRayTracing(new_origin, reflect, level, max);
 		}
 	}
 	
