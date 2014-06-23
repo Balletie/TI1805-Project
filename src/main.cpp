@@ -400,12 +400,17 @@ void keyboard(unsigned char key, int x, int y)
 				// Initialize our color to black
 				Vec3Df rgb(0, 0, 0);
 
-				float xscale = float(x) / (WindowSize_X - 1);
-				float yscale = 1 - float(y) / (WindowSize_Y - 1);
+				float deltaX = 1.0f / (WindowSize_X * 2 - 1);
+				float deltaY = 1.0f / (WindowSize_Y * 2 - 1);
 
-				// Multiply with xscale and yscale and translate back to world space
+				float xscale = 		x * deltaX * 2;
+				float yscale = 1 -	y * deltaY * 2;
+
+				// Multiply our origins with xscale and yscale and translate back to world space
 				origin = 	xscale * torig10 + yscale * torig01 + origin00;
-				dest = 		xscale * tdest10 + yscale * tdest01 + dest00;
+				for (int i = 0; i < 4; i++) {
+					dest = 		xscale * tdest10 + yscale * tdest01 + dest00;
+				}
 
 				rgb += performRayTracing(origin, dest);
 
