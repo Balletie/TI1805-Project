@@ -392,27 +392,38 @@ void keyboard(unsigned char key, int x, int y)
 		Vec3Df tdest01 = dest01 - dest00;
 		Vec3Df tdest10 = dest10 - dest00;
 
-		int samplinglevel = 0;
+		// SET YOUR MULTISAMPLING LEVEL HERE //
+		// 0 = undefined
+		// 1 = undefined
+		// 2 = multisampling x4
+		// 3 = multisampling x8
+		// 4 = multisampling x16
+		int samplinglevel = 2;
 		int samples = pow(2, samplinglevel);
+
+		// IF YOU WANT TO DISABLE MULTISAMPLING //
+		//int samplinglevel = 1;
+		//int samples = 1;
 
 		for (unsigned int y=0; y<WindowSize_Y;++y) {
 			for (unsigned int x=0; x<WindowSize_X;++x) {
 				// Initialize our color to black
 				Vec3Df rgb(0, 0, 0);
 
-				float deltaX = 1.0f / (WindowSize_X * 2 - 1);
-				float deltaY = 1.0f / (WindowSize_Y * 2 - 1);
+				float deltaX = 1.0f / (WindowSize_X * samplinglevel - 1);
+				float deltaY = 1.0f / (WindowSize_Y * samplinglevel - 1);
 
-				float xscale = 		x * deltaX * 2;
-				float yscale = 1 -	y * deltaY * 2;
+				float xscale = 		x * deltaX * samplinglevel;
+				float yscale = 1 -	y * deltaY * samplinglevel;
 
 				// Multiply our origins with xscale and yscale and translate back to world space
 				origin = 	xscale * torig10 + yscale * torig01 + origin00;
-				for (int i = 0; i < 4; i++) {
-					dest = 		xscale * tdest10 + yscale * tdest01 + dest00;
+				for (int i = 0; i < samples; i++) {
+					// Multiply our destinations with *scale + multisampling coordinate and translate back to world space
+					dest = 		(xscale + i / samplinglevel * deltaX) * tdest10 +
+								(yscale + i % samplinglevel * deltaY) * tdest01 + dest00;
+					rgb += performRayTracing(origin, dest);
 				}
-
-				rgb += performRayTracing(origin, dest);
 
 				// Divide the color by the number of samples we've taken
 				rgb = rgb / samples;
