@@ -18,7 +18,10 @@ Vec3Df Shape::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df
 
 	if (this->_mat.has_Ka()) ambient = _mat.Ka();
 	if (this->_mat.has_Kd()) {
-		diffuse = Vec3Df::dotProduct(normal, light_vec) * _mat.Kd();
+		float dot = Vec3Df::dotProduct(normal, light_vec);
+		if (dot < 0)
+			dot = Vec3Df::dotProduct(-normal, light_vec);
+		diffuse = dot * _mat.Kd();
 	}
 	if(this->_mat.has_Ks()){
 		Vec3Df reflect = 2 * Vec3Df::dotProduct(light_vec, normal) * normal - light_vec;
@@ -58,8 +61,9 @@ Vec3Df Shape::refract(const Vec3Df &normal, const Vec3Df &dir, const float &ni, 
 			// FIXME: fresnel here too?
 			ni1 = ni;
 			ni2 = this->_mat.Ni();
-			dot = -dot;
+			dot = Vec3Df::dotProduct(-normal, dir);
 			
+
 			float fzero = pow(((ni1 - ni2) / (ni1 + ni2)), 2);
 			fresnel = (fzero + (1 - fzero) * pow((1 - dot), 5)) / 100;
 		}

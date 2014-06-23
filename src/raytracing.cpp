@@ -29,7 +29,7 @@ void init()
 	//Nonetheless, if they come from Blender, they should.
 	//MyMesh.loadMesh("meshes/cube.obj", true);
 	//MyMesh.loadMesh("meshes/altair.obj", true);
-	MyMesh.loadMesh("meshes/altair.obj", true);
+	MyMesh.loadMesh("meshes/pen_low.obj", true);
 	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
@@ -38,9 +38,9 @@ void init()
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
 
 		Material plane_mat;
-	plane_mat.set_Ka(0.2,0.2,0.2);
+	//plane_mat.set_Ka(0.2,0.2,0.2);
 	//plane_mat.set_Kd(0.2,0.2,0.2);
-	//plane_mat.set_Ks(0.5,0.5,0.5);
+	plane_mat.set_Ks(0.5,0.5,0.5);
 	//plane_mat.set_Ni(1.7); //glass refractive index;
 	plane_mat.set_Tr(1.0);
 	materials.push_back(plane_mat);
@@ -163,19 +163,22 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 			float fresnel = 0.f;
 
 			Vec3Df refract = intersected->refract(normal, dir, ni_air, fresnel);
-			float translucency = 1 - intersected->getMat().Tr();
+			float translucency = 0;
+			if (intersected->getMat().has_Tr())
+				translucency = 1 - intersected->getMat().Tr();
 			if (translucency > 0)
-				refractedColor = translucency * performRayTracing(new_origin + EPSILON * refract, refract, level, max);
+				refractedColor = translucency * performRayTracing(new_origin + refract * EPSILON, refract, level, max);
 
 			reflectivity = fresnel;
 			transmission = 1 - fresnel;
 		}
 		if (intersected->getMat().has_Ks()) {
 			Vec3Df reflect = dir - 2 * dotProduct * normal;
+			if (reflectivity > 0)
 			reflectedColor = performRayTracing(new_origin, reflect, level, max);
 		}
 	}
-
+	
 	return directColor + reflectivity * reflectedColor + transmission * refractedColor;
 }
 
