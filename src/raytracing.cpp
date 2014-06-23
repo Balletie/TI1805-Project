@@ -30,11 +30,7 @@ void init()
 	//Nonetheless, if they come from Blender, they should.
 	//MyMesh.loadMesh("meshes/cube.obj", true);
 	//MyMesh.loadMesh("meshes/altair.obj", true);
-<<<<<<< HEAD
-	MyMesh.loadMesh("meshes/test.obj", true);
-=======
 	MyMesh.loadMesh("meshes/Pen_low.obj", true);
->>>>>>> 854f8594c3f86da64d7d29f902949b97e94ebc77
 	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
@@ -165,16 +161,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 			float fresnel = 0.f;
 
 			Vec3Df refract = intersected->refract(normal, dir, ni_air, fresnel);
-<<<<<<< HEAD
-			float translucency = 0;
-			if (intersected->getMat().has_Tr())
-				translucency = 1 - intersected->getMat().Tr();
-			if (translucency > 0)
-					refractedColor = translucency * performRayTracing(new_origin + refract * EPSILON, refract, level, max);
-			reflectivity = fresnel;
-			transmission = 1 - fresnel;
 
-=======
 			reflectivity = fresnel;
 			transmission = 1 - fresnel;
 
@@ -184,18 +171,12 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 				if (translucency > 0)
 					refractedColor = translucency * performRayTracing(new_origin + refract * EPSILON, refract, level, max);
 			}
->>>>>>> 854f8594c3f86da64d7d29f902949b97e94ebc77
 		}
 		//refection
 		if (intersected->getMat().has_Ks()) {
 			Vec3Df reflect = dir - 2 * dotProduct * normal;
-<<<<<<< HEAD
-			if (reflectivity > 0) 
-					reflectedColor = performRayTracing(new_origin, reflect, level, max);
-=======
 			if (reflectivity > 0)
 				reflectedColor = performRayTracing(new_origin, reflect, level, max);
->>>>>>> 854f8594c3f86da64d7d29f902949b97e94ebc77
 		}
 
 	}
