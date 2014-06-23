@@ -384,11 +384,11 @@ void keyboard(unsigned char key, int x, int y)
 		produceRay(WindowSize_X-1,0, &origin10, &dest10);
 		produceRay(WindowSize_X-1,WindowSize_Y-1, &origin11, &dest11);
 
-		// Translate the origin of the ray
+		// Translate the origin of the ray and mirror it
 		Vec3Df torig01 = origin01 - origin00;
 		Vec3Df torig10 = origin10 - origin00;
 
-		// Translate the destination of the ray
+		// Translate the destination of the ray and mirror it
 		Vec3Df tdest01 = dest01 - dest00;
 		Vec3Df tdest10 = dest10 - dest00;
 
@@ -400,12 +400,12 @@ void keyboard(unsigned char key, int x, int y)
 				// Initialize our color to black
 				Vec3Df rgb(0, 0, 0);
 
-				float xscale = 1 - float(x) / (WindowSize_X - 1);
-				float yscale = float(y) / (WindowSize_Y - 1);
+				float xscale = float(x) / (WindowSize_X - 1);
+				float yscale = 1 - float(y) / (WindowSize_Y - 1);
 
 				// Multiply with xscale and yscale and translate back to world space
-				origin = 	(1 - xscale) * torig10 + (1 - yscale) * torig01 + origin00;
-				dest = 		(1 - xscale) * tdest10 + (1 - yscale) * tdest01 + dest00;
+				origin = 	xscale * torig10 + yscale * torig01 + origin00;
+				dest = 		xscale * tdest10 + yscale * tdest01 + dest00;
 
 				rgb += performRayTracing(origin, dest);
 
