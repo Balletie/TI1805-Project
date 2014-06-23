@@ -37,42 +37,52 @@ void init()
 	//here, we set it to the current location of the camera
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
 
-	Material plane_mat;
+		Material plane_mat;
 	//plane_mat.set_Ka(0.2,0.2,0.2);
-	plane_mat.set_Kd(0.2,0.2,0.2);
+	//plane_mat.set_Kd(0.2,0.2,0.2);
 	plane_mat.set_Ks(0.5,0.5,0.5);
+	//plane_mat.set_Ni(1.7); //glass refractive index;
+	plane_mat.set_Tr(1.0);
 	materials.push_back(plane_mat);
 
 	Material red;
 	red.set_Kd(0.2,0.f,0.f);
 	red.set_Ks(0.2,0.2,0.2);
+	red.set_Ni(1.3);
+	red.set_Tr(0.5);
 	materials.push_back(red);
 
 	Material blue;
 	blue.set_Kd(0  , 0  , 0.2);
 	blue.set_Ks(0.2, 0.2, 0.2);
+	blue.set_Ni(1.3330); //Water at 20 degrees C
+	blue.set_Tr(0.5);
 	materials.push_back(blue);
 	
 	Material brown_ish;
 	brown_ish.set_Kd(0.4, 0.4, 0  );
 	brown_ish.set_Ks(0.2, 0.2, 0.2);
+	brown_ish.set_Ni(3.0);
+	brown_ish.set_Tr(1);
 	materials.push_back(brown_ish);
 
 	Material grey;
-	grey.set_Kd(0.1, 0.1, 0.1);
-	grey.set_Ks(1  , 1  , 1  );
+	//grey.set_Kd(0.1, 0.1, 0.1);
+	//grey.set_Ks(1  , 1  , 1  );
+	grey.set_Ni(1.3);
+	grey.set_Tr(0.3);
 	materials.push_back(grey);
 
-	//shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
+	shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
 	//shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
-	//shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 2, -1), 1));
-	//shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, -1), 1));
+	//shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 0, -3), 1));
+	//shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, 1), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
-	//shapes.push_back(new Plane(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
+	//shapes.push_back(new Plane(materials[0], Vec3Df(0,-2,0), Vec3Df(0,1,0)));
 	// Vertical red plane
-	//shapes.push_back(new Plane(Vec3Df(0.2,0,0), Vec3Df(0,0,0), Vec3Df(0,0,1)));
+	//shapes.push_back(new Plane(materials[1], Vec3Df(0,0,-4), Vec3Df(0,0,1)));
 	// Checkerboard
 	shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 
@@ -99,12 +109,6 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	Vec3Df normal;
 	// This will be instantiated with the coordinates of the intersection point.
 	Vec3Df new_origin;
-
-	// The color if the intersected object.
-	Vec3Df color;
-	// The reflectivity of the intersected object.
-	Vec3Df reflectivity;
-
 	//Reference to the intersected object.
 	OurObject* intersected = nullptr;
 
@@ -126,34 +130,56 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 			}
 		}
 	}
-	if (!intersection) return Vec3Df(0.f,0.f,0.f);
+	// There was no intersection, so return background color.
+	if (!intersection) return Vec3Df(0.f, 0.f, 0.f);
 
-	// Re-use intersection here
-	intersection = false;
+	/*// Calculate shadows. TODO: multiple light sources.
+	Vec3Df lightPos = MyLightPositions[0] - new_origin;
+	float lightDist = lightPos.getLength();
 	for (unsigned int i = 0; i < shapes.size(); i++) {
-		Vec3Df stub1;
-		Vec3Df stub2;
-		Vec3Df lightPos = MyLightPositions[0] - new_origin;
-		float lightDist = lightPos.getLength();
+		Vec3Df stub1, stub2;
+		if (shapes[i]->intersect(new_origin, lightPos, stub1, stub2)) {
+			if (((stub1 - new_origin).getLength() < lightDist) || shapes[i]->_mat.Tr() == 1.0) {
+				// There was an intersection, this spot is occluded.
+				return Vec3Df(0.f, 0.f, 0.f);
+			}
+		}
+	}*/
 
-		if (triangles[i]->intersect(new_origin, lightPos, stub1, stub2)) {
-			if ((stub1 - new_origin).getLength() < lightDist)
-				intersection = true;
+	// The color of the intersected object.
+	Vec3Df directColor = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
+	Vec3Df refractedColor = Vec3Df(0.f, 0.f, 0.f);
+	Vec3Df reflectedColor = Vec3Df(0.f, 0.f, 0.f);
+	double dotProduct = Vec3Df::dotProduct(dir, normal);
+	double reflectivity = 1.0f, transmission = 0.f; //FIXME: initial values correct?
+
+	if (++level == max) {
+		return directColor;
+	}
+
+	if (intersected->hasMat()) {
+		if (intersected->getMat().has_Ni()) {
+			float ni_air = 1.0f;
+			float fresnel = 0.f;
+
+			Vec3Df refract = intersected->refract(normal, dir, ni_air, fresnel);
+			float translucency = 0;
+			if (intersected->getMat().has_Tr())
+				translucency = 1 - intersected->getMat().Tr();
+			if (translucency > 0)
+				refractedColor = translucency * performRayTracing(new_origin + refract * EPSILON, refract, level, max);
+
+			reflectivity = fresnel;
+			transmission = 1 - fresnel;
+		}
+		if (intersected->getMat().has_Ks()) {
+			Vec3Df reflect = dir - 2 * dotProduct * normal;
+			if (reflectivity > 0)
+			reflectedColor = performRayTracing(new_origin, reflect, level, max);
 		}
 	}
-	// If there was an intersection, this spot is occluded.
-	if (intersection)	return Vec3Df(0.f,0.f,0.f);
-
-	normal.normalize();
-	// Compute the reflection vector for the next recursive call.
-	Vec3Df reflect = dir - 2 * Vec3Df::dotProduct(dir, normal) * normal;
-
-	// Shade the object.
-	color = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
-	reflectivity = intersected->getMat().Ks();
-
-	if (++level == max)	return color;
-	else return color + reflectivity * performRayTracing(new_origin, reflect, level, max);
+	
+	return directColor + reflectivity * reflectedColor + transmission * refractedColor;
 }
 
 void yourDebugDraw()

@@ -32,6 +32,16 @@ class OurObject {
 	 */
 	virtual Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&) = 0;
 
+	/**
+	 * Calculate the refraction vector. For simplicity, all vectors must be normalized.
+	 * It is assumed we are either inside an object or in air.
+	 * @param normal The normal at the point of intersection.
+	 * @param dir The direction of the view vector.
+	 * @param ni1 The other refraction index.
+	 * @param fresnel The return address for the fresnel value.
+	 */
+	virtual Vec3Df refract(const Vec3Df&, const Vec3Df&, const float&, float &fresnel) = 0;
+
 	virtual bool hasMat() = 0;
 	virtual Material& getMat() = 0;
 };
@@ -50,8 +60,19 @@ class Shape : public OurObject {
 	 */
 	virtual Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
 
+	/**
+	 * Calculate the refraction vector. For simplicity, all vectors must be normalized.
+	 * It is assumed we are either inside an object or in air.
+	 * @param normal The normal at the point of intersection.
+	 * @param dir The direction of the view vector.
+	 * @param ni1 The other refraction index.
+	 * @param fresnel The return address for the fresnel value.
+	 */
+	Vec3Df refract(const Vec3Df&, const Vec3Df&, const float&, float &fresnel);
+
 	virtual bool hasMat() { return true; }
 	virtual Material& getMat() { return _mat; }
+
 	/**
 	 * Draw the object using GLUT functions and OpenGL.
 	 * NOTE: This has nothing to do with raytracing the object!
