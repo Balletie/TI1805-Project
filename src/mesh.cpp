@@ -323,7 +323,6 @@ bool Mesh::loadMtl(const char * filename, std::map<string, unsigned int> & mater
 			if (indef && !key.empty() && mat.is_valid()) {
 				if (materialIndex.find(key)==materialIndex.end()) {
 					mat.set_name(key);
-					std::cout<<mat.textureName()<<std::endl;
 					materials.push_back(mat);
 					materialIndex[key]=materials.size()-1;
 				}

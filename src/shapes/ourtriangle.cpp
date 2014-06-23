@@ -8,8 +8,6 @@ OurTriangle::OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle)
 
 Vec3Df OurTriangle::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal) {
 	if (!_mat.has_tex()) return Shape::shade(cam_pos, intersect, light_pos, normal);
-	Vec3Df test = _tex->getColor(0,0);
-	printf("(%f,%f,%f)\n", test[0], test[1], test[2]);
 	int u, v;
 	float a, b;
 	barycentric(intersect, a, b);

@@ -91,10 +91,10 @@ for(auto it = textures.cbegin(); it != textures.cend(); ++it)
 {
     std::cout << it->first << "!!\n";
 }
-*/
 for (int i = 0; i < MyMesh.materials.size(); i++) {
-	std::cout<<MyMesh.materials[i].textureName()<<std::endl;
+	std::cout << MyMesh.materials[i].textureName()<<std::endl;
 }
+*/
 	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
 		Material mat = MyMesh.materials[MyMesh.triangleMaterials[i]];

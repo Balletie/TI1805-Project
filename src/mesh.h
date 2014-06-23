@@ -35,6 +35,8 @@ class Material {
 		Tr_is_set_=m.Tr_is_set_; // transperency
 		illum_ = m.illum_;
 		name_=m.name_;
+		textureName_=m.textureName_;
+		tex_is_set=m.tex_is_set;
 		return (*this);
 	};
 
@@ -47,6 +49,8 @@ class Material {
 		Ni_is_set_ = false;
 		Tr_is_set_ = false;
 		illum_is_set_=false;
+		tex_is_set = false;
+		textureName_ = "empty";
 		name_="empty";
 	}
 
