@@ -12,11 +12,9 @@ jouw functionaliteit compleet is.
 
 | Functionaliteit | Wie?!?!                 | Status           | Af       |
 | --------------- | ------------------------| ---------------- | -------- |
-| Textures        | Owen & Piet             |                  | Zondag   |
-| Soft Shadows    | Richard                 |                  | Zondag   |
-| Anti-Aliasing   | ??                      |                  | Maandag  |
+| Textures        | Owen & Piet             |                  | Dinsdag  |
+| Soft Shadows    | Richard                 |                  | Dinsdag  |
 | Depth of Field  | ??                      |                  |          |
-| Refraction      | Jente & Dennis & Skip   |                  | Zondag   |
 | Blender scene   | Arjan                   |                  |          |
 | Fractals        | Skip (als ie voldoende tijd heeft), of iemand anders | | Maandag/Dinsdag |
 | Light intensity | Piet		    |		       | Dinsdag  |
@@ -33,7 +31,7 @@ Skip
 Arjan
 Richard
 
-![interpolate_pen](https://github.com/Balletie/TI1805-Project/raw/master/interpolate_pen.png)
+![multisampling_hd_16x.png](https://github.com/Balletie/TI1805-Project/raw/master/multisampling_hd_16x.png)
 
 Hoe te compilen?!
 =================
@@ -55,3 +53,4 @@ $ ../src/project
 Windows:
 
 [...]
+
