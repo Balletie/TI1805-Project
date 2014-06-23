@@ -323,6 +323,7 @@ bool Mesh::loadMtl(const char * filename, std::map<string, unsigned int> & mater
 			if (indef && !key.empty() && mat.is_valid()) {
 				if (materialIndex.find(key)==materialIndex.end()) {
 					mat.set_name(key);
+					std::cout<<mat.textureName()<<std::endl;
 					materials.push_back(mat);
 					materialIndex[key]=materials.size()-1;
 				}
@@ -375,19 +376,13 @@ bool Mesh::loadMtl(const char * filename, std::map<string, unsigned int> & mater
 				}
 				t.erase(t.length()-1);
 			}
+			mat.set_textureName(t);
 			// Check if key exists
 			if (textures.find(t) == textures.end()) {
 				Image tex_img(t.c_str());
 				Texture* tex = new Texture(tex_img);
 				textures[t] = tex;
 			}
-			// map_Kd, diffuse map
-			// map_Ks, specular map
-			// map_Ka, ambient map
-			// map_Bump, bump map
-			// map_d,  opacity map
-			// just skip this
-			mat.set_textureName(t);
 		}
 		else if (strncmp(line, "Tr ", 3) == 0) { // transparency value
 			sscanf(line, "Tr %f", &f1);

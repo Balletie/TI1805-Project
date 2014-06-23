@@ -86,12 +86,15 @@ void init()
 	//shapes.push_back(new Plane(materials[1], Vec3Df(0,0,-4), Vec3Df(0,0,1)));
 	// Checkerboard
 	shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
-
+/*
 for(auto it = textures.cbegin(); it != textures.cend(); ++it)
 {
     std::cout << it->first << "!!\n";
 }
-
+*/
+for (int i = 0; i < MyMesh.materials.size(); i++) {
+	std::cout<<MyMesh.materials[i].textureName()<<std::endl;
+}
 	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
 		Material mat = MyMesh.materials[MyMesh.triangleMaterials[i]];

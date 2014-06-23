@@ -51,7 +51,7 @@ class Material {
 	}
 
 	bool is_valid(void) const {
-		return Kd_is_set_ || Ka_is_set_ || Ks_is_set_ || Tr_is_set_;
+		return tex_is_set || Kd_is_set_ || Ka_is_set_ || Ks_is_set_ || Tr_is_set_;
 	}
 
 	bool has_Kd(void) const { return Kd_is_set_; }
