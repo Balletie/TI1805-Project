@@ -378,29 +378,42 @@ void keyboard(unsigned char key, int x, int y)
 		Vec3Df origin11, dest11;
 		Vec3Df origin, dest;
 
-
+		// Shoot rays to obtain their coordinates in world space
 		produceRay(0,0, &origin00, &dest00);
 		produceRay(0,WindowSize_Y-1, &origin01, &dest01);
 		produceRay(WindowSize_X-1,0, &origin10, &dest10);
 		produceRay(WindowSize_X-1,WindowSize_Y-1, &origin11, &dest11);
 
-		for (unsigned int y=0; y<WindowSize_Y;++y)
-			for (unsigned int x=0; x<WindowSize_X;++x)
-			{
-				//svp, decidez vous memes quels parametres vous allez passer � la fonction
-				//e.g., maillage, triangles, sph�res etc.
-				float xscale=1.0f-float(x)/(WindowSize_X-1);
-				float yscale=float(y)/(WindowSize_Y-1);
+		// Translate the origin of the ray
+		Vec3Df torig01 = origin01 - origin00;
+		Vec3Df torig10 = origin10 - origin00;
 
-				origin=yscale*(xscale*origin00+(1-xscale)*origin10)+
-					(1-yscale)*(xscale*origin01+(1-xscale)*origin11);
-				dest=yscale*(xscale*dest00+(1-xscale)*dest10)+
-					(1-yscale)*(xscale*dest01+(1-xscale)*dest11);
+		// Translate the destination of the ray
+		Vec3Df tdest01 = dest01 - dest00;
+		Vec3Df tdest10 = dest10 - dest00;
 
-		
-				Vec3Df rgb = performRayTracing(origin, dest);
+		int samplinglevel = 0;
+		int samples = pow(2, samplinglevel);
+
+		for (unsigned int y=0; y<WindowSize_Y;++y) {
+			for (unsigned int x=0; x<WindowSize_X;++x) {
+				// Initialize our color to black
+				Vec3Df rgb(0, 0, 0);
+
+				float xscale = 1 - float(x) / (WindowSize_X - 1);
+				float yscale = float(y) / (WindowSize_Y - 1);
+
+				// Multiply with xscale and yscale and translate back to world space
+				origin = 	(1 - xscale) * torig10 + (1 - yscale) * torig01 + origin00;
+				dest = 		(1 - xscale) * tdest10 + (1 - yscale) * tdest01 + dest00;
+
+				rgb += performRayTracing(origin, dest);
+
+				// Divide the color by the number of samples we've taken
+				rgb = rgb / samples;
 				result.setPixel(x,y, RGBValue(rgb[0], rgb[1], rgb[2]));
 			}
+		}
 		
 
 		result.writeImage("result.ppm");
