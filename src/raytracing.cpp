@@ -9,7 +9,6 @@
 #include "kdnode.h"
 #include "raytracing.h"
 #include "shapes/shapes.h"
-#include "imageloader.h"
 
 //temporary variables
 Vec3Df testRayOrigin;
@@ -80,22 +79,8 @@ void init()
 		shapes.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
 	}
     
-    GLuint id = loadBMP_custom("./red_wood_texture_grain_natural_wooden_paneling_sur.bmp");
-    glEnable(GL_TEXTURE_2D);
-    glBegin(GL_TRIANGLES);
-    for (unsigned int i=0;i<MyMesh.triangles.size();++i) {
-		Vec3Df col= MyMesh.materials[MyMesh.triangleMaterials[i]].Kd();
-		glColor3fv(col.pointer());
-		for(int v = 0; v < 3 ; v++){
-			glNormal3f(MyMesh.vertices[MyMesh.triangles[i].v[v]].n[0], MyMesh.vertices[MyMesh.triangles[i].v[v]].n[1], MyMesh.vertices[MyMesh.triangles[i].v[v]].n[2]);
-            glTexCoord2f(MyMesh.texcoords[v].p[0], MyMesh.texcoords[v].p[1]);
-			glVertex3f(MyMesh.vertices[MyMesh.triangles[i].v[v]].p[0], MyMesh.vertices[MyMesh.triangles[i].v[v]].p[1], MyMesh.vertices[MyMesh.triangles[i].v[v]].p[2]);
-		}
-	}
-	glEnd();
-    glDisable(GL_TEXTURE_2D);
-    
-    
+    // init texture
+    loadBMP_custom("tex.bmp");
 }
 
 //return the color of your pixel.
@@ -175,6 +160,20 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 //		}
 //	}
 
+    glEnable(GL_TEXTURE_2D);
+    
+    for (unsigned int i = 0; i < MyMesh.triangles.size(); i++) {
+        if (MyMesh.materials[MyMesh.triangleMaterials[i]].has_textureName()) {
+            glBegin(GL_TRIANGLES);
+            for (unsigned int j = 0; j < 3; j++) {
+                glTexCoord2f(MyMesh.texcoords[j].p[0], MyMesh.texcoords[j].p[1]);
+                glVertex3f(MyMesh.vertices[MyMesh.triangles[i].v[j]].p[0], MyMesh.vertices[MyMesh.triangles[i].v[j]].p[1], MyMesh.vertices[MyMesh.triangles[i].v[j]].p[2]);
+            }
+            glEnd();
+        }
+    }
+    glDisable(GL_TEXTURE_2D);
+    
 	if (++level == max)	return color;
 	else return color + reflectivity * performRayTracing(new_origin, reflect, level, max);
 }
@@ -245,24 +244,6 @@ void yourKeyboardFunc(char t, int x, int y)
 	*/
 }
 
-//Makes the image into a texture, and returns the id of the texture
-//GLuint loadTexture(BMPImage* image) {
-//	GLuint textureId;
-//	glGenTextures(1, &textureId); //Make room for our texture
-//	glBindTexture(GL_TEXTURE_2D, textureId); //Tell OpenGL which texture to edit
-//	//Map the image to the texture
-//	glTexImage2D(GL_TEXTURE_2D,                //Always GL_TEXTURE_2D
-//				 0,                            //0 for now
-//				 GL_RGB,                       //Format OpenGL uses for image
-//				 image->width, image->height,  //Width and height
-//				 0,                            //The border of the image
-//				 GL_RGB, //GL_RGB, because pixels are stored in RGB format
-//				 GL_UNSIGNED_BYTE, //GL_UNSIGNED_BYTE, because pixels are stored
-//                 //as unsigned numbers
-//				 image->pixels);               //The actual pixel data
-//	return textureId; //Returns the id of the texture
-//}
-
 GLuint loadBMP_custom(const char* imagepath) {
     // Data read from the header of the BMP file
     unsigned char header[54]; // Each BMP file begins by a 54-bytes header
@@ -274,19 +255,6 @@ GLuint loadBMP_custom(const char* imagepath) {
     
     // Open the file
     FILE* file = fopen(imagepath, "rb");
-    if (!file) {
-        printf("Image could not be opened\n");
-        return 0;
-    }
-    if (fread(header, 1, 54, file) != 54) {
-        printf("Not a correct BMP file\n");
-        return false;
-    }
-    // since BMP header always starts with 'B' and 'M', first two bytes should be those chars
-    if (header[0] != 'B' || header[1] != 'M') {
-        printf("Not a correct BPM file\n");
-        return 0;
-    }
     
     // Read ints from the byte array
     dataPos    = *(int*)&(header[0x0A]);

@@ -5,7 +5,6 @@ set (main
 	raytracing.cpp
 	mesh.cpp
 	main.cpp
-	imageloader.cpp
 )
 
 add_executable (project ${main})
