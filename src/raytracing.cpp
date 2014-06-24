@@ -185,13 +185,13 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 			Vec3Df hit, stub2;
 			// Check whether there's an intersection between the hit point and the light source
 			if (shapes[i]->intersect(new_origin, lightPos, hit, stub2) && (hit - new_origin).getLength() < lightDist) {
-				if (shapes[i]->getMat().Tr() == 1.0) {
+				if (!shapes[i]->getMat().has_Tr() || shapes[i]->getMat().Tr() == 1.0) {
 					// There was an intersection, this spot is occluded.
 					intersection = true;
-				} else if (shapes[i]->getMat().Ka() != Vec3Df(0.f, 0.f, 0.f)) {
+				} else if (shapes[i]->getMat().has_Ka() && shapes[i]->getMat().Ka() != Vec3Df(0.f, 0.f, 0.f)) {
 					directColor = directColor + intersected->shade(origin, new_origin, MyLightPositions[j], normal) * shapes[i]->getMat().Ka();
 				} else {
-					directColor = directColor / 1.25;
+					directColor = directColor * (1 - shapes[i]->getMat().Tr());
 				}
 			}
 		}
