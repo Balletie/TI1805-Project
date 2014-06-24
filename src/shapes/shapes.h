@@ -10,6 +10,8 @@
 
 static const float EPSILON = 1e-4;
 
+class Shape;
+
 class OurObject {
   public:
 	/**
@@ -48,8 +50,14 @@ class OurObject {
 	 */
 	virtual void draw() = 0;
 
+	virtual Shape* getIntersected() = 0;
 	virtual bool hasMat() = 0;
 	virtual Material& getMat() = 0;
+	bool hasTexture() { return texture_set; }
+	void setTexture(Texture* tex) { texture_set = true; _tex = tex; }
+
+	bool texture_set;
+	Texture* _tex;
 };
 
 class Shape : public OurObject {
@@ -76,18 +84,15 @@ class Shape : public OurObject {
 	 */
 	Vec3Df refract(const Vec3Df&, const Vec3Df&, const float&, float &fresnel);
 
+	virtual Shape* getIntersected() { return this; };
 	virtual bool hasMat() { return true; }
 	virtual Material& getMat() { return _mat; }
-	bool hasTexture() { return texture_set; }
-	void setTexture(Texture* tex) { texture_set = true; _tex = tex; }
 	/**
 	 * Draw the object using GLUT functions and OpenGL.
 	 * NOTE: This has nothing to do with raytracing the object!
 	 */
 	virtual void draw() = 0;
 
-	bool texture_set;
-	Texture* _tex;
 	Material& _mat;
 	const Vec3Df _origin;
 };

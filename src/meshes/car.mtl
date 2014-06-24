@@ -144,6 +144,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
+map_Kd C:\Users\aclangerak\Downloads\gravel.jpg
 
 newmtl Material.048
 Ns 96.078431
