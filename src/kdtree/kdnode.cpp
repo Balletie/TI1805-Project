@@ -20,12 +20,10 @@ bool KDNode::intersect(KDNode* node, const Vec3Df& origin, const Vec3Df& dir, Ou
 			for (int i = 0; i < node->triangles.size(); i++) {
 				Vec3Df new_new_origin;
 				Vec3Df new_normal;
-
 				if (node->triangles[i]->intersect(origin, dir, new_new_origin, new_normal)) {
-					intersection = true;
 					float new_depth = (new_new_origin - origin).getLength();
-
 					if (new_depth < depth) {
+						intersection = true;
 						depth = new_depth;
 						normal = new_normal;
 						new_origin = new_new_origin;

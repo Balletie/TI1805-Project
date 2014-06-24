@@ -10,6 +10,8 @@
 
 static const float EPSILON = 1e-4;
 
+class Shape;
+
 class OurObject {
   public:
 	/**
@@ -48,6 +50,7 @@ class OurObject {
 	 */
 	virtual void draw() = 0;
 
+	virtual Shape* getIntersected() = 0;
 	virtual bool hasMat() = 0;
 	virtual Material& getMat() = 0;
 	bool hasTexture() { return texture_set; }
@@ -81,6 +84,7 @@ class Shape : public OurObject {
 	 */
 	Vec3Df refract(const Vec3Df&, const Vec3Df&, const float&, float &fresnel);
 
+	virtual Shape* getIntersected() { return this; };
 	virtual bool hasMat() { return true; }
 	virtual Material& getMat() { return _mat; }
 	/**
