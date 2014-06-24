@@ -1,12 +1,27 @@
 #include "shapes.h"
 
+#include <stdio.h>
 #include "float.h"
 
 OurTriangle::OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle)
 : Shape(mat, mesh->vertices[triangle->v[0]].p), _mesh(mesh), _triangle(triangle)
 {}
 
-void OurTriangle::barycentric(Vec3Df &p, float &a, float &b) {
+Vec3Df OurTriangle::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal) {
+	if (!_mat.has_tex()) return Shape::shade(cam_pos, intersect, light_pos, normal);
+	int u, v;
+	float a, b;
+	barycentric(intersect, a, b);
+	Vec3Df texcoords[3];
+	for (int i = 0; i < 3; i++) {
+		texcoords[i] = _mesh->texcoords[_triangle->t[i]];
+	}
+	this->_tex->convertBarycentricToTexCoord(a, b, texcoords, u, v);
+	Vec3Df diffuse = this->_tex->getColor(u,v);
+	this->_mat.set_Kd(diffuse[0], diffuse[1], diffuse[2]);
+	return Shape::shade(cam_pos, intersect, light_pos, normal);
+}
+void OurTriangle::barycentric(const Vec3Df &p, float &a, float &b) {
 	Vec3Df u = _mesh->vertices[_triangle->v[1]].p - _origin;
 	Vec3Df v = _mesh->vertices[_triangle->v[2]].p - _origin;
 
