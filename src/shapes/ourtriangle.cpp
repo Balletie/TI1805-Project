@@ -5,11 +5,30 @@
 
 OurTriangle::OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle)
 : Shape(mat, mesh->vertices[triangle->v[0]].p), _mesh(mesh), _triangle(triangle)
-{}
+{
+	Vec3Df p1 = (*this)[1].p - (*this)[0].p;
+	Vec3Df p2 = (*this)[2].p - (*this)[0].p;
+	Vec3Df tc[3];
+	for (int i = 0; i < 3; i++) {
+		tc[i] = _mesh->texcoords[_triangle->t[i]];
+	}
+	float q1 = tc[1][0] - tc[0][0];
+	float r1 = tc[1][1] - tc[0][1];
+	float q2 = tc[2][0] - tc[0][0];
+	float r2 = tc[2][1] - tc[0][1];
+
+	float det = 1.f / (q1 * r2 - q2 * r1);
+	tangent = Vec3Df(det * (r2 * p1[0] - r1 * p2[0]), det * (r2 * p1[1] - r1 * p2[1]), det * (r2 * p1[2] - r1 * p2[2]));
+	bitangent = Vec3Df(det * (q1 * p2[0] - q2 * p1[0]), det * (q1 * p2[1] - q2 * p1[1]), det * (q1 * p2[2] - q2 * p1[2]));
+	tangent.normalize();
+	bitangent.normalize();
+	truenormal = Vec3Df::crossProduct(tangent, bitangent);
+	truenormal.normalize();
+}
 
 Vec3Df OurTriangle::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal) {
 	if (!_mat.has_tex()) return Shape::shade(cam_pos, intersect, light_pos, normal);
-	int u, v;
+	float u, v;
 	float a, b;
 	barycentric(intersect, a, b);
 	Vec3Df texcoords[3];
@@ -19,7 +38,19 @@ Vec3Df OurTriangle::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const 
 	this->_tex->convertBarycentricToTexCoord(a, b, texcoords, u, v);
 	Vec3Df diffuse = this->_tex->getColor(u,v);
 	this->_mat.set_Kd(diffuse[0], diffuse[1], diffuse[2]);
-	return Shape::shade(cam_pos, intersect, light_pos, normal);
+	if (norm_set) {
+		Vec3Df normal_tangent_space = this->_norm->getColor(u,v);
+		Vec3Df mat_row_1 = Vec3Df(tangent[0], bitangent[0], truenormal[0]);
+		Vec3Df mat_row_2 = Vec3Df(tangent[1], bitangent[1], truenormal[1]);
+		Vec3Df mat_row_3 = Vec3Df(tangent[2], bitangent[2], truenormal[2]);
+
+		Vec3Df norm_object_space = Vec3Df(	Vec3Df::dotProduct(mat_row_1, normal_tangent_space),
+							Vec3Df::dotProduct(mat_row_2, normal_tangent_space),
+							Vec3Df::dotProduct(mat_row_3, normal_tangent_space));
+		return Shape::shade(cam_pos, intersect, light_pos, norm_object_space);
+	} else {
+		return Shape::shade(cam_pos, intersect, light_pos, normal);
+	}
 }
 void OurTriangle::barycentric(const Vec3Df &p, float &a, float &b) {
 	Vec3Df u = _mesh->vertices[_triangle->v[1]].p - _origin;
