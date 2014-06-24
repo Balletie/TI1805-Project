@@ -55,9 +55,12 @@ class OurObject {
 	virtual Material& getMat() = 0;
 	bool hasTexture() { return texture_set; }
 	void setTexture(Texture* tex) { texture_set = true; _tex = tex; }
+	void setNormalMap(Texture* norm) { norm_set = true; _norm = norm; }
 
 	bool texture_set;
 	Texture* _tex;
+	bool norm_set;
+	Texture* _norm;
 };
 
 class Shape : public OurObject {
@@ -131,9 +134,13 @@ class OurTriangle : public Shape {
 	virtual void draw();
 	BoundingBox getBoundingBox();
 	Vec3Df getMidPoint();
+	Vertex  operator[] (int i) const;
+
+	Vec3Df tangent;
+	Vec3Df bitangent;
+	Vec3Df truenormal;
 	const Mesh* _mesh;
 	const Triangle* _triangle;
-	Vertex  operator[] (int i) const;
 };
 
 #endif

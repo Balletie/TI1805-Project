@@ -93,8 +93,8 @@ class Texture {
 	public:
 	Texture(Image img) : _image_data(img)
 	{}
-	void convertBarycentricToTexCoord(float a, float b, Vec3Df* texcoords, int& tex_u, int& tex_v);
-	Vec3Df getColor(int u, int v);
+	void convertBarycentricToTexCoord(float a, float b, Vec3Df* texcoords, float& tex_u, float& tex_v);
+	Vec3Df getColor(float u, float v);
 	private:
 	Image _image_data;
 };

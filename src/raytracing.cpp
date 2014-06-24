@@ -86,12 +86,16 @@ void init()
 	//shapes.push_back(new Plane(materials[1], Vec3Df(0,0,-4), Vec3Df(0,0,1)));
 	// Checkerboard
 	//shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
+
+	Image img("meshes/textures/wood_norm3.ppm");
+	Texture* test = new Texture(img);
 	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
 		Material& mat = MyMesh.materials[MyMesh.triangleMaterials[i]];
 		OurTriangle* t = new OurTriangle(mat,&MyMesh,&*(iter + i));
 		if (mat.has_tex()) {
 			t->setTexture(textures.at(mat.textureName()));
+			t->setNormalMap(test);
 		}
 		triangles.push_back(t);
 	}
