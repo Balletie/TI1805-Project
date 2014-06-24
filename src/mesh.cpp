@@ -9,8 +9,10 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
-
+#include "image.h"
+extern std::map<std::string, Texture*> textures;
 using namespace std;
+
 
 const unsigned int LINE_LEN=256;
 
@@ -368,15 +370,18 @@ bool Mesh::loadMtl(const char * filename, std::map<string, unsigned int> & mater
 		else if (strncmp(line, "map_Kd ",7) == 0) { // map images
 			std::string t=&(line[7]);
 			if (!t.empty() && t[t.length()-1] == '\n') {
+				if (t[t.length()-2] == '\r') {
+					t.erase(t.length()-1);
+				}
 				t.erase(t.length()-1);
 			}
-			// map_Kd, diffuse map
-			// map_Ks, specular map
-			// map_Ka, ambient map
-			// map_Bump, bump map
-			// map_d,  opacity map
-			// just skip this
 			mat.set_textureName(t);
+			// Check if key exists
+			if (textures.find(t) == textures.end()) {
+				Image tex_img(t.c_str());
+				Texture* tex = new Texture(tex_img);
+				textures[t] = tex;
+			}
 		}
 		else if (strncmp(line, "Tr ", 3) == 0) { // transparency value
 			sscanf(line, "Tr %f", &f1);

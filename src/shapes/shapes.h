@@ -5,7 +5,7 @@
 
 #include "../mesh.h"
 #include "../Vec3D.h"
-
+#include "../image.h"
 #include "boundingbox.h"
 
 static const float EPSILON = 1e-4;
@@ -78,13 +78,16 @@ class Shape : public OurObject {
 
 	virtual bool hasMat() { return true; }
 	virtual Material& getMat() { return _mat; }
-
+	bool hasTexture() { return texture_set; }
+	void setTexture(Texture* tex) { texture_set = true; _tex = tex; }
 	/**
 	 * Draw the object using GLUT functions and OpenGL.
 	 * NOTE: This has nothing to do with raytracing the object!
 	 */
 	virtual void draw() = 0;
 
+	bool texture_set;
+	Texture* _tex;
 	Material& _mat;
 	const Vec3Df _origin;
 };
@@ -109,7 +112,7 @@ class Plane : public Shape {
 class Checkerboard : public Plane {
   public:
 	Checkerboard(Material& mat, Vec3Df org, Vec3Df coeff);
-	Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
+	virtual Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
   private:
 	const float checker_size = 2.f;
 };
@@ -117,7 +120,8 @@ class Checkerboard : public Plane {
 class OurTriangle : public Shape {
   public:
 	OurTriangle(Material& mat, Mesh *mesh, Triangle *triangle);
-	void barycentric(Vec3Df &p, float &a, float &b);
+	virtual Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
+	void barycentric(const Vec3Df &p, float &a, float &b);
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 	virtual void draw();
 	BoundingBox getBoundingBox();

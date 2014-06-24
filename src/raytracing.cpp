@@ -18,6 +18,7 @@ Vec3Df new_orig;
 Vec3Df new_dest;
 std::vector<OurObject*> shapes;
 std::vector<Material> materials;
+std::map<std::string, Texture*> textures;
 std::vector<OurTriangle*> triangles;
 
 //use this function for any preprocessing of the mesh.
@@ -27,9 +28,9 @@ void init()
 	//feel free to replace cube by a path to another model
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
-	//MyMesh.loadMesh("meshes/cube.obj", true);
+	MyMesh.loadMesh("meshes/cube.obj", true);
 	//MyMesh.loadMesh("meshes/altair.obj", true);
-	MyMesh.loadMesh("meshes/Pen_low.obj", true);
+	//MyMesh.loadMesh("meshes/Pen_low.obj", true);
 	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
@@ -85,10 +86,14 @@ void init()
 	//shapes.push_back(new Plane(materials[1], Vec3Df(0,0,-4), Vec3Df(0,0,1)));
 	// Checkerboard
 	shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
-
 	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
-		triangles.push_back(new OurTriangle(MyMesh.materials[MyMesh.triangleMaterials[i]], &MyMesh, &*(iter + i)));
+		Material& mat = MyMesh.materials[MyMesh.triangleMaterials[i]];
+		OurTriangle* t = new OurTriangle(mat,&MyMesh,&*(iter + i));
+		if (mat.has_tex()) {
+			t->setTexture(textures.at(mat.textureName()));
+		}
+		triangles.push_back(t);
 	}
 
 	shapes.push_back(new KDTree(triangles));
