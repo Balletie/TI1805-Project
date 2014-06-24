@@ -87,7 +87,7 @@ void init()
 	// Checkerboard
 	//shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 
-	Image img("meshes/textures/wood_norm.ppm");
+	Image img("meshes/textures/wood_norm3.ppm");
 	Texture* test = new Texture(img);
 	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
