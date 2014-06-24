@@ -405,8 +405,8 @@ void keyboard(unsigned char key, int x, int y)
 		//int samplinglevel = 1;
 		//int samples = 1;
 
-		for (unsigned int y=0; y<WindowSize_Y;++y) {
-			for (unsigned int x=0; x<WindowSize_X;++x) {
+		for (unsigned int y = 0; y < WindowSize_Y; ++y) {
+			for (unsigned int x = 0; x < WindowSize_X; ++x) {
 				// Initialize our color to black
 				Vec3Df rgb(0, 0, 0);
 
@@ -417,11 +417,11 @@ void keyboard(unsigned char key, int x, int y)
 				float yscale = 1 -	y * deltaY * samplinglevel;
 
 				// Multiply our origins with xscale and yscale and translate back to world space
-				origin = 	xscale * torig10 + yscale * torig01 + origin00;
+				origin = xscale * torig10 + yscale * torig01 + origin00;
 				for (int i = 0; i < samples; i++) {
 					// Multiply our destinations with *scale + multisampling coordinate and translate back to world space
-					dest = 		(xscale + i / samplinglevel * deltaX) * tdest10 +
-								(yscale + i % samplinglevel * deltaY) * tdest01 + dest00;
+					dest = (xscale + (i / samplinglevel + rand() % 1 - 0.5) * deltaX) * tdest10 +
+						   (yscale + (i % samplinglevel + rand() % 1 - 0.5) * deltaY) * tdest01 + dest00;
 					rgb += performRayTracing(origin, dest);
 				}
 
