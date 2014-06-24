@@ -26,8 +26,8 @@ void init()
 	//feel free to replace cube by a path to another model
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
-	MyMesh.loadMesh("meshes/Pen_low.obj", true);
-	//MyMesh.loadMesh("meshes/altair.obj", true);
+	//MyMesh.loadMesh("meshes/Pen_low.obj", true);
+	MyMesh.loadMesh("meshes/final.obj", true);
 	//MyMesh.loadMesh("meshes/Pen_low.obj", true);
 	MyMesh.computeVertexNormals();
 
@@ -35,6 +35,7 @@ void init()
 	//at least ONE light source has to be in the scene!!!
 	//here, we set it to the current location of the camera
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
+	MyLightPositions.push_back(MyCameraPosition + Vec3Df(2, 4, 0));
 
 	Material plane_mat;
 	//plane_mat.set_Ka(0.2,0.2,0.2);
@@ -44,15 +45,15 @@ void init()
 	plane_mat.set_Tr(1.0);
 	materials.push_back(plane_mat);
 
-	Material red;
-	red.set_Kd(0.2,0.f,0.f);
-	red.set_Ks(0.2,0.2,0.2);
-	red.set_Ni(1.3);
-	red.set_Tr(0.5);
-	red.set_textureName("meshes/textures/earthmap1k.ppm");
+	Material earthmat;
+	earthmat.set_Kd(0.2,0.f,0.f);
+	earthmat.set_Ks(0.2,0.2,0.2);
+	earthmat.set_Ni(1.3);
+	earthmat.set_Tr(0.5);
+	earthmat.set_textureName("meshes/textures/earthmap1k.ppm");
 	Image earth_img("meshes/textures/earthmap1k.ppm");
 	Texture* earth_tex = new Texture(earth_img);
-	materials.push_back(red);
+	materials.push_back(earthmat);
 
 	Material blue;
 	blue.set_Kd(0  , 0  , 0.2);
@@ -81,24 +82,32 @@ void init()
 	grey.set_Tr(0.3);
 	materials.push_back(grey);
 
-	OurObject* earth = new Sphere(materials[1], Vec3Df(-2, 0, -1), 1);
+	Material red;
+	red.set_Kd(0.2,0.f,0.f);
+	red.set_Ks(0.2,0.2,0.2);
+	red.set_Ni(1.3);
+	red.set_Tr(0.5);
+	materials.push_back(red);
+
+	OurObject* earth = new Sphere(materials[1], Vec3Df(0, 1, 4), 1);
 	earth->setTexture(earth_tex);
 	shapes.push_back(earth);
-	OurObject* sisal = new Sphere(materials[2], Vec3Df(-4, 0, -1), 1);
+	OurObject* sisal = new Sphere(materials[2], Vec3Df(-2, 1, 4), 1);
 	sisal->setTexture(sisal_tex);
 	shapes.push_back(sisal);
-	OurObject* Sky = new Sphere(materials[3], Vec3Df(-2, 0, -3), 1);
+	OurObject* Sky = new Sphere(materials[3], Vec3Df(0, 1, 2), 1);
 	Sky->setTexture(Sky_tex);
 	shapes.push_back(Sky);
-	shapes.push_back(new Sphere(materials[4], Vec3Df(-2, 0, 1), 1));
+	shapes.push_back(new Sphere(materials[4], Vec3Df(0, 1, 6), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
 	//shapes.push_back(new Plane(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 	// Vertical red plane
-	//shapes.push_back(new Plane(materials[1], Vec3Df(0,0,-4), Vec3Df(0,0,1)));
+	//shapes.push_back(new Plane(materials[5], Vec3Df(0,0,-4), Vec3Df(0,0,1)));
+	//shapes.push_back(new Plane(materials[5], Vec3Df(0,-4,0), Vec3Df(1,0,0)));
 	// Checkerboard
-	shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
+	shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,0,0), Vec3Df(0,1,0)));
 	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
 		Material& mat = MyMesh.materials[MyMesh.triangleMaterials[i]];
