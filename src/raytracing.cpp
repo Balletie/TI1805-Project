@@ -118,9 +118,9 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 		Vec3Df new_new_origin;
 		Vec3Df new_normal;
 		if (shapes[i]->intersect(origin, dir, new_new_origin, new_normal)) {
-			intersection = true;
 			float new_depth = (new_new_origin - origin).getLength();
 			if (new_depth < current_depth) {
+				intersection = true;
 				current_depth = new_depth;
 				normal = new_normal;
 				new_origin = new_new_origin;
