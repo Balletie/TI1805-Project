@@ -73,7 +73,7 @@ class Shape : public OurObject {
 	virtual bool hasMat() { return true; }
 	virtual Material& getMat() { return _mat; }
 	bool hasTexture() { return texture_set; }
-	bool setTexture(Texture* tex) { texture_set = true; _tex = tex; }
+	void setTexture(Texture* tex) { texture_set = true; _tex = tex; }
 	/**
 	 * Draw the object using GLUT functions and OpenGL.
 	 * NOTE: This has nothing to do with raytracing the object!
