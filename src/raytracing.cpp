@@ -38,7 +38,7 @@ void init()
 
 	Material plane_mat;
 	//plane_mat.set_Ka(0.2,0.2,0.2);
-	//plane_mat.set_Kd(0.2,0.2,0.2);
+	plane_mat.set_Kd(0.2,0.2,0.2);
 	plane_mat.set_Ks(0.5,0.5,0.5);
 	//plane_mat.set_Ni(1.7); //glass refractive index;
 	plane_mat.set_Tr(1.0);
@@ -94,11 +94,11 @@ void init()
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
-	shapes.push_back(new Plane(materials[0], Vec3Df(0,0,0), Vec3Df(0,1,0)));
+	//shapes.push_back(new Plane(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 	// Vertical red plane
 	//shapes.push_back(new Plane(materials[1], Vec3Df(0,0,-4), Vec3Df(0,0,1)));
 	// Checkerboard
-	//shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
+	shapes.push_back(new Checkerboard(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 	std::vector<Triangle>::iterator iter = MyMesh.triangles.begin();
 	for (int i = 0; i < MyMesh.triangles.size(); i++) {
 		Material& mat = MyMesh.materials[MyMesh.triangleMaterials[i]];
