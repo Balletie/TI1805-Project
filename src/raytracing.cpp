@@ -110,6 +110,8 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest)
 
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t level, uint8_t max)
 {
+	if (level == max) return Vec3Df(0,0,0);
+
 	// This will be instantiated with the new normal at the intersection point.
 	Vec3Df normal;
 	// This will be instantiated with the coordinates of the intersection point.
@@ -156,14 +158,14 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 			if (intersected->getMat().has_Tr()) {
 				translucency = 1 - intersected->getMat().Tr();
 				if (translucency > 0)
-					refractedColor = translucency * performRayTracing(new_origin + refract * EPSILON, refract, level, max);
+					refractedColor = translucency * performRayTracing(new_origin + refract * EPSILON, refract, level + 1, max);
 			}
 		}
 		//refection
 		if (intersected->getMat().has_Ks()) {
 			Vec3Df reflect = dir - 2 * dotProduct * normal;
 			if (reflectivity > 0)
-				reflectedColor = performRayTracing(new_origin, reflect, level, max);
+				reflectedColor = performRayTracing(new_origin, reflect, level + 1, max);
 		}
 
 	}
@@ -204,9 +206,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 		}
 	}
 	directColor /= MyLightPositions.size();
-	if (++level == max) {
-		return directColor;
-	}
+
 	return directColor + reflectivity * reflectedColor + transmission * refractedColor;
 }
 
