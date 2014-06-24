@@ -53,8 +53,6 @@ bool Image::readImage(const char * filename)
 	std::vector<unsigned char> imageC(width * height * 3);
 	int t = fread(&(imageC[0]), width * height * 3, 1, file);
 	for (int i = 0; i < imageC.size(); i++) {
-//		printf("%i ", imageC[i]);
-//		if ((i + 1) % 3 == 0) printf("\n");
 		_image.push_back((float)imageC[i]/255.0f);
 	}
 	printf("Loaded texture %s\n", filename);
