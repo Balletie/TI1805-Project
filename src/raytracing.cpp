@@ -5,6 +5,7 @@
 #include <GL/glut.h>
 #include <float.h>
 #include <stdint.h>
+#include <omp.h>
 
 #include "raytracing.h"
 
@@ -74,10 +75,10 @@ void init()
 	grey.set_Tr(0.3);
 	materials.push_back(grey);
 
-	shapes.push_back(new Sphere(materials[1], Vec3Df(-2, 0, -1), 1));
-	//shapes.push_back(new Sphere(materials[2], Vec3Df( 0, 0, -1), 1));
-	//shapes.push_back(new Sphere(materials[3], Vec3Df( 0, 0, -3), 1));
-	//shapes.push_back(new Sphere(materials[4], Vec3Df( 0, 0, 1), 1));
+	shapes.push_back(new Sphere(materials[1], Vec3Df(-4, 0, -1), 1));
+	shapes.push_back(new Sphere(materials[2], Vec3Df(-2, 0, -1), 1));
+	shapes.push_back(new Sphere(materials[3], Vec3Df(-2, 0, -3), 1));
+	shapes.push_back(new Sphere(materials[4], Vec3Df(-2, 0, 1), 1));
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
@@ -136,21 +137,11 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	// There was no intersection, so return background color.
 	if (!intersection) return Vec3Df(0.f, 0.f, 0.f);
 
-	/*// Calculate shadows. TODO: multiple light sources.
-	Vec3Df lightPos = MyLightPositions[0] - new_origin;
-	float lightDist = lightPos.getLength();
-	for (unsigned int i = 0; i < shapes.size(); i++) {
-		Vec3Df stub1, stub2;
-		if (shapes[i]->intersect(new_origin, lightPos, stub1, stub2)) {
-			if (((stub1 - new_origin).getLength() < lightDist) || shapes[i]->getMat().Tr() == 1.0) {
-				// There was an intersection, this spot is occluded.
-				return Vec3Df(0.f, 0.f, 0.f);
-			}
-		}
-	}*/
+	// The color of the intersected object for all lightsources.
+	Vec3Df directColor = Vec3Df(0.f, 0.f, 0.f); 
+	for (unsigned int j = 0; j < MyLightPositions.size(); j++)
+		directColor = directColor + intersected->shade(origin, new_origin, MyLightPositions[j], normal);
 
-	// The color of the intersected object.
-	Vec3Df directColor = intersected->shade(origin, new_origin, MyLightPositions[0], normal);
 	Vec3Df refractedColor = Vec3Df(0.f, 0.f, 0.f);
 	Vec3Df reflectedColor = Vec3Df(0.f, 0.f, 0.f);
 	double dotProduct = Vec3Df::dotProduct(dir, normal);
@@ -161,11 +152,13 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	}
 
 	if (intersected->hasMat()) {
+		//refraction
 		if (intersected->getMat().has_Ni()) {
 			float ni_air = 1.0f;
 			float fresnel = 0.f;
 
 			Vec3Df refract = intersected->refract(normal, dir, ni_air, fresnel);
+
 			reflectivity = fresnel;
 			transmission = 1 - fresnel;
 
@@ -176,18 +169,48 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 					refractedColor = translucency * performRayTracing(new_origin + refract * EPSILON, refract, level, max);
 			}
 		}
+		//refection
 		if (intersected->getMat().has_Ks()) {
 			Vec3Df reflect = dir - 2 * dotProduct * normal;
 			if (reflectivity > 0)
 				reflectedColor = performRayTracing(new_origin, reflect, level, max);
 		}
+
 	}
-	
-	return directColor + reflectivity * reflectedColor + transmission * refractedColor;
+
+	bool clear = false; // is not fully in a shadow
+	intersection = false;
+	// Calculate shadows. multiple light sources. tansparant shadows.
+	for (unsigned int j = 0; j < MyLightPositions.size(); j++) {
+		Vec3Df lightPos = MyLightPositions[j] - new_origin;
+		float lightDist = lightPos.getLength();
+		for (unsigned int i = 0; i < shapes.size(); i++) {
+			Vec3Df hit, stub2;
+			// Check whether there's an intersection between the hit point and the light source
+			if (shapes[i]->intersect(new_origin, lightPos, hit, stub2) && (hit - new_origin).getLength() < lightDist) {
+				if (shapes[i]->getMat().Tr() == 1.0) {
+					// There was an intersection, this spot is occluded.
+					intersection = true;
+				} else if (shapes[i]->getMat().Ka() != Vec3Df(0.f, 0.f, 0.f)) {
+					directColor = directColor + intersected->shade(origin, new_origin, MyLightPositions[j], normal) * shapes[i]->getMat().Ka();
+				} else {
+					directColor = directColor / 1.25;
+				}
+			}
+		}
+		if (!intersection)
+			clear = true;
+		else directColor = (directColor / 2);
+	}
+	if (clear)
+		return directColor + reflectivity * reflectedColor + transmission * refractedColor;
+	else
+		return reflectivity * reflectedColor + transmission * refractedColor;
 }
 
 void yourDebugDraw()
 {
+	
 	//draw open gl debug stuff
 	//this function is called every frame
 
