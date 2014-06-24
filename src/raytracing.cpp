@@ -26,7 +26,7 @@ void init()
 	//feel free to replace cube by a path to another model
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
-	MyMesh.loadMesh("meshes/cube.obj", true);
+	MyMesh.loadMesh("meshes/Pen_low.obj", true);
 	//MyMesh.loadMesh("meshes/altair.obj", true);
 	//MyMesh.loadMesh("meshes/Pen_low.obj", true);
 	MyMesh.computeVertexNormals();
@@ -73,10 +73,10 @@ void init()
 	grey.set_Ni(1.3);
 	grey.set_Tr(0.3);
 	materials.push_back(grey);
-	OurObject* earth = new Sphere(materials[1], Vec3Df(-4, 0, -1), 1);
+	OurObject* earth = new Sphere(materials[1], Vec3Df(-2, 0, -1), 1);
 	earth->setTexture(earth_tex);
 	shapes.push_back(earth);
-	shapes.push_back(new Sphere(materials[2], Vec3Df(-2, 0, -1), 1));
+	shapes.push_back(new Sphere(materials[2], Vec3Df(-4, 0, -1), 1));
 	shapes.push_back(new Sphere(materials[3], Vec3Df(-2, 0, -3), 1));
 	shapes.push_back(new Sphere(materials[4], Vec3Df(-2, 0, 1), 1));
 	// Plane(color, origin, coeff)
