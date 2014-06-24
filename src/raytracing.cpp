@@ -9,6 +9,9 @@
 #include "kdtree/kdtree.h"
 #include "shapes/shapes.h"
 
+#include <mutex>
+static std::mutex barrier;
+
 //temporary variables
 Vec3Df testRayOrigin;
 Vec3Df testRayDestination;
@@ -110,7 +113,6 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dest)
 
 Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t level, uint8_t max)
 {
-	if (level == max) return Vec3Df(0,0,0);
 
 	// This will be instantiated with the new normal at the intersection point.
 	Vec3Df normal;
@@ -122,6 +124,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	float current_depth = FLT_MAX;
 	bool intersection = false;
 	for (int i = 0; i < shapes.size(); i++) {
+		std::lock_guard<std::mutex> block_threads_until_finish_this_job(barrier);
 		Vec3Df new_new_origin;
 		Vec3Df new_normal;
 		if (shapes[i]->intersect(origin, dir, new_new_origin, new_normal)) {
@@ -137,6 +140,48 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	}
 	// There was no intersection, so return background color.
 	if (!intersection) return Vec3Df(0.f, 0.f, 0.f);
+
+
+	// The color of the intersected object for all lightsources.
+	Vec3Df directColor = Vec3Df(0.f, 0.f, 0.f);
+	Shape* shadowInt = nullptr;
+
+	// Calculate shadows. multiple light sources. transparant shadows.
+	for (unsigned int j = 0; j < MyLightPositions.size(); j++) {
+		std::lock_guard<std::mutex> block_threads_until_finish_this_job(barrier);
+		Vec3Df lightDir = MyLightPositions[j] - new_origin;
+		float lightDist = lightDir.getLength();
+		bool intersection = false;
+
+		for (unsigned int i = 0; i < shapes.size(); i++) {
+			Vec3Df hit, stub2;
+			// Check whether there's an intersection between the hit point and the light source
+			if (shapes[i]->intersect(new_origin, lightDir, hit, stub2) && (hit - new_origin).getLength() < lightDist) {
+				intersection = true;
+				shadowInt = shapes[i]->getIntersected();
+
+				if (!shadowInt->_mat.has_Tr() || shadowInt->_mat.Tr() == 1.0) {
+					// Intersected with an opaque object.
+					break;
+				}
+				else {
+					// Material is transparent
+					directColor += (1 - shapes[i]->getMat().Tr()) * intersected->shade(origin, new_origin, MyLightPositions[j], normal);
+					// If it has an ambient color, it should let that color pass through.
+					if (shapes[i]->getMat().has_Ka() && shapes[i]->getMat().Ka() != Vec3Df(0.f, 0.f, 0.f)) {
+						directColor *= shapes[i]->getMat().Ka();
+					}
+				}
+			}
+		}
+		if (!intersection) {
+			// There was no intersection.
+			directColor += intersected->shade(origin, new_origin, MyLightPositions[j], normal);
+		}
+	}
+	directColor /= MyLightPositions.size();
+
+	if (level == max) return directColor;
 
 	Vec3Df refractedColor = Vec3Df(0.f, 0.f, 0.f);
 	Vec3Df reflectedColor = Vec3Df(0.f, 0.f, 0.f);
@@ -170,42 +215,6 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 
 	}
 
-	// The color of the intersected object for all lightsources.
-	Vec3Df directColor = Vec3Df(0.f, 0.f, 0.f);
-	Shape* shadowInt = nullptr;
-
-	// Calculate shadows. multiple light sources. transparant shadows.
-	for (unsigned int j = 0; j < MyLightPositions.size(); j++) {
-		Vec3Df lightDir = MyLightPositions[j] - new_origin;
-		float lightDist = lightDir.getLength();
-		bool intersection = false;
-
-		for (unsigned int i = 0; i < shapes.size(); i++) {
-			Vec3Df hit, stub2;
-			// Check whether there's an intersection between the hit point and the light source
-			if (shapes[i]->intersect(new_origin, lightDir, hit, stub2) && (hit - new_origin).getLength() < lightDist) {
-				intersection = true;
-				shadowInt = shapes[i]->getIntersected();
-
-				if (!shadowInt->_mat.has_Tr() || shadowInt->_mat.Tr() == 1.0) {
-					// Intersected with an opaque object.
-					break;
-				} else {
-					// Material is transparent
-					directColor +=  (1 - shapes[i]->getMat().Tr()) * intersected->shade(origin, new_origin, MyLightPositions[j], normal); 
-					// If it has an ambient color, it should let that color pass through.
-					if (shapes[i]->getMat().has_Ka() && shapes[i]->getMat().Ka() != Vec3Df(0.f, 0.f, 0.f)) {
-						directColor *= shapes[i]->getMat().Ka();
-					}
-				}
-			}
-		}
-		if (!intersection) {
-			// There was no intersection.
-			directColor += intersected->shade(origin, new_origin, MyLightPositions[j], normal);
-		}
-	}
-	directColor /= MyLightPositions.size();
 
 	return directColor + reflectivity * reflectedColor + transmission * refractedColor;
 }
