@@ -5,10 +5,7 @@
 #include <GL/glut.h>
 #include <float.h>
 #include <stdint.h>
-#include <omp.h>
-
 #include "raytracing.h"
-
 #include "kdtree/kdtree.h"
 #include "shapes/shapes.h"
 
