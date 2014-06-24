@@ -10,22 +10,6 @@ bool KDTree::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_orig
 	return _root->intersect(_root, origin, dir, _intersected, new_origin, normal, depth);
 }
 
-Vec3Df KDTree::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal) {
-	if (this->hasMat()) {
-		return _intersected->shade(cam_pos, intersect, light_pos, normal);
-	} else {
-		return Vec3Df(0.f,0.f,0.f);
-	}
-}
-
-Vec3Df KDTree::refract(const Vec3Df &normal, const Vec3Df &dir, const float &ni, float &fresnel) {
-	if (this->hasMat()) {
-		return _intersected->refract(normal, dir, ni, fresnel);
-	} else {
-		return Vec3Df(0.f,0.f,0.f);
-	}
-}
-
 KDNode* KDTree::build(std::vector<OurTriangle*>& tris) {
 	KDNode* node = new KDNode();
 	node->triangles = tris;

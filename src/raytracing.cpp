@@ -141,31 +141,28 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	double dotProduct = Vec3Df::dotProduct(dir, normal);
 	double reflectivity = 1.0f, transmission = 0.f; //FIXME: initial values correct?
 
-	if (intersected->hasMat()) {
-		//refraction
-		if (intersected->getMat().has_Ni()) {
-			float ni_air = 1.0f;
-			float fresnel = 0.f;
+	//refraction
+	if (intersected->_mat.has_Ni()) {
+		float ni_air = 1.0f;
+		float fresnel = 0.f;
 
-			Vec3Df refract = intersected->refract(normal, dir, ni_air, fresnel);
+		Vec3Df refract = intersected->refract(normal, dir, ni_air, fresnel);
 
-			reflectivity = fresnel;
-			transmission = 1 - fresnel;
+		reflectivity = fresnel;
+		transmission = 1 - fresnel;
 
-			float translucency = 0.f;
-			if (intersected->getMat().has_Tr()) {
-				translucency = 1 - intersected->getMat().Tr();
-				if (translucency > 0)
-					refractedColor = translucency * performRayTracing(new_origin + refract * EPSILON, refract, level, max);
-			}
+		float translucency = 0.f;
+		if (intersected->_mat.has_Tr()) {
+			translucency = 1 - intersected->_mat.Tr();
+			if (translucency > 0)
+				refractedColor = translucency * performRayTracing(new_origin + refract * EPSILON, refract, level, max);
 		}
-		//refection
-		if (intersected->getMat().has_Ks()) {
-			Vec3Df reflect = dir - 2 * dotProduct * normal;
-			if (reflectivity > 0)
-				reflectedColor = performRayTracing(new_origin, reflect, level, max);
-		}
-
+	}
+	//refection
+	if (intersected->_mat.has_Ks()) {
+		Vec3Df reflect = dir - 2 * dotProduct * normal;
+		if (reflectivity > 0)
+			reflectedColor = performRayTracing(new_origin, reflect, level, max);
 	}
 
 	// The color of the intersected object for all lightsources.
@@ -190,10 +187,10 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 					break;
 				} else {
 					// Material is transparent
-					directColor +=  (1 - shapes[i]->getMat().Tr()) * intersected->shade(origin, new_origin, MyLightPositions[j], normal); 
+					directColor +=  (1 - shadowInt->_mat.Tr()) * intersected->shade(origin, new_origin, MyLightPositions[j], normal);
 					// If it has an ambient color, it should let that color pass through.
-					if (shapes[i]->getMat().has_Ka() && shapes[i]->getMat().Ka() != Vec3Df(0.f, 0.f, 0.f)) {
-						directColor *= shapes[i]->getMat().Ka();
+					if (shadowInt->_mat.has_Ka() && shadowInt->_mat.Ka() != Vec3Df(0.f, 0.f, 0.f)) {
+						directColor *= shadowInt->_mat.Ka();
 					}
 				}
 			}
