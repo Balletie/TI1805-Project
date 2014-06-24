@@ -1,10 +1,32 @@
 #include "shapes.h"
 
 #include <GL/glut.h>
+#include <math.h>
+
+#define _USE_MATH_DEFINES
+#define M_PI 3.14159265358979323846
+
 
 Sphere::Sphere(Material& mat, Vec3Df org, float rad)
 : Shape(mat, org), _radius(rad)
 {}
+
+Vec3Df Sphere::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const Vec3Df& light_pos, const Vec3Df& normal){
+	if (!_mat.has_tex()) return Shape::shade(cam_pos, intersect, light_pos, normal);
+	float u, v;
+	Vec3Df mid = this->_origin;
+	Vec3Df dir = intersect - mid;
+	dir.normalize();
+	u = 0.5 + (atan2(dir[2], dir[0]))/(2*M_PI);
+	v = 0.5 - asin(dir[1])/M_PI;
+	int height = _tex->_image_data._height;
+	int width = _tex->_image_data._width;
+	u = u*(width-1);
+	v = v*(height-1);
+	Vec3Df diffuse = this->_tex->getColor(u,v);
+	this->_mat.set_Kd(diffuse[0], diffuse[1], diffuse[2]);
+	return Shape::shade(cam_pos, intersect, light_pos, normal);
+}
 
 bool Sphere::intersect(const Vec3Df& origin, const Vec3Df& dir, Vec3Df& new_origin, Vec3Df& normal) {
 	Vec3Df trans_origin = origin - this->_origin;

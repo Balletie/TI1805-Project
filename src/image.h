@@ -95,7 +95,6 @@ class Texture {
 	{}
 	void convertBarycentricToTexCoord(float a, float b, Vec3Df* texcoords, int& tex_u, int& tex_v);
 	Vec3Df getColor(int u, int v);
-	private:
 	Image _image_data;
 };
 #endif

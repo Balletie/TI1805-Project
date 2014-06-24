@@ -49,8 +49,10 @@ void init()
 	red.set_Ks(0.2,0.2,0.2);
 	red.set_Ni(1.3);
 	red.set_Tr(0.5);
+	red.set_textureName("meshes/textures/earthmap1k.ppm");
+	Image earth_img("meshes/textures/earthmap1k.ppm");
+	Texture* earth_tex = new Texture(earth_img);
 	materials.push_back(red);
-
 	Material blue;
 	blue.set_Kd(0  , 0  , 0.2);
 	blue.set_Ks(0.2, 0.2, 0.2);
@@ -71,12 +73,12 @@ void init()
 	grey.set_Ni(1.3);
 	grey.set_Tr(0.3);
 	materials.push_back(grey);
-
-	shapes.push_back(new Sphere(materials[1], Vec3Df(-4, 0, -1), 1));
+	OurObject* earth = new Sphere(materials[1], Vec3Df(-4, 0, -1), 1);
+	earth->setTexture(earth_tex);
+	shapes.push_back(earth);
 	shapes.push_back(new Sphere(materials[2], Vec3Df(-2, 0, -1), 1));
 	shapes.push_back(new Sphere(materials[3], Vec3Df(-2, 0, -3), 1));
 	shapes.push_back(new Sphere(materials[4], Vec3Df(-2, 0, 1), 1));
-
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
 	//shapes.push_back(new Plane(materials[0], Vec3Df(0,-2,0), Vec3Df(0,1,0)));

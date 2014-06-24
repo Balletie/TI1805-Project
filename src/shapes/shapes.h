@@ -50,6 +50,11 @@ class OurObject {
 
 	virtual bool hasMat() = 0;
 	virtual Material& getMat() = 0;
+	bool hasTexture() { return texture_set; }
+	void setTexture(Texture* tex) { texture_set = true; _tex = tex; }
+
+	bool texture_set;
+	Texture* _tex;
 };
 
 class Shape : public OurObject {
@@ -78,16 +83,12 @@ class Shape : public OurObject {
 
 	virtual bool hasMat() { return true; }
 	virtual Material& getMat() { return _mat; }
-	bool hasTexture() { return texture_set; }
-	void setTexture(Texture* tex) { texture_set = true; _tex = tex; }
 	/**
 	 * Draw the object using GLUT functions and OpenGL.
 	 * NOTE: This has nothing to do with raytracing the object!
 	 */
 	virtual void draw() = 0;
 
-	bool texture_set;
-	Texture* _tex;
 	Material& _mat;
 	const Vec3Df _origin;
 };
@@ -96,6 +97,7 @@ class Sphere : public Shape {
   public:
 	Sphere(Material& mat, Vec3Df org, float rad);
 
+	virtual Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 	virtual void draw();
 	const float _radius;
