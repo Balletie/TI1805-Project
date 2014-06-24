@@ -37,15 +37,14 @@ void init()
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
 
 	Material plane_mat;
-	plane_mat.set_Ka(0.2,0.2,0.2);
-	plane_mat.set_Kd(0.2,0.2,0.2);
+	//plane_mat.set_Ka(0.2,0.2,0.2);
+	//plane_mat.set_Kd(0.2,0.2,0.2);
 	plane_mat.set_Ks(0.5,0.5,0.5);
 	//plane_mat.set_Ni(1.7); //glass refractive index;
 	plane_mat.set_Tr(1.0);
 	materials.push_back(plane_mat);
 
 	Material red;
-	red.set_Ka(0.2,0.f,0.f);
 	red.set_Kd(0.2,0.f,0.f);
 	red.set_Ks(0.2,0.2,0.2);
 	red.set_Ni(1.3);
@@ -54,19 +53,25 @@ void init()
 	Image earth_img("meshes/textures/earthmap1k.ppm");
 	Texture* earth_tex = new Texture(earth_img);
 	materials.push_back(red);
+
 	Material blue;
 	blue.set_Kd(0  , 0  , 0.2);
 	blue.set_Ks(0.2, 0.2, 0.2);
 	blue.set_Ni(1.3330); //Water at 20 degrees C
 	blue.set_Tr(0.5);
+	blue.set_textureName("meshes/textures/sisal.ppm");
+	Image sisal_img("meshes/textures/sisal.ppm");
+	Texture* sisal_tex = new Texture(sisal_img);
 	materials.push_back(blue);
 	
 	Material brown_ish;
-	brown_ish.set_Ka(0.4, 0.4, 0  );
 	brown_ish.set_Kd(0.4, 0.4, 0  );
 	brown_ish.set_Ks(0.2, 0.2, 0.2);
 	brown_ish.set_Ni(3.0);
 	brown_ish.set_Tr(1);
+	brown_ish.set_textureName("meshes/textures/Sky.ppm");
+	Image Sky_img("meshes/textures/Sky.ppm");
+	Texture* Sky_tex = new Texture(Sky_img);
 	materials.push_back(brown_ish);
 
 	Material grey;
@@ -79,8 +84,12 @@ void init()
 	OurObject* earth = new Sphere(materials[1], Vec3Df(-2, 0, -1), 1);
 	earth->setTexture(earth_tex);
 	shapes.push_back(earth);
-	shapes.push_back(new Sphere(materials[2], Vec3Df(-4, 0, -1), 1));
-	shapes.push_back(new Sphere(materials[3], Vec3Df(-2, 0, -3), 1));
+	OurObject* sisal = new Sphere(materials[2], Vec3Df(-4, 0, -1), 1);
+	sisal->setTexture(sisal_tex);
+	shapes.push_back(sisal);
+	OurObject* Sky = new Sphere(materials[3], Vec3Df(-2, 0, -3), 1);
+	Sky->setTexture(Sky_tex);
+	shapes.push_back(Sky);
 	shapes.push_back(new Sphere(materials[4], Vec3Df(-2, 0, 1), 1));
 
 	// Plane(color, origin, coeff)
