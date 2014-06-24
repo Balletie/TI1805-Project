@@ -33,7 +33,7 @@ bool Image::writeImage(const char * filename)
 bool Image::readImage(const char * filename)
 {
 	FILE* file;
-	file = fopen(filename, "r");
+	file = fopen(filename, "rb");
 	if (!file) {
 		printf("ERROR: No file called %s!\n", filename);
 		return false;
@@ -53,9 +53,9 @@ bool Image::readImage(const char * filename)
 	std::vector<unsigned char> imageC(width * height * 3);
 	int t = fread(&(imageC[0]), width * height * 3, 1, file);
 	for (int i = 0; i < imageC.size(); i++) {
+//		printf("%i ", imageC[i]);
+//		if ((i + 1) % 3 == 0) printf("\n");
 		_image.push_back((float)imageC[i]/255.0f);
-		//printf("%f ", _image[i]);
-		//if ((i + 1) % 3 == 0) printf("\n");
 	}
 	printf("Loaded texture %s\n", filename);
 	return true;

@@ -18,6 +18,7 @@ Vec3Df OurTriangle::shade(const Vec3Df& cam_pos, const Vec3Df& intersect, const 
 	}
 	this->_tex->convertBarycentricToTexCoord(a, b, texcoords, u, v);
 	Vec3Df diffuse = this->_tex->getColor(u,v);
+	std::cout<<diffuse<<"\n";
 	this->_mat.set_Kd(diffuse[0], diffuse[1], diffuse[2]);
 	return Shape::shade(cam_pos, intersect, light_pos, normal);
 }
