@@ -100,6 +100,11 @@ class Material {
 		textureName_=s; tex_is_set = true;
 	}
 
+	void set_normal_mapName(const std::string& s)
+	{
+		normal_mapName_=s; normal_is_set = true;
+	}
+
 	void set_name(const std::string & s )
 	{ 
 		name_=s;
@@ -115,6 +120,11 @@ class Material {
 	const std::string & textureName()//name of the texture image file
 	{
 		return textureName_;
+	}
+
+	const std::string & normal_mapName()
+	{
+		return normal_mapName_;
 	}
 
 	const std::string & name()//name of the material
@@ -133,6 +143,7 @@ class Material {
 	float Tr_;	 bool Tr_is_set_;	// transperency
 	std::string name_;
 	std::string textureName_; bool tex_is_set;
+	std::string normal_mapName_; bool normal_is_set;
 };
 
 
