@@ -115,7 +115,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	// This will be instantiated with the coordinates of the intersection point.
 	Vec3Df new_origin;
 	//Reference to the intersected object.
-	OurObject* intersected = nullptr;
+	Shape* intersected = nullptr;
 
 	float current_depth = FLT_MAX;
 	bool intersection = false;
@@ -129,7 +129,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 				current_depth = new_depth;
 				normal = new_normal;
 				new_origin = new_new_origin;
-				intersected = shapes[i];
+				intersected = shapes[i]->getIntersected();
 			}
 		}
 	}
@@ -170,21 +170,25 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 
 	// The color of the intersected object for all lightsources.
 	Vec3Df directColor = Vec3Df(0.f, 0.f, 0.f);
-	// Calculate shadows. multiple light sources. tansparant shadows.
+	Shape* shadowInt = nullptr;
+
+	// Calculate shadows. multiple light sources. transparant shadows.
 	for (unsigned int j = 0; j < MyLightPositions.size(); j++) {
 		Vec3Df lightDir = MyLightPositions[j] - new_origin;
 		float lightDist = lightDir.getLength();
 		bool intersection = false;
+
 		for (unsigned int i = 0; i < shapes.size(); i++) {
 			Vec3Df hit, stub2;
 			// Check whether there's an intersection between the hit point and the light source
 			if (shapes[i]->intersect(new_origin, lightDir, hit, stub2) && (hit - new_origin).getLength() < lightDist) {
-				if (!shapes[i]->getMat().has_Tr() || shapes[i]->getMat().Tr() == 1.0) {
+				intersection = true;
+				shadowInt = shapes[i]->getIntersected();
+
+				if (!shadowInt->_mat.has_Tr() || shadowInt->_mat.Tr() == 1.0) {
 					// Intersected with an opaque object.
-					intersection = true;
 					break;
 				} else {
-					intersection = true;
 					// Material is transparent
 					directColor +=  (1 - shapes[i]->getMat().Tr()) * intersected->shade(origin, new_origin, MyLightPositions[j], normal); 
 					// If it has an ambient color, it should let that color pass through.
