@@ -10,6 +10,7 @@ class KDTree : public OurObject {
 		virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 		virtual Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
 		virtual Vec3Df refract(const Vec3Df&, const Vec3Df&, const float&, float&);
+		virtual void draw();
 		virtual bool hasMat() { return _intersected != nullptr; };
 		virtual Material& getMat() { return _intersected->_mat; };
 		static KDNode* build(std::vector<OurTriangle*>& triangles);

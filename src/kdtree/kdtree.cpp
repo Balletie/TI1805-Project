@@ -92,3 +92,6 @@ KDNode* KDTree::build(std::vector<OurTriangle*>& tris) {
 
 	return node;
 }
+
+void KDTree::draw()
+{}

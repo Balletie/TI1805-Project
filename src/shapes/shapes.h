@@ -42,6 +42,12 @@ class OurObject {
 	 */
 	virtual Vec3Df refract(const Vec3Df&, const Vec3Df&, const float&, float &fresnel) = 0;
 
+	/**
+	 * Draw the object using GLUT functions and OpenGL.
+	 * NOTE: This has nothing to do with raytracing the object!
+	 */
+	virtual void draw() = 0;
+
 	virtual bool hasMat() = 0;
 	virtual Material& getMat() = 0;
 };

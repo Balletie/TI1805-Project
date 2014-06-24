@@ -191,9 +191,9 @@ void yourDebugDraw()
 	glDisable(GL_LIGHTING);
 
 	// Draw all the shapes for the viewport window.
-	//for (int i = 0; i < shapes.size(); i++) {
-	//	shapes[i]->draw();
-	//}
+	for (int i = 0; i < shapes.size(); i++) {
+		shapes[i]->draw();
+	}
 
 	glColor3f(0,1,1);
 	glBegin(GL_LINES);
