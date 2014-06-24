@@ -137,7 +137,7 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	for (unsigned int i = 0; i < shapes.size(); i++) {
 		Vec3Df stub1, stub2;
 		if (shapes[i]->intersect(new_origin, lightPos, stub1, stub2)) {
-			if (((stub1 - new_origin).getLength() < lightDist) || shapes[i]->_mat.Tr() == 1.0) {
+			if (((stub1 - new_origin).getLength() < lightDist) || shapes[i]->getMat().Tr() == 1.0) {
 				// There was an intersection, this spot is occluded.
 				return Vec3Df(0.f, 0.f, 0.f);
 			}
