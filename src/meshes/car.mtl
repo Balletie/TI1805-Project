@@ -153,7 +153,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd C:\Users\aclangerak\Downloads\wall.ppm
+map_Kd meshes/textures/wall.ppm
 
 newmtl Material.048_NONE
 Ns 96.078431
@@ -163,7 +163,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd C:\\Users\\aclangerak\\Downloads\\wall.jpg
+map_Kd meshes/textures/wall.ppm
 
 newmtl Material.050
 Ns 96.078431
