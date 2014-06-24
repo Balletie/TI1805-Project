@@ -16,7 +16,6 @@
 		Arjan Langerak 4211235\\
 		Skip Lentz 4334051\\
 		Dennis van Velzen 4338324\\
-		Richard van de Kuilen 4226151\\
 	   }
 
 \begin{document}
@@ -24,14 +23,18 @@
 \maketitle
 Ray tracing does indeed deliver beautiful images. That is, if it supports enough graphics techniques. We think that our ray tracer delivers beautiful images and, before showing you the proof, we would like to give you a quick list of graphics techniques we have implemented:
 \begin{itemize}
-	\item Shading (Phong illumination model);
+	\item Shading (Phong and Lambertian);
 	\item Reflections;
 	\item Refractions (inluding Schlick's approximation);
 	\item Shadows (from multiple light sources);
 	\item Textures;
+	\item Normal maps;
 	\item Anti-aliasing (jittered super-sampling);
 	\item Hierarchical bounding box tree;
 \end{itemize}
+
+Our final image is the file called \texttt{final.png}. It is an image of a few spheres on a checkerboard and a car. We have chosen this image, because it clearly shows our implemented graphics techniques such as reflections, refractions, shadows from multiple light sources, textures and anti-aliasing. Sadly we had no time to render a new image with normal maps, but an image is included below for reference on this.
+
 What follows now are a few images produced by our raytracer. Some show funny results that appeared when testing a new feature and others show proper results.
 
 \newpage The first proper image of a pen object:\\
@@ -60,4 +63,7 @@ Testing multiple shadows:\\
 
 \newpage Working textures on spheres:\\
 \includegraphics[keepaspectratio,width=8.0cm]{images/earth}\\
+
+Normal map working ten minutes before the deadline:\\
+\includegraphics[keepaspectratio,width=8.0cm]{images/normalmaps}\\
 \end{document}
