@@ -72,7 +72,7 @@ Vec3Df Texture::getColor(float tex_u, float tex_v) {
 void Texture::convertBarycentricToTexCoord(float a, float b, Vec3Df* texcoords, float& tex_u, float& tex_v) {
 	//calculate third barycentric coordinate
 	float c = 1 - a - b;
-	Vec3Df uv = a * texcoords[0] + b * texcoords[1] + c * texcoords[2];
+	Vec3Df uv = c * texcoords[0] + a * texcoords[1] + b * texcoords[2];
 	tex_u = uv[0];
 	tex_v = uv[1];
 }
