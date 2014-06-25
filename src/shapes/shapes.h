@@ -104,6 +104,7 @@ class Sphere : public Shape {
   public:
 	Sphere(Material& mat, Vec3Df org, float rad);
 
+	virtual Vec3Df shade(const Vec3Df&, const Vec3Df&, const Vec3Df&, const Vec3Df&);
 	virtual bool intersect(const Vec3Df&, const Vec3Df&, Vec3Df&, Vec3Df&);
 	virtual void draw();
 	const float _radius;
