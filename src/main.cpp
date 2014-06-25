@@ -25,8 +25,8 @@ unsigned int type = MODEL;
 unsigned int WindowSize_X = 1920;  // largeur fenetre
 unsigned int WindowSize_Y = 1080;  // hauteur fenetre
 
-unsigned int RayTracingResolutionX = 800;  // largeur fenetre
-unsigned int RayTracingResolutionY = 800;  // largeur fenetre
+unsigned int RayTracingResolutionX = 1920;  // largeur fenetre
+unsigned int RayTracingResolutionY = 1080;  // largeur fenetre
 
 
 
@@ -277,12 +277,12 @@ void keyboard(unsigned char key, int x, int y)
 		// 2 = multisampling x4
 		// 3 = multisampling x8
 		// 4 = multisampling x16
-		int samplinglevel = 4;
-		int samples = pow(2, samplinglevel);
+		//int samplinglevel = 4;
+		//int samples = pow(2, samplinglevel);
 
 		// IF YOU WANT TO DISABLE MULTISAMPLING //
-		//int samplinglevel = 1;
-		//int samples = 1;
+		int samplinglevel = 1;
+		int samples = 1;
 
 		for (unsigned int y = 0; y < WindowSize_Y; ++y) {
 			for (unsigned int x = 0; x < WindowSize_X; ++x) {
