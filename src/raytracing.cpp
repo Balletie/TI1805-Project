@@ -29,9 +29,9 @@ void init()
 	//feel free to replace cube by a path to another model
 	//please realize that not all OBJ files will successfully load.
 	//Nonetheless, if they come from Blender, they should.
-	MyMesh.loadMesh("meshes/cube.obj", true);
-	//MyMesh.loadMesh("meshes/altair.obj", true);
-	//MyMesh.loadMesh("meshes/Pen_low.obj", true);
+	//MyMesh.loadMesh("meshes/car.obj", true);
+	//MyMesh.loadMesh("meshes/cube.obj", true);
+	MyMesh.loadMesh("meshes/Pen_low.obj", true);
 	MyMesh.computeVertexNormals();
 
 	//one first move: initialize the first light source
@@ -40,8 +40,8 @@ void init()
 	MyLightPositions.push_back(MyCameraPosition + Vec3Df(0, 4, 0));
 
 	Material plane_mat;
-	plane_mat.set_Ka(0.2,0.2,0.2);
-	plane_mat.set_Kd(0.2,0.2,0.2);
+	//plane_mat.set_Ka(0.2,0.2,0.2);
+	plane_mat.set_Kd(0.f,0.2,0.f);
 	plane_mat.set_Ks(0.5,0.5,0.5);
 	//plane_mat.set_Ni(1.7); //glass refractive index;
 	plane_mat.set_Tr(1.0);
@@ -84,7 +84,7 @@ void init()
 
 	// Plane(color, origin, coeff)
 	// Horizontal green plane
-	shapes.push_back(new Plane(materials[0], Vec3Df(0,0,0), Vec3Df(0,1,0)));
+	shapes.push_back(new Plane(materials[0], Vec3Df(0,-1,0), Vec3Df(0,1,0)));
 	// Vertical red plane
 	//shapes.push_back(new Plane(materials[1], Vec3Df(0,0,-4), Vec3Df(0,0,1)));
 	// Checkerboard
@@ -98,7 +98,6 @@ void init()
 		}
 		triangles.push_back(t);
 	}
-
 	shapes.push_back(new KDTree(triangles));
 }
 
@@ -145,41 +144,95 @@ Vec3Df performRayTracing(const Vec3Df & origin, const Vec3Df & dir, uint8_t leve
 	// The color of the intersected object for all lightsources.
 	Vec3Df directColor = Vec3Df(0.f, 0.f, 0.f);
 	Shape* shadowInt = nullptr;
-
+	int changes = 0;
+	bool obscured = false;
+	std::vector<Vec3Df> col;
 	// Calculate shadows. multiple light sources. transparant shadows.
 	for (unsigned int j = 0; j < MyLightPositions.size(); j++) {
+		Vec3Df colorNow = Vec3Df(0.f, 0.f, 0.f);
+		std::vector<Vec3Df> ExtraPositions;
+		std::vector<Vec3Df> currentColor;
 		std::lock_guard<std::mutex> block_threads_until_finish_this_job(barrier);
-		Vec3Df lightDir = MyLightPositions[j] - new_origin;
-		float lightDist = lightDir.getLength();
-		bool intersection = false;
+		Vec3Df colorLight = Vec3Df(0.f, 0.f, 0.f);
+		ExtraPositions.push_back(MyLightPositions[j]);
+		Vec3Df pos = MyLightPositions[j];
+			ExtraPositions.push_back((pos + Vec3Df(0.1, 0.f, 0.1)));
+			ExtraPositions.push_back((pos + Vec3Df(-0.1, 0.f, -0.1)));
+			ExtraPositions.push_back((pos + Vec3Df(0.1, 0.f, -0.1)));
+			ExtraPositions.push_back((pos + Vec3Df(-0.1, 0.f, 0.1)));
+			ExtraPositions.push_back((pos + Vec3Df(0.1, 0.f, 0.f)));
+			ExtraPositions.push_back((pos + Vec3Df(-0.1, 0.f, 0.f)));
+			ExtraPositions.push_back((pos + Vec3Df(0.1, 0.f, 0.f)));
+			ExtraPositions.push_back((pos + Vec3Df(-0.1, 0.f, 0.f)));
+			ExtraPositions.push_back((pos + Vec3Df(0.f, 0.f, 0.1)));
+			ExtraPositions.push_back((pos + Vec3Df(0.f, 0.f, -0.1)));
+			ExtraPositions.push_back((pos + Vec3Df(0.f, 0.f, -0.1)));
+			ExtraPositions.push_back((pos + Vec3Df(0.f, 0.f, 0.1)));
+			ExtraPositions.push_back((pos + Vec3Df(0.05, 0.f, 0.05)));
+			ExtraPositions.push_back((pos + Vec3Df(-0.05, 0.f, -0.05)));
+			ExtraPositions.push_back((pos + Vec3Df(0.05, 0.f, -0.05)));
+			ExtraPositions.push_back((pos + Vec3Df(-0.05, 0.f, 0.05)));
+			ExtraPositions.push_back((pos + Vec3Df(0.05, 0.f, 0.f)));
+			ExtraPositions.push_back((pos + Vec3Df(-0.05, 0.f, 0.f)));
+			ExtraPositions.push_back((pos + Vec3Df(0.05, 0.f, 0.f)));
+			ExtraPositions.push_back((pos + Vec3Df(-0.05, 0.f, 0.f)));
+			ExtraPositions.push_back((pos + Vec3Df(0.f, 0.f, 0.05)));
+			ExtraPositions.push_back((pos + Vec3Df(0.f, 0.f, -0.05)));
+			ExtraPositions.push_back((pos + Vec3Df(0.f, 0.f, -0.05)));
+			ExtraPositions.push_back((pos + Vec3Df(0.f, 0.f, 0.05)));
 
-		for (unsigned int i = 0; i < shapes.size(); i++) {
-			Vec3Df hit, stub2;
-			// Check whether there's an intersection between the hit point and the light source
-			if (shapes[i]->intersect(new_origin, lightDir, hit, stub2) && (hit - new_origin).getLength() < lightDist) {
-				intersection = true;
-				shadowInt = shapes[i]->getIntersected();
+		for (unsigned int k = 0; k < ExtraPositions.size(); k++) {
+			Vec3Df colorChange = Vec3Df(0.f, 0.f, 0.f);
+			Vec3Df lightDir = ExtraPositions[k] - new_origin;
+			float lightDist = lightDir.getLength();
+			bool intersection = false;
 
-				if (!shadowInt->_mat.has_Tr() || shadowInt->_mat.Tr() == 1.0) {
-					// Intersected with an opaque object.
-					break;
-				}
-				else {
-					// Material is transparent
-					directColor += (1 - shapes[i]->getMat().Tr()) * intersected->shade(origin, new_origin, MyLightPositions[j], normal);
-					// If it has an ambient color, it should let that color pass through.
-					if (shapes[i]->getMat().has_Ka() && shapes[i]->getMat().Ka() != Vec3Df(0.f, 0.f, 0.f)) {
-						directColor *= shapes[i]->getMat().Ka();
+			for (unsigned int i = 0; i < shapes.size(); i++) {
+				Vec3Df hit, stub2;
+				// Check whether there's an intersection between the hit point and the light source
+				if (shapes[i]->intersect(new_origin, lightDir, hit, stub2) && (hit - new_origin).getLength() < lightDist) {
+					intersection = true;
+					shadowInt = shapes[i]->getIntersected();
+
+					if (!shadowInt->_mat.has_Tr() || shadowInt->_mat.Tr() == 1.0) {
+						// Intersected with an opaque object.
 					}
+					else {
+						// Material is transparent
+						colorChange += (1 - shapes[i]->getMat().Tr()) * intersected->shade(origin, new_origin, ExtraPositions[j], normal);
+						if (colorChange != Vec3Df(0.f, 0.f, 0.f) && !(shapes[i]->getMat().has_Ka() && shapes[i]->getMat().Ka() != Vec3Df(0.f, 0.f, 0.f))) {
+							currentColor.push_back(colorChange);
+						}
+						// If it has an ambient color, it should let that color pass through.
+						if (shapes[i]->getMat().has_Ka() && shapes[i]->getMat().Ka() != Vec3Df(0.f, 0.f, 0.f)) {
+							colorChange *= shapes[i]->getMat().Ka();
+							currentColor.push_back(colorChange.pointer());
+						}
+					}
+
 				}
+
+			}
+
+			if (!intersection) {
+				// There was no intersection.
+				colorChange += intersected->shade(origin, new_origin, ExtraPositions[j], normal);
+			}
+			if (!intersection || colorChange != Vec3Df(0.f, 0.f, 0.f)) {
+				currentColor.push_back(colorChange);
 			}
 		}
-		if (!intersection) {
-			// There was no intersection.
-			directColor += intersected->shade(origin, new_origin, MyLightPositions[j], normal);
+
+		for (unsigned int i = 0; i < currentColor.size(); i++) {
+			colorNow += currentColor[i];
 		}
+		colorLight = colorLight + (colorNow/ 25);
+		col.push_back(colorLight);
 	}
-	directColor /= MyLightPositions.size();
+	for (unsigned int i = 0; i < col.size(); i++)
+		directColor = directColor + col[i];
+
+	//directColor = directColor/MyLightPositions.size();
 
 	if (level == max) return directColor;
 

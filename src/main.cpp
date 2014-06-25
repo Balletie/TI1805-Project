@@ -83,6 +83,9 @@ void rayThread(Image &result, int x_begin, int x_eind, Vec3Df origin10, Vec3Df o
 
 			// Divide the color by the number of samples we've taken
 			rgb = rgb / samples;
+
+			if ((x % 100 == 0) && (y %20 == 0))
+				cout << "colorx " << x << "colory "<< y << "   =" << rgb << endl;
 			result.setPixel(x, y, RGBValue(rgb[0], rgb[1], rgb[2]));
 		}
 	}
@@ -326,7 +329,7 @@ void keyboard(unsigned char key, int x, int y)
 				int parts = 8;
 
 				std::vector<int> bnd;
-				for (int i = 0; i < parts + 1; ++i) {
+				for (int i = 0; i <= parts; ++i) {
 					bnd.push_back((WindowSize_X / parts) * i);
 				}
 
