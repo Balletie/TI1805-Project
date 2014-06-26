@@ -102,7 +102,9 @@ The principle stayed the same, just the computation of the texture coordinates w
 Shadows
 What started out as a simple feature was starting to bug us, now that we support so many great things: shadows. 
 Our support for them was really rudimentary and stood out in comparison to the other implemented techniques.
-ADD. [Elaboration on the part how we fixed this]. <----
+We ended up looping through all the lights, to see if it intersects from the point, adding the amount of color
+for each light. Then, at the end, we divide the total amount of color by the number of light sources, so that the
+color values stay between 0 and 1.
 On the image to the right it shows that the shadows also work properly when there are multiple light sources.
 We have also taken into account that shadows may be influenced by the transparency of the object. 
 This results in the shadows being partly colored by the color of the object.
