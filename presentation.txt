@@ -69,14 +69,18 @@ Here the normals are interpolated and the surfaces are much more smoother.
 
 Reflection and refraction
 We were now at a point where a basic ray tracer was functioning well and it was time to add extra, non-crucial features. We started with reflections.
-Reflections are....
-ADD
+Reflections were very easy to implement, since this was basically just an extension of the previous practical assignment.
+The same formula's and techniques could be used, with just the added support for a reflectivity factor that is used to recursively call the raytracing function.
 
 After we had support for reflections, we moved on to refractions. We had the option to choose between Fresnel and Schlick's approximation. After we learned that many game engines use Schlick's Approximation, because 
 	1) it is simple to calculate and 
 	2) approximates more than enough,
 we decided we would start with Schlick and perhaps, if time allowed, would implemented Fresnel later. Implementing refractions turned out to be quite difficult and it took us a couple of days to get it right. 
-We also had to revise our reflections, because an object can both reflect and refract (measured by the Fresnel term). There is proof left in the code that this was a difficult feature to implement, but we will leave that for you to find out...
+First of all we encountered another problem with intersection.
+The nearest intersection point was often the previous intersection point itself, again because of floating point rounding errors.
+This was solved by moving EPSILON * refractvector before calling our intersection code again.
+We also had to revise our reflections, because an object can both reflect and refract (measured by the Fresnel term).
+There is proof left in the code that this was a difficult feature to implement, but we will leave that for you to find out...
 
 Bounding volume hierarchy
 In the meantime, tracing images for debugging purposes was starting to take very long. 
