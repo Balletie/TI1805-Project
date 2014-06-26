@@ -1,0 +1,113 @@
+Introduction
+Good morning and welcome.
+I will shortly introduce us.
+I am Piet van Agtmaal and they are Gerlof Fokkema, Jente Hidskes, Owen Huang, Arjan Langerak, Skip Lentz and Dennis van Velzen. 
+Today we will present to you our ray tracer, our final result of the Computer Graphics project and some information on the development process.
+
+Competition image
+We have chosen to submit this image, because it clearly shows the numerous graphics techniques our ray tracer supports. 
+First and foremost, it shows that we also support shapes other than triangles. As you can see, there are four spheres in our image. 
+These are not objects made in Blender, but rather mathematically defined in our code.
+The checkerboard is here firstly to give some sort of ground instead of showing objects in the dark but it also has two other purposes: to show reflections and to show our anti-aliasing. 
+Again, the checkerboard is not an object but mathematically defined in our code. 
+Furthermore, we have implemented textures. You can see them on the two spheres in the middle and the one behind the middle one. 
+Besides that, our ray tracer supports refractions. These can be noticed most clearly in the leftmost sphere. 
+Shading has also been implemented. Both Lambertian and Phong shading are applied to the scene.
+When looking more closely, you can also notice the use of multiple light sources. Parts of overlapping shadows indicate this.
+One other important technique that has been implemented is anti-aliasing. 
+This image has been ray traced with x32 multisampling, making it incredibly sharp. 
+On the checkerboard you can clearly notice the anti-aliasing. On the right you can see our car impressively made in Blender, although slightly too dark to see it clearly. 
+Our ray tracer also supports normal maps, but this was implemented ten minutes before the deadline so we had no time to trace a new image. 
+There is an image later on in a slide that does show the use of normal maps. 
+We will now go deeper into the development process, starting with the work distribution.
+
+Work distribution
+As you can see, quite some work has been done during the past few weeks. 
+The order given on this slide is not per se the order in which these features were implemented, but we will get to that in a minute. 
+It is important to notice that some group members occur quite a few times in the work distribution, but for a great deal this is due to the fact that some tasks require more time than others. 
+Besides that, some tasks were initially assigned to other or less people than is shown here. 
+It sometimes happened that people got stuck on implementing certain techniques, so help of other group members was needed. 
+It is however worth mentioning that Skip and Gerlof did slightly more work than others, as they started earlier while others were still occupied with other projects from other courses. 
+On an overall basis, we enjoyed working with each other and we were happy to help when needed. 
+Next, we will cover the techniques that have been implemented in our ray tracer. 
+
+Overview
+Let’s give an overview of the functionality of our ray tracer.
+First of all, the tracer supports both Lambertian and Phong shading. 
+This also includes shading from multiple light sources. 
+Furthermore, reflections and refractions through Schlick’s approximation have been implemented.
+Additionally, textures can be applied to both triangles and spheres. Also, normal maps are supported. 
+Sadly, this functionality is not in the final image as the code was not ready to trace everything we wanted in time. 
+Furthermore, anti-aliasing through jittered super-sampling is implemented. 
+Last but not least, we have used a bounding volume hierarchy to increase the tracing speed significantly.
+
+First steps: Spheres and planes
+At first, we started by implementing ray intersection with spheres and planes.
+We did not use object files to define the shapes but rather made them mathematically. 
+One major issue we came across, were rounding errors, making the image quite ugly.
+We managed to solve most of the problems by introducing an epsilon value of 1e-4 for intersection formulas.
+The first intersection point is then calculated by using the normal quadratic formula.
+For extra precision we used citardauq to calculate the second intersection based on the result of the first intersection.
+~~~ [FOR REFERENCE] ~~~ Citardauq is the reverse quadratic formula (2c / (-b ∓ sqrt(b^2 - 4ac)), or (c / (a*t1).
+
+Triangles and meshes
+As soon as we had the spheres and planes up and running, we started on ray tracing triangles from meshes. 
+This mesh you see here, is supposed to represent a pen. This is a mesh made in Blender by ourselves, but did not look that wonderful at first after tracing.
+Once again, rounding errors ruined the image. Eventually, we fixed this by using Cramer's rule to eliminate division operations as much as possible.
+Cramer's rule is a way to solve a linear system without computing it's inverse using almost only dot products.
+By introducing Cramer's rule we eliminated all but one division operation in our triangle intersection.
+Not only is it more accurate, but it's also faster, since division is more expensive than multiplication on CPU's.
+
+Normal interpolation
+The normal interpolation refers in this case to a part of our Phong shading (which also includes the Phong lighting). As seen on these images, the polygons are clearly visible.
+In order to make the surface look smooth, we must apply normal interpolation on the surface normals across the rasterized polygons.
+We can do this by computing the barycentric coordinates of the intersected triangles of our mesh.
+This was very easy to implement, since we were already determining barycentric coordinates for our triangle intersections.
+Note that these images also already contain Phong lighting. On the pen, the specular is nicely visible.
+~~~ [NEXT SLIDE] ~~~
+Here the normals are interpolated and the surfaces are much more smoother.
+
+Reflection and refraction
+We were now at a point where a basic ray tracer was functioning well and it was time to add extra, non-crucial features. We started with reflections.
+Reflections are....
+ADD
+
+After we had support for reflections, we moved on to refractions. We had the option to choose between Fresnel and Schlick's approximation. After we learned that many game engines use Schlick's Approximation, because 
+	1) it is simple to calculate and 
+	2) approximates more than enough,
+we decided we would start with Schlick and perhaps, if time allowed, would implemented Fresnel later. Implementing refractions turned out to be quite difficult and it took us a couple of days to get it right. 
+We also had to revise our reflections, because an object can both reflect and refract (measured by the Fresnel term). There is proof left in the code that this was a difficult feature to implement, but we will leave that for you to find out...
+
+Bounding volume hierarchy
+In the meantime, tracing images for debugging purposes was starting to take very long. 
+On average on our systems, it took roughly 20 minutes to create an image. 
+This lead to the decision to implement some sort of optimisation. 
+We opted for a KD-tree initially, but this turned out to be very complicated. 
+We now have some sort of hybrid, which more or less identifies with a bounding volume hierarchy. 
+This greatly sped up our tracing, therefore enabled us to opt for simple anti-aliasing in the form of super-sampling. The improvement in image quality was huge!
+
+Textures
+Then, we started implementing textures. 
+We struggled with applying textures for quite some time.
+We were in the dark about how to load the texture image, let alone calculating the correct texture coordinates. 
+Eventually, we wrote our own function to read a .ppm file for our textures and used a function to calculate the correct texture coordinates, using barycentric coordinates for the UV mapping on triangles. 
+After this was working smoothly, we were still not satisfied: not only triangles but also spheres should be able to use textures. 
+After having done the mapping for triangles, doing the same for spheres was not that difficult. 
+The principle stayed the same, just the computation of the texture coordinates were different.
+
+Shadows
+What started out as a simple feature was starting to bug us, now that we support so many great things: shadows. 
+Our support for them was really rudimentary and stood out in comparison to the other implemented techniques.
+ADD. [Elaboration on the part how we fixed this]. <----
+On the image to the right it shows that the shadows also work properly when there are multiple light sources.
+We have also taken into account that shadows may be influenced by the transparency of the object. 
+This results in the shadows being partly colored by the color of the object.
+
+Normal Maps
+Lastly, Skip had to have normal maps! He started working on them only a few hours before the deadline, succeeding with ten minutes left to spare. Finally, Skip was satisfied.
+With normal maps, the normal vector for a particular point on the mesh is stored as RGB value. This RGB value should then be correctly mapped to the object’s intersection point, using some linear algebra.
+
+Before we end this presentation, we would like to show you some additional images that reflect all the features in our ray tracer.
+[Explain what's to be seen in the images. As in what do the objects represent?]
+
+Thank you for your attention.
