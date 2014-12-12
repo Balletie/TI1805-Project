@@ -31,7 +31,7 @@ Skip
 Arjan
 Richard
 
-![multisampling_hd_16x.png](https://github.com/Balletie/TI1805-Project/raw/master/multisampling_hd_16x.png)
+![multisampling_hd_16x.png](https://raw.githubusercontent.com/Balletie/TI1805-Project/master/images/multisampling_hd_16x.png)
 
 Hoe te compilen?!
 =================
